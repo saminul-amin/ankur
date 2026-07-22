@@ -16,7 +16,8 @@
     "build": "next build",
     "spike:gemma": "node --env-file-if-exists=.env.local --import tsx scripts/provider-spike/run.ts",
     "verify:vertical-slice": "node --env-file-if-exists=.env.local --import tsx scripts/vertical-slice/run-live.ts",
-    "verify:ingestion": "node --env-file-if-exists=.env.local --import tsx scripts/ingestion/run-live.ts"
+    "verify:ingestion": "node --env-file-if-exists=.env.local --import tsx scripts/ingestion/run-live.ts",
+    "verify:mixed-assessment": "node --env-file-if-exists=.env.local --import tsx scripts/mixed-assessment/run-live.ts"
   },
   "dependencies": {
     "@google/genai": "latest",

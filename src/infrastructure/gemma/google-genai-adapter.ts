@@ -156,10 +156,11 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
     }
 
     if (request.maxSchemaRepairs === 0) {
-      throw new ProviderError("INVALID_OUTPUT");
+      throw new ProviderError("INVALID_OUTPUT", { cause: new Error(firstValidation.error) });
     }
 
     const repairContents: readonly GenerationContentPart[] = [
+      ...request.contents,
       {
         kind: "text",
         text: `Repair this invalid JSON object so it satisfies the supplied output contract. Return JSON only.\n\nVALIDATION ERRORS\n${firstValidation.error}\n\nINVALID OBJECT\n${firstText}`,
@@ -169,7 +170,7 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
     const repairedText = extractText(repaired.response);
     const repairedValidation = this.#parseAndValidate(repairedText, request);
     if (!repairedValidation.success) {
-      throw new ProviderError("INVALID_OUTPUT");
+      throw new ProviderError("INVALID_OUTPUT", { cause: new Error(repairedValidation.error) });
     }
 
     return {

@@ -23,12 +23,15 @@ test("reviews a mixed source, recovers it, and preserves page-grounded evidence"
   await expect(page.getByRole("heading", { name: /evidence boundary/u })).toBeVisible();
   await expect(page.getByText("উপকরণ ও ফলাফলে গুরুত্ব দিন")).toBeVisible();
   await page.getByRole("button", { name: "Build preparation map" }).click();
-  await page.getByRole("button", { name: "Generate one grounded MCQ" }).click();
+  await page.getByRole("button", { name: "Generate mixed assessment" }).click();
   await page.getByRole("radio", { name: /B\. অক্সিজেন/u }).check();
-  await page.getByRole("button", { name: "Submit answer" }).click();
-  await page.getByRole("button", { name: /View source/u }).click();
-  await expect(page.getByTestId("evidence-context")).toContainText("অক্সিজেন নির্গত হয়");
-  await expect(page.getByRole("button", { name: /Page 2/u })).toBeVisible();
+  await page.getByRole("button", { name: "Next question" }).click();
+  await page.getByRole("button", { name: "Review and submit" }).click();
+  await page.getByRole("button", { name: "Confirm submission" }).click();
+  await expect(page.getByText("3 / 6")).toBeVisible();
+  await page.getByRole("button", { name: /Page 2.*View source/u }).first().click();
+  await expect(page.getByTestId("evidence-context").first()).toContainText("অক্সিজেন নির্গত হয়");
+  await expect(page.getByRole("button", { name: /Page 2/u }).first()).toBeVisible();
 });
 
 test("critical review controls are keyboard operable", async ({ page }) => {

@@ -161,3 +161,45 @@ export function rehydrateConfirmedSource(input: {
   }
   return source;
 }
+
+export function rehydrateEvidenceWindow(input: {
+  readonly sourceVersionId: string;
+  readonly language: SourceLanguage;
+  readonly segments: ReadonlyArray<{ id: string; pageNumber: number; text: string }>;
+}): ConfirmedSource {
+  if (
+    !/^source-[a-f0-9]{8}$/u.test(input.sourceVersionId) ||
+    input.segments.length === 0 ||
+    input.segments.length > 100 ||
+    new Set(input.segments.map((segment) => segment.id)).size !== input.segments.length ||
+    input.segments.some((segment) =>
+      !/^M\d{2}-P\d{3}-S\d{3}$/u.test(segment.id) ||
+      !Number.isInteger(segment.pageNumber) ||
+      segment.pageNumber < 1 ||
+      segment.pageNumber > 3 ||
+      normalizeSourceText(segment.text).length === 0,
+    )
+  ) {
+    throw new SourceDomainError("INVALID_SEGMENTS");
+  }
+  const segments = input.segments.map((segment, index): ConfirmedSegment => {
+    const text = normalizeSourceText(segment.text);
+    return Object.freeze({
+      id: segment.id,
+      materialId: "material-01",
+      pageNumber: segment.pageNumber,
+      ordinal: index + 1,
+      text,
+      normalizedText: text,
+      textHash: stableHash(text),
+    });
+  });
+  return Object.freeze({
+    sourceVersionId: input.sourceVersionId,
+    confirmedAt: "1970-01-01T00:00:00.000Z",
+    language: input.language,
+    method: "pasted_text",
+    segments: Object.freeze(segments),
+    normalizedTextHash: input.sourceVersionId.slice("source-".length),
+  });
+}

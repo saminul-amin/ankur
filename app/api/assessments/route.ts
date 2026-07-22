@@ -16,15 +16,17 @@ export function POST(request: Request) {
         language: data.configuration.language,
         segments: data.segments,
       });
-      const activitySet = await createServerApplication().generateOneMcq.execute({
+      const activitySet = await createServerApplication().generateMixedAssessment.execute({
         source,
         preparationMap: data.preparationMap,
         selectedConceptIds: data.selectedConceptIds,
+        title: data.configuration.title,
+        difficulty: data.configuration.difficulty,
         requestId,
       });
       return {
         activitySet,
-        rejectedCandidateCount: 0,
+        rejectedCandidateCount: activitySet.artifact.repaired ? 1 : 0,
         warnings: activitySet.warnings,
         artifact: activitySet.artifact,
       };

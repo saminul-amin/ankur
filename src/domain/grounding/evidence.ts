@@ -8,7 +8,14 @@ export interface EvidenceReference {
 
 export interface EvidenceValidationFailure {
   readonly path: string;
-  readonly reason: "UNKNOWN_SEGMENT" | "QUOTE_NOT_FOUND" | "EVIDENCE_REQUIRED";
+  readonly reason:
+    | "UNKNOWN_SEGMENT"
+    | "QUOTE_NOT_FOUND"
+    | "EVIDENCE_REQUIRED"
+    | "SOURCE_VERSION_MISMATCH"
+    | "UNKNOWN_CONCEPT"
+    | "DUPLICATE_PROMPT"
+    | "INVARIANT_VIOLATION";
 }
 
 export function validateEvidence(

@@ -1,336 +1,130 @@
 import { z } from "zod";
 
-// Provider-independent, versioned runtime contracts shared by API and infrastructure adapters.
-
-const evidenceSchema = z
-  .object({
-    segmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
-    quote: z.string().min(1).max(600).optional(),
-  })
-  .strict();
+export const evidenceSchema = z.object({
+  segmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
+  quote: z.string().min(1).max(600).optional(),
+}).strict();
 
 const prioritySchema = z.enum(["high", "medium", "low"]);
+const conceptIdSchema = z.string().regex(/^concept-[a-z0-9-]+$/);
 
-export const preparationMapModelSchema = z
-  .object({
-    schemaVersion: z.literal("preparation-map.v1"),
-    sourceVersionId: z.string().min(1),
-    title: z.string().min(1).max(160),
-    language: z.enum(["bn", "en", "mixed"]),
-    domain: z.string().min(1).max(120),
-    topics: z
-      .array(
-        z
-          .object({
-            id: z.string().regex(/^topic-[a-z0-9-]+$/),
-            name: z.string().min(1).max(120),
-            priority: prioritySchema,
-            evidence: z.array(evidenceSchema).min(1).max(3),
-          })
-          .strict(),
-      )
-      .min(1)
-      .max(4),
-    concepts: z
-      .array(
-        z
-          .object({
-            id: z.string().regex(/^concept-[a-z0-9-]+$/),
-            topicId: z.string().regex(/^topic-[a-z0-9-]+$/),
-            name: z.string().min(1).max(120),
-            description: z.string().min(1).max(500),
-            priority: prioritySchema,
-            evidence: z.array(evidenceSchema).min(1).max(3),
-          })
-          .strict(),
-      )
-      .min(1)
-      .max(8),
-    objectives: z
-      .array(
-        z
-          .object({
-            id: z.string().regex(/^objective-[a-z0-9-]+$/),
-            description: z.string().min(1).max(300),
-            conceptIds: z.array(z.string().regex(/^concept-[a-z0-9-]+$/)).min(1).max(4),
-            evidence: z.array(evidenceSchema).min(1).max(3),
-          })
-          .strict(),
-      )
-      .min(1)
-      .max(6),
-    warnings: z.array(z.string().max(240)).max(5),
-  })
-  .strict();
-
-const optionSchema = z
-  .object({
-    id: z.enum(["A", "B", "C", "D"]),
-    text: z.string().min(1).max(240),
-  })
-  .strict();
-
-export const activitySetModelSchema = z
-  .object({
-    schemaVersion: z.literal("activity-set.v1"),
-    sourceVersionId: z.string().min(1),
-    title: z.string().min(1).max(160),
-    question: z
-      .object({
-        id: z.literal("question-001"),
-        type: z.literal("single_mcq"),
-        prompt: z.string().min(1).max(500),
-        conceptIds: z.array(z.string().regex(/^concept-[a-z0-9-]+$/)).min(1).max(3),
-        difficulty: z.enum(["easy", "medium", "hard"]),
-        marks: z.literal(1),
-        explanation: z.string().min(1).max(600),
-        options: z.tuple([optionSchema, optionSchema, optionSchema, optionSchema]),
-        correctOptionId: z.enum(["A", "B", "C", "D"]),
-        evidence: z.array(evidenceSchema).min(1).max(3),
-      })
-      .strict(),
-    warnings: z.array(z.string().max(240)).max(5),
-  })
-  .strict();
-
-export type PreparationMapModelOutput = z.infer<typeof preparationMapModelSchema>;
-export type ActivitySetModelOutput = z.infer<typeof activitySetModelSchema>;
-
-export const preparationMapProviderSchema = z
-  .object({
-    schemaVersion: z.literal("preparation-map.v1"),
-    sourceVersionId: z.string().min(1),
-    title: z.string().min(1).max(160),
-    language: z.enum(["bn", "en", "mixed"]),
-    domain: z.string().min(1).max(120),
+export const preparationMapModelSchema = z.object({
+  schemaVersion: z.literal("preparation-map.v1"),
+  sourceVersionId: z.string().min(1),
+  title: z.string().min(1).max(160),
+  language: z.enum(["bn", "en", "mixed"]),
+  domain: z.string().min(1).max(120),
+  topics: z.array(z.object({
+    id: z.string().regex(/^topic-[a-z0-9-]+$/),
+    name: z.string().min(1).max(120),
+    priority: prioritySchema,
+    evidence: z.array(evidenceSchema).min(1).max(3),
+  }).strict()).min(1).max(4),
+  concepts: z.array(z.object({
+    id: conceptIdSchema,
     topicId: z.string().regex(/^topic-[a-z0-9-]+$/),
-    topicName: z.string().min(1).max(120),
-    topicPriority: prioritySchema,
-    conceptId: z.string().regex(/^concept-[a-z0-9-]+$/),
-    conceptName: z.string().min(1).max(120),
-    conceptDescription: z.string().min(1).max(500),
-    conceptPriority: prioritySchema,
-    objectiveId: z.string().regex(/^objective-[a-z0-9-]+$/),
-    objectiveDescription: z.string().min(1).max(300),
-    evidenceSegmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
-    evidenceQuote: z.string().min(1).max(600),
-    warnings: z.array(z.string().max(240)).max(3),
-  })
-  .strict();
+    name: z.string().min(1).max(120),
+    description: z.string().min(1).max(500),
+    priority: prioritySchema,
+    evidence: z.array(evidenceSchema).min(1).max(3),
+  }).strict()).min(1).max(8),
+  objectives: z.array(z.object({
+    id: z.string().regex(/^objective-[a-z0-9-]+$/),
+    description: z.string().min(1).max(300),
+    conceptIds: z.array(conceptIdSchema).min(1).max(4),
+    evidence: z.array(evidenceSchema).min(1).max(3),
+  }).strict()).min(1).max(6),
+  warnings: z.array(z.string().max(240)).max(5),
+}).strict();
 
-export const activitySetProviderSchema = z
-  .object({
-    schemaVersion: z.literal("activity-set.v1"),
-    sourceVersionId: z.string().min(1),
-    title: z.string().min(1).max(160),
-    prompt: z.string().min(1).max(500),
-    conceptId: z.string().regex(/^concept-[a-z0-9-]+$/),
-    difficulty: z.enum(["easy", "medium", "hard"]),
-    explanation: z.string().min(1).max(600),
-    optionA: z.string().min(1).max(240),
-    optionB: z.string().min(1).max(240),
-    optionC: z.string().min(1).max(240),
-    optionD: z.string().min(1).max(240),
-    correctOptionId: z.enum(["A", "B", "C", "D"]),
-    evidenceSegmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
-    evidenceQuote: z.string().min(1).max(600),
-    warnings: z.array(z.string().max(240)).max(3),
-  })
-  .strict();
+export const preparationMapProviderSchema = z.object({
+  schemaVersion: z.literal("preparation-map.v1"),
+  sourceVersionId: z.string().min(1),
+  title: z.string().min(1).max(160),
+  language: z.enum(["bn", "en", "mixed"]),
+  domain: z.string().min(1).max(120),
+  topicId: z.string().regex(/^topic-[a-z0-9-]+$/),
+  topicName: z.string().min(1).max(120),
+  topicPriority: prioritySchema,
+  conceptId: conceptIdSchema,
+  conceptName: z.string().min(1).max(120),
+  conceptDescription: z.string().min(1).max(500),
+  conceptPriority: prioritySchema,
+  objectiveId: z.string().regex(/^objective-[a-z0-9-]+$/),
+  objectiveDescription: z.string().min(1).max(300),
+  evidenceSegmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
+  evidenceQuote: z.string().min(1).max(600),
+  warnings: z.array(z.string().max(240)).max(3),
+}).strict();
+
+const providerSegmentIdsSchema = z.array(z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/)).min(1).max(4);
+
+export const mcqCandidateProviderSchema = z.object({
+  prompt: z.string().min(1).max(500),
+  conceptIds: z.array(conceptIdSchema).min(1).max(4),
+  explanation: z.string().min(1).max(600),
+  options: z.array(z.string().min(1).max(240)).length(4),
+  correctOptionId: z.enum(["A", "B", "C", "D"]),
+  evidenceSegmentIds: providerSegmentIdsSchema,
+}).strict();
+
+export const writtenCandidateProviderSchema = z.object({
+  prompt: z.string().min(1).max(700),
+  conceptIds: z.array(conceptIdSchema).min(1).max(6),
+  explanation: z.string().min(1).max(700),
+  expectedLength: z.enum(["one_sentence", "short_paragraph"]),
+  referenceAnswer: z.string().min(1).max(1_200),
+  requiredConceptIds: z.array(conceptIdSchema).min(1).max(6),
+  evidenceSegmentIds: providerSegmentIdsSchema,
+  criterion1Description: z.string().min(1).max(400), criterion1MaximumMarks: z.number().int().min(1).max(4),
+  criterion1RequiredConceptIds: z.array(conceptIdSchema).min(1).max(4), criterion1EvidenceSegmentIds: providerSegmentIdsSchema,
+  criterion2Description: z.string().min(1).max(400), criterion2MaximumMarks: z.number().int().min(1).max(4),
+  criterion2RequiredConceptIds: z.array(conceptIdSchema).min(1).max(4), criterion2EvidenceSegmentIds: providerSegmentIdsSchema,
+  criterion3Description: z.string().min(1).max(400), criterion3MaximumMarks: z.number().int().min(1).max(4),
+  criterion3RequiredConceptIds: z.array(conceptIdSchema).min(1).max(4), criterion3EvidenceSegmentIds: providerSegmentIdsSchema,
+  warnings: z.array(z.string().max(240)).max(5),
+}).strict();
 
 export type PreparationMapProviderOutput = z.infer<typeof preparationMapProviderSchema>;
-export type ActivitySetProviderOutput = z.infer<typeof activitySetProviderSchema>;
+export type McqCandidateProviderOutput = z.infer<typeof mcqCandidateProviderSchema>;
+export type WrittenCandidateProviderOutput = z.infer<typeof writtenCandidateProviderSchema>;
 
 export const preparationMapProviderJsonSchema = {
-  type: "object",
-  additionalProperties: false,
+  type: "object", additionalProperties: false,
   properties: {
-    schemaVersion: { type: "string", enum: ["preparation-map.v1"] },
-    sourceVersionId: { type: "string" },
-    title: { type: "string" },
-    language: { type: "string", enum: ["bn", "en", "mixed"] },
-    domain: { type: "string" },
-    topicId: { type: "string" },
-    topicName: { type: "string" },
-    topicPriority: { type: "string", enum: ["high", "medium", "low"] },
-    conceptId: { type: "string" },
-    conceptName: { type: "string" },
-    conceptDescription: { type: "string" },
-    conceptPriority: { type: "string", enum: ["high", "medium", "low"] },
-    objectiveId: { type: "string" },
-    objectiveDescription: { type: "string" },
-    evidenceSegmentId: { type: "string" },
-    evidenceQuote: { type: "string" },
+    schemaVersion: { type: "string", enum: ["preparation-map.v1"] }, sourceVersionId: { type: "string" },
+    title: { type: "string" }, language: { type: "string", enum: ["bn", "en", "mixed"] }, domain: { type: "string" },
+    topicId: { type: "string" }, topicName: { type: "string" }, topicPriority: { type: "string", enum: ["high", "medium", "low"] },
+    conceptId: { type: "string" }, conceptName: { type: "string" }, conceptDescription: { type: "string" }, conceptPriority: { type: "string", enum: ["high", "medium", "low"] },
+    objectiveId: { type: "string" }, objectiveDescription: { type: "string" }, evidenceSegmentId: { type: "string" }, evidenceQuote: { type: "string" },
     warnings: { type: "array", maxItems: 3, items: { type: "string" } },
   },
-  required: [
-    "schemaVersion", "sourceVersionId", "title", "language", "domain", "topicId",
-    "topicName", "topicPriority", "conceptId", "conceptName", "conceptDescription",
-    "conceptPriority", "objectiveId", "objectiveDescription", "evidenceSegmentId",
-    "evidenceQuote", "warnings",
-  ],
+  required: ["schemaVersion", "sourceVersionId", "title", "language", "domain", "topicId", "topicName", "topicPriority", "conceptId", "conceptName", "conceptDescription", "conceptPriority", "objectiveId", "objectiveDescription", "evidenceSegmentId", "evidenceQuote", "warnings"],
 } as const;
 
-export const activitySetProviderJsonSchema = {
-  type: "object",
-  additionalProperties: false,
+const segmentIdsJsonSchema = { type: "array", minItems: 1, maxItems: 4, items: { type: "string" } } as const;
+const conceptIdsJsonSchema = { type: "array", minItems: 1, maxItems: 6, items: { type: "string" } } as const;
+
+export const mcqCandidateProviderJsonSchema = {
+  type: "object", additionalProperties: false,
   properties: {
-    schemaVersion: { type: "string", enum: ["activity-set.v1"] },
-    sourceVersionId: { type: "string" },
-    title: { type: "string" },
-    prompt: { type: "string" },
-    conceptId: { type: "string" },
-    difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
-    explanation: { type: "string" },
-    optionA: { type: "string" },
-    optionB: { type: "string" },
-    optionC: { type: "string" },
-    optionD: { type: "string" },
-    correctOptionId: { type: "string", enum: ["A", "B", "C", "D"] },
-    evidenceSegmentId: { type: "string" },
-    evidenceQuote: { type: "string" },
-    warnings: { type: "array", maxItems: 3, items: { type: "string" } },
+    prompt: { type: "string" }, conceptIds: conceptIdsJsonSchema, explanation: { type: "string" },
+    options: { type: "array", minItems: 4, maxItems: 4, items: { type: "string" } },
+    correctOptionId: { type: "string", enum: ["A", "B", "C", "D"] }, evidenceSegmentIds: segmentIdsJsonSchema,
   },
-  required: [
-    "schemaVersion", "sourceVersionId", "title", "prompt", "conceptId", "difficulty",
-    "explanation", "optionA", "optionB", "optionC", "optionD", "correctOptionId",
-    "evidenceSegmentId", "evidenceQuote", "warnings",
-  ],
+  required: ["prompt", "conceptIds", "explanation", "options", "correctOptionId", "evidenceSegmentIds"],
 } as const;
 
-const evidenceJsonSchema = {
-  type: "object",
-  additionalProperties: false,
+export const writtenCandidateProviderJsonSchema = {
+  type: "object", additionalProperties: false,
   properties: {
-    segmentId: { type: "string" },
-    quote: { type: "string" },
-  },
-  required: ["segmentId"],
-} as const;
-
-export const preparationMapJsonSchema = {
-  type: "object",
-  additionalProperties: false,
-  properties: {
-    schemaVersion: { type: "string", enum: ["preparation-map.v1"] },
-    sourceVersionId: { type: "string" },
-    title: { type: "string" },
-    language: { type: "string", enum: ["bn", "en", "mixed"] },
-    domain: { type: "string" },
-    topics: {
-      type: "array",
-      minItems: 1,
-      maxItems: 4,
-      items: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          id: { type: "string" },
-          name: { type: "string" },
-          priority: { type: "string", enum: ["high", "medium", "low"] },
-          evidence: { type: "array", minItems: 1, maxItems: 3, items: evidenceJsonSchema },
-        },
-        required: ["id", "name", "priority", "evidence"],
-      },
-    },
-    concepts: {
-      type: "array",
-      minItems: 1,
-      maxItems: 8,
-      items: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          id: { type: "string" },
-          topicId: { type: "string" },
-          name: { type: "string" },
-          description: { type: "string" },
-          priority: { type: "string", enum: ["high", "medium", "low"] },
-          evidence: { type: "array", minItems: 1, maxItems: 3, items: evidenceJsonSchema },
-        },
-        required: ["id", "topicId", "name", "description", "priority", "evidence"],
-      },
-    },
-    objectives: {
-      type: "array",
-      minItems: 1,
-      maxItems: 6,
-      items: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          id: { type: "string" },
-          description: { type: "string" },
-          conceptIds: { type: "array", minItems: 1, maxItems: 4, items: { type: "string" } },
-          evidence: { type: "array", minItems: 1, maxItems: 3, items: evidenceJsonSchema },
-        },
-        required: ["id", "description", "conceptIds", "evidence"],
-      },
-    },
+    prompt: { type: "string" }, conceptIds: conceptIdsJsonSchema, explanation: { type: "string" },
+    expectedLength: { type: "string", enum: ["one_sentence", "short_paragraph"] }, referenceAnswer: { type: "string" },
+    requiredConceptIds: conceptIdsJsonSchema, evidenceSegmentIds: segmentIdsJsonSchema,
+    criterion1Description: { type: "string" }, criterion1MaximumMarks: { type: "integer", minimum: 1, maximum: 4 }, criterion1RequiredConceptIds: conceptIdsJsonSchema, criterion1EvidenceSegmentIds: segmentIdsJsonSchema,
+    criterion2Description: { type: "string" }, criterion2MaximumMarks: { type: "integer", minimum: 1, maximum: 4 }, criterion2RequiredConceptIds: conceptIdsJsonSchema, criterion2EvidenceSegmentIds: segmentIdsJsonSchema,
+    criterion3Description: { type: "string" }, criterion3MaximumMarks: { type: "integer", minimum: 1, maximum: 4 }, criterion3RequiredConceptIds: conceptIdsJsonSchema, criterion3EvidenceSegmentIds: segmentIdsJsonSchema,
     warnings: { type: "array", maxItems: 5, items: { type: "string" } },
   },
-  required: [
-    "schemaVersion",
-    "sourceVersionId",
-    "title",
-    "language",
-    "domain",
-    "topics",
-    "concepts",
-    "objectives",
-    "warnings",
-  ],
-} as const;
-
-export const activitySetJsonSchema = {
-  type: "object",
-  additionalProperties: false,
-  properties: {
-    schemaVersion: { type: "string", enum: ["activity-set.v1"] },
-    sourceVersionId: { type: "string" },
-    title: { type: "string" },
-    question: {
-      type: "object",
-      additionalProperties: false,
-      properties: {
-        id: { type: "string", enum: ["question-001"] },
-        type: { type: "string", enum: ["single_mcq"] },
-        prompt: { type: "string" },
-        conceptIds: { type: "array", minItems: 1, maxItems: 3, items: { type: "string" } },
-        difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
-        marks: { type: "integer", enum: [1] },
-        explanation: { type: "string" },
-        options: {
-          type: "array",
-          minItems: 4,
-          maxItems: 4,
-          items: {
-            type: "object",
-            additionalProperties: false,
-            properties: {
-              id: { type: "string", enum: ["A", "B", "C", "D"] },
-              text: { type: "string" },
-            },
-            required: ["id", "text"],
-          },
-        },
-        correctOptionId: { type: "string", enum: ["A", "B", "C", "D"] },
-        evidence: { type: "array", minItems: 1, maxItems: 3, items: evidenceJsonSchema },
-      },
-      required: [
-        "id",
-        "type",
-        "prompt",
-        "conceptIds",
-        "difficulty",
-        "marks",
-        "explanation",
-        "options",
-        "correctOptionId",
-        "evidence",
-      ],
-    },
-    warnings: { type: "array", maxItems: 5, items: { type: "string" } },
-  },
-  required: ["schemaVersion", "sourceVersionId", "title", "question", "warnings"],
+  required: ["prompt", "conceptIds", "explanation", "expectedLength", "referenceAnswer", "requiredConceptIds", "evidenceSegmentIds", "criterion1Description", "criterion1MaximumMarks", "criterion1RequiredConceptIds", "criterion1EvidenceSegmentIds", "criterion2Description", "criterion2MaximumMarks", "criterion2RequiredConceptIds", "criterion2EvidenceSegmentIds", "criterion3Description", "criterion3MaximumMarks", "criterion3RequiredConceptIds", "criterion3EvidenceSegmentIds", "warnings"],
 } as const;

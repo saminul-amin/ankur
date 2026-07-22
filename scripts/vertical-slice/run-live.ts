@@ -2,7 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 import { AnalyzeConfirmedSource } from "../../src/application/use-cases/analyze-confirmed-source.js";
-import { GenerateOneMcq } from "../../src/application/use-cases/generate-one-mcq.js";
+import { GenerateMixedAssessment } from "../../src/application/use-cases/generate-mixed-assessment.js";
 import { gradeMcq, validateActivitySet } from "../../src/domain/assessments/mcq.js";
 import { validatePreparationMap } from "../../src/domain/preparation/preparation-map.js";
 import { createConfirmedSource } from "../../src/domain/source/confirmed-source.js";
@@ -40,13 +40,15 @@ async function main(): Promise<void> {
   const provider = new GoogleGenAiAdapter(config.apiKey, config.primaryModel);
   const content = new GemmaLearningContentAdapter(provider, config.requestTimeoutMs);
   const analyze = new AnalyzeConfirmedSource(content);
-  const generate = new GenerateOneMcq(content);
+  const generate = new GenerateMixedAssessment(content);
   const startedAt = new Date().toISOString();
   const map = await analyze.execute({ source, requestId: crypto.randomUUID() });
   const activity = await generate.execute({
     source,
     preparationMap: map,
     selectedConceptIds: map.concepts.map((concept) => concept.id),
+    title: "Grounded vertical-slice check",
+    difficulty: "medium",
     requestId: crypto.randomUUID(),
   });
   const question = activity.questions[0];

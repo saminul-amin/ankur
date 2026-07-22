@@ -7,9 +7,13 @@ import { useEffect, useRef, useState } from "react";
 import {
   createSampleActivitySet,
   createSamplePreparationMap,
+  createSampleWrittenEvaluation,
+  SAMPLE_PARTIAL_WRITTEN_ANSWER,
   SAMPLE_PAGES,
 } from "../../../application/sample/sample-vertical-slice";
-import { gradeMcq, type ActivitySet, type McqGrade } from "../../../domain/assessments/mcq";
+import { calculateConceptPerformance, reconcileAssessmentTotal, type ConceptPerformance } from "../../../domain/assessments/concept-performance";
+import { gradeMcq, type ActivitySet, type AssessmentDifficulty, type McqGrade } from "../../../domain/assessments/mcq";
+import { createEmptyWrittenEvaluation, type WrittenAnswerEvaluation } from "../../../domain/assessments/written-evaluation";
 import { type PreparationMap } from "../../../domain/preparation/preparation-map";
 import {
   createConfirmedSource,
@@ -20,9 +24,10 @@ import {
 } from "../../../domain/source/confirmed-source";
 import type { ReviewPage } from "../../../domain/source/page-extraction";
 import { DocumentIngestionError } from "../../../infrastructure/documents/browser-document-processor";
-import { requestOneMcq, requestPageTranscription, requestPreparationMap, ApiClientError } from "../../api/client";
+import { requestMixedAssessment, requestPageTranscription, requestPreparationMap, requestWrittenEvaluation, ApiClientError } from "../../api/client";
 import { AnkurMark } from "../../components/brand/ankur-mark";
 import { ConceptCanopy } from "../../components/learning/concept-canopy";
+import { AssessmentBuilder } from "../../components/learning/assessment-builder";
 import { GrowthRail, type LearningStage } from "../../components/learning/growth-rail";
 import { PageReviewCard } from "../../components/learning/page-review-card";
 import { PracticeCard } from "../../components/learning/practice-card";
@@ -34,8 +39,9 @@ import { AlertBanner, Badge, Button, Field, TextInput } from "../../components/u
 import { processPageImagesForReview, processPdfForReview } from "../../composition/browser-services";
 import {
   INGESTION_STORAGE_KEY,
+  TASK03_STORAGE_KEY,
+  migrateTask03Session,
   parsePersistedIngestionSession,
-  recoveredGrade,
   toPersistedIngestionSession,
 } from "../../persistence/ingestion-session";
 
@@ -135,8 +141,19 @@ export function VerticalSliceWorkspace() {
   const [confirmedSource, setConfirmedSource] = useState<ConfirmedSource>();
   const [preparationMap, setPreparationMap] = useState<PreparationMap>();
   const [activitySet, setActivitySet] = useState<ActivitySet>();
+  const [assessmentTitle, setAssessmentTitle] = useState("");
+  const [difficulty, setDifficulty] = useState<AssessmentDifficulty>("medium");
+  const [selectedConceptIds, setSelectedConceptIds] = useState<string[]>([]);
   const [selectedOptionId, setSelectedOptionId] = useState("");
+  const [writtenAnswer, setWrittenAnswer] = useState("");
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<0 | 1>(0);
   const [grade, setGrade] = useState<McqGrade>();
+  const [writtenEvaluation, setWrittenEvaluation] = useState<WrittenAnswerEvaluation>();
+  const [conceptPerformance, setConceptPerformance] = useState<ConceptPerformance[]>();
+  const [writtenOperationId, setWrittenOperationId] = useState<string>();
+  const [uncertainWrittenFailure, setUncertainWrittenFailure] = useState(false);
+  const [confirmingSubmission, setConfirmingSubmission] = useState(false);
+  const [submittingAssessment, setSubmittingAssessment] = useState(false);
   const [loading, setLoading] = useState<string>();
   const [loadingKind, setLoadingKind] = useState<"ingestion" | "generation">("generation");
   const [error, setError] = useState<string>();
@@ -144,21 +161,30 @@ export function VerticalSliceWorkspace() {
   const [draftId, setDraftId] = useState("");
   const [liveStatus, setLiveStatus] = useState<RuntimeState>("checking");
   const [hydrated, setHydrated] = useState(false);
+  const [motionReady, setMotionReady] = useState(false);
   const [recoveryNotice, setRecoveryNotice] = useState(false);
   const workspaceRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
+    setMotionReady(true);
     setSessionId(getSessionId());
     setDraftId(`draft-${crypto.randomUUID()}`);
     const raw = window.localStorage.getItem(INGESTION_STORAGE_KEY);
-    const persisted = raw === null ? undefined : parsePersistedIngestionSession(raw);
+    const legacy = window.localStorage.getItem(TASK03_STORAGE_KEY);
+    const persisted = raw === null ? legacy === null ? undefined : migrateTask03Session(legacy) : parsePersistedIngestionSession(raw);
     if (persisted !== undefined) {
       setStage(persisted.stage); setMode(persisted.mode); setSourceKind(persisted.sourceKind);
       setPages([...persisted.pages]); setPriority(persisted.priorityInstruction);
       setMetadata(persisted.sourceMetadata); setConfirmedSource(persisted.confirmedSource);
       setPreparationMap(persisted.preparationMap); setActivitySet(persisted.activitySet);
-      setSelectedOptionId(persisted.selectedOptionId ?? ""); setGrade(recoveredGrade(persisted));
+      setAssessmentTitle(persisted.assessmentConfiguration?.title ?? "");
+      setDifficulty(persisted.assessmentConfiguration?.difficulty ?? "medium");
+      setSelectedConceptIds([...(persisted.assessmentConfiguration?.selectedConceptIds ?? persisted.preparationMap?.concepts.map((concept) => concept.id) ?? [])]);
+      setSelectedOptionId(persisted.selectedOptionId ?? ""); setWrittenAnswer(persisted.writtenAnswer ?? "");
+      setCurrentQuestionIndex(persisted.currentQuestionIndex); setGrade(persisted.mcqGrade);
+      setWrittenEvaluation(persisted.writtenEvaluation); setConceptPerformance(persisted.conceptPerformance === undefined ? undefined : [...persisted.conceptPerformance]);
+      setWrittenOperationId(persisted.writtenOperationId); setUncertainWrittenFailure(persisted.uncertainWrittenFailure);
       setDraftText(persisted.pages[0]?.sourceKind === "pasted_text" ? persisted.pages[0].text : "");
       setRecoveryNotice(persisted.recoveredWithoutPreviews && persisted.pages.some((page) => page.sourceKind === "pdf" || page.sourceKind === "page_image"));
     }
@@ -180,19 +206,26 @@ export function VerticalSliceWorkspace() {
       pages, priorityInstruction: priority,
       ...(confirmedSource === undefined ? {} : { confirmedSource }),
       ...(preparationMap === undefined ? {} : { preparationMap }),
+      ...(preparationMap === undefined || assessmentTitle.trim() === "" || selectedConceptIds.length === 0 ? {} : { assessmentConfiguration: { title: assessmentTitle, selectedConceptIds, difficulty } }),
       ...(activitySet === undefined ? {} : { activitySet }),
       ...(selectedOptionId === "" ? {} : { selectedOptionId }),
+      writtenAnswer, currentQuestionIndex,
+      ...(grade === undefined ? {} : { mcqGrade: grade }),
+      ...(writtenEvaluation === undefined ? {} : { writtenEvaluation }),
+      ...(conceptPerformance === undefined ? {} : { conceptPerformance }),
+      ...(writtenOperationId === undefined ? {} : { writtenOperationId }),
+      uncertainWrittenFailure,
     }));
-  }, [activitySet, confirmedSource, hydrated, metadata, mode, pages, preparationMap, priority, selectedOptionId, sourceKind, stage]);
+  }, [activitySet, assessmentTitle, conceptPerformance, confirmedSource, currentQuestionIndex, difficulty, grade, hydrated, metadata, mode, pages, preparationMap, priority, selectedConceptIds, selectedOptionId, sourceKind, stage, uncertainWrittenFailure, writtenAnswer, writtenEvaluation, writtenOperationId]);
 
-  const question = activitySet?.questions[0];
   const hasProcessingPage = pages.some((page) => page.status === "processing");
   const canConfirm = !hasProcessingPage && pages.some((page) => page.included && page.text.trim().length > 0);
 
   function invalidateDownstream() {
     if (confirmedSource !== undefined || preparationMap !== undefined || activitySet !== undefined) {
       setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined);
-      setSelectedOptionId(""); setGrade(undefined); setStage("review");
+      setAssessmentTitle(""); setSelectedConceptIds([]); setSelectedOptionId(""); setWrittenAnswer(""); setGrade(undefined);
+      setWrittenEvaluation(undefined); setConceptPerformance(undefined); setWrittenOperationId(undefined); setUncertainWrittenFailure(false); setStage("review");
     }
   }
 
@@ -248,7 +281,9 @@ export function VerticalSliceWorkspace() {
     setMode("sample"); setSourceKind("pdf"); setDraftText(""); setPriority("");
     const nextPages = sampleReviewPages();
     setPages(nextPages); setMetadata({ name: "Bengali photosynthesis · mixed sample", kind: "sample", pageCount: 3 });
-    setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setSelectedOptionId(""); setGrade(undefined);
+    setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setSelectedConceptIds([]);
+    setSelectedOptionId(""); setWrittenAnswer(SAMPLE_PARTIAL_WRITTEN_ANSWER); setCurrentQuestionIndex(0); setGrade(undefined);
+    setWrittenEvaluation(undefined); setConceptPerformance(undefined); setWrittenOperationId(undefined); setUncertainWrittenFailure(false);
     setError(undefined); setRecoveryNotice(false); setStage("review");
   }
 
@@ -259,7 +294,7 @@ export function VerticalSliceWorkspace() {
       text: draftText, uncertainSegments: [], warnings: [], included: true, status: "ready", previewAvailable: false,
     };
     setMode("live"); setPages([nextPage]); setMetadata({ name: "Pasted learning material", kind: "pasted_text", pageCount: 1 });
-    setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setError(undefined); setStage("review");
+    setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setSelectedConceptIds([]); setWrittenAnswer(""); setError(undefined); setStage("review");
   }
 
   async function handlePdf(file: File | undefined) {
@@ -269,7 +304,7 @@ export function VerticalSliceWorkspace() {
       const processed = await processPdfForReview(file);
       setMode("live"); setSourceKind("pdf"); setPages([...processed.pages]);
       setMetadata({ name: processed.sourceName, kind: "pdf", pageCount: processed.pages.length });
-      setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setRecoveryNotice(false); setStage("review");
+      setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setSelectedConceptIds([]); setWrittenAnswer(""); setRecoveryNotice(false); setStage("review");
       await transcribePending(processed.pages);
     } catch (caught) {
       setError(errorMessage(caught));
@@ -283,7 +318,7 @@ export function VerticalSliceWorkspace() {
       const processed = await processPageImagesForReview(files);
       setMode("live"); setSourceKind("images"); setPages([...processed.pages]);
       setMetadata({ name: processed.sourceName, kind: "page_images", pageCount: processed.pages.length });
-      setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setRecoveryNotice(false); setStage("review");
+      setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setSelectedConceptIds([]); setWrittenAnswer(""); setRecoveryNotice(false); setStage("review");
       await transcribePending(processed.pages);
     } catch (caught) {
       setError(errorMessage(caught));
@@ -302,7 +337,9 @@ export function VerticalSliceWorkspace() {
         method: sourceMethod(metadata),
         ...(priority.trim() === "" ? {} : { priorityInstruction: priority }),
       });
-      setConfirmedSource(source); setPreparationMap(undefined); setActivitySet(undefined); setSelectedOptionId(""); setGrade(undefined); setStage("confirmed");
+      setConfirmedSource(source); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setSelectedConceptIds([]);
+      setSelectedOptionId(""); setWrittenAnswer(mode === "sample" ? SAMPLE_PARTIAL_WRITTEN_ANSWER : ""); setGrade(undefined);
+      setWrittenEvaluation(undefined); setConceptPerformance(undefined); setStage("confirmed");
     } catch (caught) { setError(errorMessage(caught)); }
   }
 
@@ -316,32 +353,82 @@ export function VerticalSliceWorkspace() {
         ...(confirmedSource.priorityInstruction === undefined ? {} : { priorityInstruction: confirmedSource.priorityInstruction }),
         segments: confirmedSource.segments.map(({ id, pageNumber, text }) => ({ id, pageNumber, text })),
       }, sessionId);
-      setPreparationMap(map); setStage("preparation");
+      setPreparationMap(map); setAssessmentTitle(`${map.title} · Focus assessment`); setSelectedConceptIds(map.concepts.map((concept) => concept.id)); setDifficulty("medium"); setStage("preparation");
     } catch (caught) { setError(errorMessage(caught)); }
     finally { setLoading(undefined); }
   }
 
   async function generateAssessment() {
     if (confirmedSource === undefined || preparationMap === undefined) return;
-    setLoadingKind("generation"); setLoading(mode === "sample" ? "Preparing the fixed offline question…" : "Preparing one evidence-linked question…"); setError(undefined);
+    setLoadingKind("generation"); setLoading(mode === "sample" ? "Preparing the fixed offline mixed assessment…" : "Preparing one MCQ and one written question…"); setError(undefined);
     try {
-      const generated = mode === "sample" ? createSampleActivitySet(confirmedSource, preparationMap) : await requestOneMcq({
+      const generated = mode === "sample" ? createSampleActivitySet(confirmedSource, preparationMap) : await requestMixedAssessment({
         sourceVersionId: confirmedSource.sourceVersionId, preparationMap,
-        selectedConceptIds: preparationMap.concepts.map((concept) => concept.id),
-        configuration: { language: confirmedSource.language, mcqCount: 1, shortWrittenCount: 0, difficulty: "mixed" },
+        selectedConceptIds,
+        configuration: { title: assessmentTitle.trim(), language: confirmedSource.language, mcqCount: 1, shortWrittenCount: 1, difficulty },
         segments: confirmedSource.segments.map(({ id, pageNumber, text }) => ({ id, pageNumber, text })),
       }, sessionId);
-      setActivitySet(generated); setSelectedOptionId(""); setGrade(undefined); setStage("assessment");
+      setActivitySet(generated); setSelectedOptionId(""); setWrittenAnswer(mode === "sample" ? SAMPLE_PARTIAL_WRITTEN_ANSWER : ""); setCurrentQuestionIndex(0);
+      setGrade(undefined); setWrittenEvaluation(undefined); setConceptPerformance(undefined); setWrittenOperationId(undefined); setUncertainWrittenFailure(false); setStage("assessment");
     } catch (caught) { setError(errorMessage(caught)); }
     finally { setLoading(undefined); }
   }
 
-  function submitAnswer() { if (question !== undefined && selectedOptionId !== "") { setGrade(gradeMcq(question, selectedOptionId)); setStage("results"); } }
+  function updateAssessmentConfiguration(change: () => void) {
+    change(); setActivitySet(undefined); setSelectedOptionId(""); setWrittenAnswer(mode === "sample" ? SAMPLE_PARTIAL_WRITTEN_ANSWER : "");
+    setGrade(undefined); setWrittenEvaluation(undefined); setConceptPerformance(undefined); setWrittenOperationId(undefined); setUncertainWrittenFailure(false);
+  }
+
+  function toggleConcept(conceptId: string) {
+    updateAssessmentConfiguration(() => setSelectedConceptIds((current) => current.includes(conceptId) ? current.filter((id) => id !== conceptId) : [...current, conceptId]));
+  }
+
+  async function submitAssessment() {
+    if (activitySet === undefined || confirmedSource === undefined || preparationMap === undefined || submittingAssessment) return;
+    setConfirmingSubmission(false); setSubmittingAssessment(true); setError(undefined); setLoadingKind("generation");
+    const operationId = writtenOperationId ?? `written-${crypto.randomUUID()}`;
+    setWrittenOperationId(operationId);
+    const mcqGrade = gradeMcq(activitySet.questions[0], selectedOptionId);
+    setGrade(mcqGrade);
+    try {
+      let evaluation: WrittenAnswerEvaluation;
+      if (writtenAnswer.trim() === "") {
+        evaluation = createEmptyWrittenEvaluation({ question: activitySet.questions[1], requestId: operationId });
+      } else if (mode === "sample") {
+        setLoading("Applying the fixed grounded sample rubric…");
+        evaluation = createSampleWrittenEvaluation(activitySet);
+      } else {
+        setLoading("Gemma 4 is reconciling each rubric criterion…");
+        const allowedIds = new Set([
+          ...activitySet.questions[1].evidence.map((reference) => reference.segmentId),
+          ...activitySet.questions[1].rubric.flatMap((criterion) => criterion.evidence.map((reference) => reference.segmentId)),
+        ]);
+        evaluation = await requestWrittenEvaluation({
+          operationId, sourceVersionId: confirmedSource.sourceVersionId, question: activitySet.questions[1], studentAnswer: writtenAnswer,
+          evidenceSegments: confirmedSource.segments.filter((segment) => allowedIds.has(segment.id)).map(({ id, pageNumber, text }) => ({ id, pageNumber, text })),
+        }, sessionId);
+      }
+      const performance = calculateConceptPerformance({ concepts: preparationMap.concepts, mcqQuestion: activitySet.questions[0], mcqGrade, writtenQuestion: activitySet.questions[1], writtenEvaluation: evaluation });
+      if (!reconcileAssessmentTotal({ mcqGrade, writtenEvaluation: evaluation, performance })) throw new Error("Assessment totals did not reconcile.");
+      window.localStorage.setItem(INGESTION_STORAGE_KEY, toPersistedIngestionSession({
+        stage: "results", mode, sourceKind, ...(metadata === undefined ? {} : { sourceMetadata: metadata }), pages,
+        priorityInstruction: priority, confirmedSource, preparationMap,
+        assessmentConfiguration: { title: assessmentTitle, selectedConceptIds, difficulty }, activitySet,
+        ...(selectedOptionId === "" ? {} : { selectedOptionId }), writtenAnswer, currentQuestionIndex,
+        mcqGrade, writtenEvaluation: evaluation, conceptPerformance: performance, writtenOperationId: operationId, uncertainWrittenFailure: false,
+      }));
+      setWrittenEvaluation(evaluation); setConceptPerformance(performance); setUncertainWrittenFailure(false); setStage("results");
+    } catch (caught) {
+      setUncertainWrittenFailure(writtenAnswer.trim() !== ""); setError(`${errorMessage(caught)} Your answers and assessment remain saved. Review your connection before explicitly retrying grading.`);
+    } finally { setLoading(undefined); setSubmittingAssessment(false); }
+  }
 
   function clearSession() {
-    window.localStorage.removeItem(INGESTION_STORAGE_KEY); window.localStorage.removeItem(LEGACY_STORAGE_KEY);
+    window.localStorage.removeItem(INGESTION_STORAGE_KEY); window.localStorage.removeItem(TASK03_STORAGE_KEY); window.localStorage.removeItem(LEGACY_STORAGE_KEY);
     setStage("input"); setMode("live"); setSourceKind("text"); setDraftText(""); setPages([]); setMetadata(undefined); setPriority("");
-    setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setSelectedOptionId(""); setGrade(undefined); setError(undefined); setRecoveryNotice(false);
+    setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setDifficulty("medium"); setSelectedConceptIds([]);
+    setSelectedOptionId(""); setWrittenAnswer(""); setCurrentQuestionIndex(0); setGrade(undefined); setWrittenEvaluation(undefined); setConceptPerformance(undefined);
+    setWrittenOperationId(undefined); setUncertainWrittenFailure(false); setConfirmingSubmission(false); setSubmittingAssessment(false); setError(undefined); setRecoveryNotice(false);
   }
 
   function enterWorkspace() {
@@ -385,7 +472,7 @@ export function VerticalSliceWorkspace() {
             <div className="stage-panel">
               {liveStatus === "unavailable" && mode !== "sample" ? <AlertBanner tone="warning" title="Live generation is unavailable">Pasted text review still works. Scanned-page transcription needs live mode; the complete mixed sample remains available.</AlertBanner> : null}
               {recoveryNotice ? <AlertBanner tone="info" title="Review recovered without original previews">Your edits, methods, warnings, and include choices were restored. Re-select the original source only if you need previews or a transcription retry.</AlertBanner> : null}
-              <m.div key={stage} animate={{ opacity: 1, y: 0 }} initial={reduceMotion ? false : { opacity: 0, y: 10 }} transition={{ duration: reduceMotion ? 0 : 0.22 }}>
+              <m.div key={stage} animate={{ opacity: 1, y: 0 }} initial={motionReady && !reduceMotion ? { opacity: 0, y: 10 } : false} transition={{ duration: reduceMotion ? 0 : 0.22 }}>
                 {stage === "input" ? <SourceCanvas sourceKind={sourceKind} draftText={draftText} onSourceKindChange={setSourceKind} onDraftChange={setDraftText} onReviewText={reviewPastedText} onPdf={(file) => void handlePdf(file)} onImages={(files) => void handleImages(files)} onSample={startSample} onResumeReview={() => setStage("review")} hasReviewDraft={pages.length > 0} disabled={loading !== undefined} /> : null}
                 {stage === "review" ? (
                   <div className="review-stage">
@@ -411,18 +498,18 @@ export function VerticalSliceWorkspace() {
                     <div className="stage-actions"><Button variant="quiet" onClick={() => setStage("review")}><PencilLine aria-hidden="true" size={16} />Edit reviewed pages</Button><Button disabled={loading !== undefined || sessionId === ""} onClick={() => void buildPreparationMap()}>Build preparation map</Button></div>
                   </section>
                 ) : null}
-                {stage === "preparation" && preparationMap !== undefined && confirmedSource !== undefined ? <div><ConceptCanopy map={preparationMap} source={confirmedSource} /><div className="stage-actions"><Button variant="quiet" onClick={() => setStage("review")}>Edit source</Button><Button disabled={loading !== undefined} onClick={() => void generateAssessment()}>Generate one grounded MCQ</Button></div></div> : null}
-                {stage === "assessment" && question !== undefined && confirmedSource !== undefined ? <PracticeCard question={question} language={confirmedSource.language} selectedOptionId={selectedOptionId} onSelect={setSelectedOptionId} onSubmit={submitAnswer} /> : null}
-                {stage === "results" && question !== undefined && grade !== undefined && confirmedSource !== undefined ? <ResultSummary grade={grade} question={question} source={confirmedSource} onRetry={() => { setStage("assessment"); setGrade(undefined); }} onNewSource={clearSession} /> : null}
+                {stage === "preparation" && preparationMap !== undefined && confirmedSource !== undefined ? <div><ConceptCanopy map={preparationMap} source={confirmedSource} /><AssessmentBuilder map={preparationMap} title={assessmentTitle} difficulty={difficulty} selectedConceptIds={selectedConceptIds} disabled={loading !== undefined} onTitleChange={(title) => updateAssessmentConfiguration(() => setAssessmentTitle(title))} onDifficultyChange={(value) => updateAssessmentConfiguration(() => setDifficulty(value))} onConceptToggle={toggleConcept} onGenerate={() => void generateAssessment()} /><div className="stage-actions"><Button variant="quiet" onClick={() => setStage("review")}>Edit source</Button></div></div> : null}
+                {stage === "assessment" && activitySet !== undefined && confirmedSource !== undefined ? <><PracticeCard activitySet={activitySet} language={confirmedSource.language} currentQuestionIndex={currentQuestionIndex} selectedOptionId={selectedOptionId} writtenAnswer={writtenAnswer} submitting={submittingAssessment} confirming={confirmingSubmission} onSelect={setSelectedOptionId} onWrittenChange={setWrittenAnswer} onPrevious={() => setCurrentQuestionIndex(0)} onNext={() => setCurrentQuestionIndex(1)} onRequestSubmit={() => setConfirmingSubmission(true)} onCancelSubmit={() => setConfirmingSubmission(false)} onConfirmSubmit={() => void submitAssessment()} />{uncertainWrittenFailure ? <AlertBanner tone="warning" title="A retry may repeat the grading request">No automatic retry was made. Confirm the connection, then use Review and submit again only when you choose to retry.</AlertBanner> : null}</> : null}
+                {stage === "results" && activitySet !== undefined && grade !== undefined && writtenEvaluation !== undefined && conceptPerformance !== undefined && confirmedSource !== undefined ? <ResultSummary mcqGrade={grade} writtenEvaluation={writtenEvaluation} activitySet={activitySet} source={confirmedSource} performance={conceptPerformance} onNewSource={clearSession} /> : null}
               </m.div>
               {loading === undefined ? null : <ProcessNarrative message={loading} kind={loadingKind} />}
-              {error === undefined ? null : <AlertBanner tone="danger" title="We could not complete that step" role="alert">{error} Completed extraction and review work remains saved.</AlertBanner>}
+              {error === undefined ? null : <AlertBanner tone="danger" title="We could not complete that step" role="alert">{error} Confirmed source, review work, and entered answers remain saved.</AlertBanner>}
               <p className="privacy-note">PDFs are processed on this device. Live transcription sends one compressed page image to Google’s hosted Gemini API; analysis sends only explicitly confirmed text. Do not use confidential or examination-restricted material.</p>
             </div>
           </div>
         </section>
 
-        <footer className="site-footer"><AnkurMark compact /><p>Learning that grows from evidence.</p><span>Grounded P0 ingestion slice</span></footer>
+        <footer className="site-footer"><AnkurMark compact /><p>Learning that grows from evidence.</p><span>Grounded mixed-assessment slice</span></footer>
       </main>
     </LazyMotion>
   );

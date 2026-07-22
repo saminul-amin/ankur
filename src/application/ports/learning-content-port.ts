@@ -1,4 +1,4 @@
-import type { ActivitySet } from "../../domain/assessments/mcq";
+import type { ActivitySet, AssessmentDifficulty } from "../../domain/assessments/mcq";
 import type { PreparationMap } from "../../domain/preparation/preparation-map";
 import type { ConfirmedSource } from "../../domain/source/confirmed-source";
 
@@ -14,10 +14,12 @@ export interface LearningContentGenerationPort {
     readonly repair?: EvidenceRepairContext<PreparationMap>;
   }): Promise<PreparationMap>;
 
-  generateOneMcq(input: {
+  generateMixedAssessment(input: {
     readonly source: ConfirmedSource;
     readonly preparationMap: PreparationMap;
     readonly selectedConceptIds: readonly string[];
+    readonly title: string;
+    readonly difficulty: AssessmentDifficulty;
     readonly requestId: string;
     readonly repair?: EvidenceRepairContext<ActivitySet>;
   }): Promise<ActivitySet>;
