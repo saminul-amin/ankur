@@ -34,7 +34,11 @@ function failure(requestId: string, code: ApiErrorCode, retryable = false, statu
 function mapError(requestId: string, error: unknown): NextResponse<ApiFailure> {
   if (error instanceof ApplicationError) {
     const code = error.code;
-    return failure(requestId, code, false, code === "SOURCE_VERSION_MISMATCH" ? 409 : 422);
+    const status = code === "SOURCE_VERSION_MISMATCH" ? 409
+      : code === "PAYLOAD_TOO_LARGE" ? 413
+        : code === "UNSUPPORTED_MEDIA" ? 415
+          : 422;
+    return failure(requestId, code, false, status);
   }
   if (error instanceof ProviderError) {
     if (error.code === "RATE_LIMITED") return failure(requestId, "PROVIDER_RATE_LIMITED", true, 429);
@@ -50,6 +54,7 @@ export async function handleAiRoute<TInput, TOutput>(input: {
   readonly request: Request;
   readonly schema: ZodType<TInput>;
   readonly execute: (data: TInput, requestId: string) => Promise<TOutput>;
+  readonly maxBodyBytes?: number;
 }): Promise<NextResponse<ApiSuccess<TOutput> | ApiFailure>> {
   const requestId = crypto.randomUUID();
   const config = readRuntimeConfig();
@@ -60,8 +65,9 @@ export async function handleAiRoute<TInput, TOutput>(input: {
   if (sessionId === null || !/^[a-zA-Z0-9_-]{8,100}$/.test(sessionId)) {
     return failure(requestId, "VALIDATION_FAILED", false, 400);
   }
+  const maxBodyBytes = input.maxBodyBytes ?? 300_000;
   const contentLength = Number(input.request.headers.get("content-length") ?? "0");
-  if (Number.isFinite(contentLength) && contentLength > 300_000) {
+  if (Number.isFinite(contentLength) && contentLength > maxBodyBytes) {
     return failure(requestId, "PAYLOAD_TOO_LARGE", false, 413);
   }
   const rate = acquireAiRequest({
@@ -74,7 +80,7 @@ export async function handleAiRoute<TInput, TOutput>(input: {
 
   try {
     const rawBody = await input.request.text();
-    if (new TextEncoder().encode(rawBody).byteLength > 300_000) {
+    if (new TextEncoder().encode(rawBody).byteLength > maxBodyBytes) {
       return failure(requestId, "PAYLOAD_TOO_LARGE", false, 413);
     }
     let body: unknown;

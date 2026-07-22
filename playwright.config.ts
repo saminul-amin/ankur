@@ -18,5 +18,8 @@ export default defineConfig({
     stderr: "ignore",
     timeout: 120_000,
   },
-  projects: [{ name: "desktop-chrome", use: { ...devices["Desktop Chrome"], channel: "chrome" } }],
+  projects: [
+    { name: "desktop-chrome", use: { ...devices["Desktop Chrome"], channel: "chrome" } },
+    { name: "mobile-chrome", use: { ...devices["Pixel 5"], channel: "chrome" } },
+  ],
 });

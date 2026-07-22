@@ -41,4 +41,12 @@ describe("server-only provider isolation", () => {
       expect(contents).not.toContain("NEXT_PUBLIC_GEMINI_API_KEY");
     }
   });
+
+  it("has no API route that accepts an original PDF", async () => {
+    const routeRoot = resolve("app/api");
+    for (const file of await sourceFiles(routeRoot)) {
+      const contents = await readFile(file, "utf8");
+      expect(contents).not.toMatch(/formData\(|application\/pdf|\.pdf\b/u);
+    }
+  });
 });

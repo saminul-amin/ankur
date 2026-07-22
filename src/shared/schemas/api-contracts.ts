@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { activitySetModelSchema, preparationMapModelSchema } from "./learning-content-schemas";
+import { pageTranscriptionProviderSchema } from "./transcription-schemas";
 
 export const apiErrorCodes = [
   "VALIDATION_FAILED",
@@ -25,7 +26,7 @@ const artifactSchema = z
   .object({
     provider: z.literal("gemini_api"),
     modelId: z.literal("gemma-4-26b-a4b-it"),
-    task: z.enum(["material_analysis", "assessment_generation"]),
+    task: z.enum(["page_transcription", "material_analysis", "assessment_generation"]),
     promptVersion: z.string().min(1),
     schemaVersion: z.string().min(1),
     thinkingLevel: z.enum(["minimal", "high"]),
@@ -56,7 +57,7 @@ export const activitySetApiSchema = z
 export const segmentInputSchema = z
   .object({
     id: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
-    pageNumber: z.number().int().min(1).max(1),
+    pageNumber: z.number().int().min(1).max(3),
     text: z.string().min(1).max(25_000),
   })
   .strict();
@@ -96,6 +97,20 @@ export const assessmentRequestSchema = z
     segments: z.array(segmentInputSchema).min(1).max(100),
   })
   .strict();
+
+export const transcriptionRequestSchema = z.object({
+  sourceVersionDraftId: z.string().min(1).max(120),
+  materialOrdinal: z.literal(1),
+  pageNumber: z.number().int().min(1).max(3),
+  mimeType: z.enum(["image/jpeg", "image/png", "image/webp"]),
+  imageBase64: z.string().min(4).max(4_194_304),
+  optionalRawExtraction: z.string().max(25_000).optional(),
+  targetLanguage: z.enum(["bn", "en", "mixed"]),
+}).strict();
+
+export const transcriptionResultApiSchema = pageTranscriptionProviderSchema.extend({
+  artifact: artifactSchema,
+});
 
 export interface ApiSuccess<T> {
   readonly ok: true;

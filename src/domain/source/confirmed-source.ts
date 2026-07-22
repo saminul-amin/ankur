@@ -1,5 +1,5 @@
 export type SourceLanguage = "bn" | "en" | "mixed";
-export type SourceMethod = "pasted_text" | "digital_pdf";
+export type SourceMethod = "pasted_text" | "digital_pdf" | "pdf" | "page_images";
 
 export interface SourcePageInput {
   readonly pageNumber: number;
@@ -83,7 +83,13 @@ export function createConfirmedSource(input: {
   }
   if (
     normalizedPages.length === 0 ||
-    normalizedPages.some((page, index) => page.pageNumber !== index + 1)
+    normalizedPages.length > 3 ||
+    normalizedPages.some((page, index) =>
+      !Number.isInteger(page.pageNumber) ||
+      page.pageNumber < 1 ||
+      page.pageNumber > 3 ||
+      (index > 0 && page.pageNumber <= (normalizedPages[index - 1]?.pageNumber ?? 0)),
+    )
   ) {
     throw new SourceDomainError("INVALID_SEGMENTS");
   }
@@ -106,6 +112,9 @@ export function createConfirmedSource(input: {
     throw new SourceDomainError("EMPTY_SOURCE");
   }
 
+  const normalizedPriority = input.priorityInstruction?.trim()
+    ? normalizeSourceText(input.priorityInstruction)
+    : undefined;
   const normalizedTextHash = stableHash(
     segments.map((segment) => `${segment.id}:${segment.normalizedText}`).join("\n"),
   );
@@ -116,9 +125,7 @@ export function createConfirmedSource(input: {
     method: input.method,
     segments: Object.freeze(segments),
     normalizedTextHash,
-    ...(input.priorityInstruction?.trim()
-      ? { priorityInstruction: normalizeSourceText(input.priorityInstruction) }
-      : {}),
+    ...(normalizedPriority === undefined ? {} : { priorityInstruction: normalizedPriority }),
   });
 }
 

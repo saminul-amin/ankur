@@ -2,11 +2,17 @@ import type { ActivitySet } from "../../domain/assessments/mcq";
 import type { PreparationMap } from "../../domain/preparation/preparation-map";
 import { createConfirmedSource, type ConfirmedSource } from "../../domain/source/confirmed-source";
 
-export const SAMPLE_TEXT = `উদ্ভিদ সূর্যালোকের শক্তি ব্যবহার করে পানি ও কার্বন ডাই-অক্সাইড থেকে খাদ্য তৈরি করে। এই প্রক্রিয়াকে সালোকসংশ্লেষণ বলা হয় এবং এতে অক্সিজেন নির্গত হয়।`;
+export const SAMPLE_PAGES = [
+  { pageNumber: 1, text: "সবুজ উদ্ভিদ নিজের খাদ্য তৈরির জন্য সূর্যালোকের শক্তি গ্রহণ করে। পাতার ক্লোরোফিল এই আলো শোষণ করে এবং প্রক্রিয়াটি শুরু করতে সাহায্য করে।" },
+  { pageNumber: 2, text: "উদ্ভিদ পানি ও কার্বন ডাই-অক্সাইড ব্যবহার করে খাদ্য তৈরি করে। এই প্রক্রিয়াকে সালোকসংশ্লেষণ বলা হয় এবং এতে অক্সিজেন নির্গত হয়।" },
+  { pageNumber: 3, text: "সালোকসংশ্লেষণ উদ্ভিদের বৃদ্ধি ও জীবজগতের অক্সিজেন সরবরাহে গুরুত্বপূর্ণ ভূমিকা রাখে।" },
+] as const;
+
+export const SAMPLE_TEXT = SAMPLE_PAGES.map((page) => page.text).join("\n\n");
 
 export function createSampleSource(): ConfirmedSource {
   return createConfirmedSource({
-    pages: [{ pageNumber: 1, text: SAMPLE_TEXT }],
+    pages: SAMPLE_PAGES,
     language: "bn",
     method: "pasted_text",
     priorityInstruction: "সালোকসংশ্লেষণের উপকরণ ও ফলাফলে গুরুত্ব দিন।",
@@ -30,7 +36,8 @@ function sampleArtifact(task: "material_analysis" | "assessment_generation", sch
 }
 
 export function createSamplePreparationMap(source: ConfirmedSource): PreparationMap {
-  const evidence = [{ segmentId: source.segments[0]?.id ?? "", quote: "সালোকসংশ্লেষণ" }];
+  const evidenceSegment = source.segments.find((segment) => segment.pageNumber === 2) ?? source.segments[0];
+  const evidence = [{ segmentId: evidenceSegment?.id ?? "", quote: "সালোকসংশ্লেষণ" }];
   return {
     schemaVersion: "preparation-map.v1",
     id: `preparation-${source.sourceVersionId}`,
@@ -66,6 +73,7 @@ export function createSampleActivitySet(
   source: ConfirmedSource,
   preparationMap: PreparationMap,
 ): ActivitySet {
+  const evidenceSegment = source.segments.find((segment) => segment.pageNumber === 2) ?? source.segments[0];
   return {
     schemaVersion: "activity-set.v1",
     id: `activity-${source.sourceVersionId}`,
@@ -87,7 +95,7 @@ export function createSampleActivitySet(
           { id: "D", text: "মিথেন" },
         ],
         correctOptionId: "B",
-        evidence: [{ segmentId: source.segments[0]?.id ?? "", quote: "অক্সিজেন নির্গত হয়" }],
+        evidence: [{ segmentId: evidenceSegment?.id ?? "", quote: "অক্সিজেন নির্গত হয়" }],
       },
     ],
     warnings: [],

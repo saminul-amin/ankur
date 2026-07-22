@@ -42,4 +42,17 @@ describe("confirmed source", () => {
       }),
     ).toThrow(SourceDomainError);
   });
+
+  it("preserves original page numbers across included gaps and invalidates versions after an edit", () => {
+    const first = createConfirmedSource({
+      pages: [{ pageNumber: 1, text: "First reviewed page." }, { pageNumber: 3, text: "Third reviewed page." }],
+      language: "en", method: "pdf",
+    });
+    const edited = createConfirmedSource({
+      pages: [{ pageNumber: 1, text: "First reviewed page, corrected." }, { pageNumber: 3, text: "Third reviewed page." }],
+      language: "en", method: "pdf",
+    });
+    expect(first.segments.map((segment) => segment.id)).toEqual(["M01-P001-S001", "M01-P003-S001"]);
+    expect(edited.sourceVersionId).not.toBe(first.sourceVersionId);
+  });
 });

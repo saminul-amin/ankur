@@ -7,6 +7,8 @@ import {
   analysisRequestSchema,
   assessmentRequestSchema,
   preparationMapApiSchema,
+  transcriptionRequestSchema,
+  transcriptionResultApiSchema,
 } from "../../shared/schemas/api-contracts";
 
 const failureSchema = z
@@ -108,4 +110,21 @@ export async function requestOneMcq(
     throw new ApiClientError("The assessment response did not satisfy its contract.", false);
   }
   return parsed.data.data.activitySet;
+}
+
+export async function requestPageTranscription(
+  input: z.input<typeof transcriptionRequestSchema>,
+  sessionId: string,
+) {
+  const validatedInput = transcriptionRequestSchema.parse(input);
+  const payload = await postJson("/api/transcriptions", sessionId, validatedInput);
+  const parsed = z.object({
+    ok: z.literal(true),
+    requestId: z.string(),
+    data: transcriptionResultApiSchema,
+  }).strict().safeParse(payload);
+  if (!parsed.success) {
+    throw new ApiClientError("The transcription response did not satisfy its contract.", false);
+  }
+  return parsed.data.data;
 }
