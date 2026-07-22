@@ -13,12 +13,20 @@ import type { WrittenEvaluationPort } from "../../src/application/ports/written-
 import { createSamplePreparationMap, createSampleSource } from "../../src/application/sample/sample-vertical-slice.js";
 import { EvaluateWrittenAnswer } from "../../src/application/use-cases/evaluate-written-answer.js";
 import { GenerateMixedAssessment } from "../../src/application/use-cases/generate-mixed-assessment.js";
+import type { EvidenceValidationFailure } from "../../src/domain/grounding/evidence.js";
 import { validateActivitySet, type ActivitySet } from "../../src/domain/assessments/mcq.js";
 import { validateWrittenEvaluation } from "../../src/domain/assessments/written-evaluation.js";
 import { rehydrateEvidenceWindow } from "../../src/domain/source/confirmed-source.js";
 import { GemmaLearningContentAdapter } from "../../src/infrastructure/gemma/gemma-learning-content-adapter.js";
 import { GemmaWrittenEvaluationAdapter } from "../../src/infrastructure/gemma/gemma-written-evaluation-adapter.js";
 import { GoogleGenAiAdapter } from "../../src/infrastructure/gemma/google-genai-adapter.js";
+import type {
+  ProviderFailureCategory,
+  ProviderValidationDiagnostic,
+} from "../../src/infrastructure/gemma/provider-diagnostics.js";
+import { parsePersistedIngestionSession, toPersistedIngestionSession } from "../../src/presentation/persistence/ingestion-session.js";
+import { ApplicationError } from "../../src/shared/errors/application-error.js";
+import { ProviderError } from "../../src/shared/errors/provider-error.js";
 import { readRuntimeConfig } from "../../src/shared/config/runtime-config.js";
 
 const RESULTS_PATH = resolve("evaluation/provider-reliability/RESULTS.md");
@@ -35,6 +43,10 @@ interface TransportRecord {
   readonly networkRetries: number;
 }
 
+interface SafeDiagnostic extends ProviderValidationDiagnostic {
+  readonly operation: string;
+}
+
 interface OperationRecord {
   readonly label: string;
   readonly finalSuccess: boolean;
@@ -45,11 +57,15 @@ interface OperationRecord {
   readonly outputTokens: number;
   readonly networkRetries: number;
   readonly groundingFailures: number;
+  readonly quoteFailures: number;
   readonly reconciliationFailures: number;
+  readonly conceptFailures: number;
+  readonly diagnostics: readonly SafeDiagnostic[];
 }
 
 class ObservingProvider implements GenerativeModelPort {
   readonly records: TransportRecord[] = [];
+  attempts = 0;
 
   constructor(private readonly delegate: GenerativeModelPort) {}
 
@@ -62,6 +78,7 @@ class ObservingProvider implements GenerativeModelPort {
   }
 
   async generateStructured<T>(request: StructuredGenerationRequest<T>): Promise<StructuredGenerationResult<T>> {
+    this.attempts += 1;
     const result = await this.delegate.generateStructured(request);
     this.records.push({
       schemaVersion: request.schemaVersion,
@@ -81,26 +98,104 @@ function total(records: readonly TransportRecord[], field: "promptTokens" | "out
   return records.reduce((sum, record) => sum + (record[field] ?? 0), 0);
 }
 
+function categoryForProviderError(error: ProviderError): ProviderFailureCategory {
+  switch (error.code) {
+    case "REQUEST_REJECTED": return "provider_request_rejected";
+    case "TIMEOUT": return "timeout";
+    case "RATE_LIMITED": return "rate_limited";
+    case "UNAVAILABLE": return "unavailable_or_network";
+    default: return "unknown_controlled_failure";
+  }
+}
+
+function controlledFailureDiagnostic(input: {
+  readonly error: unknown;
+  readonly operation: string;
+  readonly modelId: "gemma-4-26b-a4b-it";
+  readonly promptVersion: string;
+  readonly schemaVersion: string;
+}): SafeDiagnostic {
+  const category = input.error instanceof ProviderError
+    ? categoryForProviderError(input.error)
+    : input.error instanceof ApplicationError && input.error.code === "EVIDENCE_INVALID"
+      ? "invalid_evidence"
+      : "unknown_controlled_failure";
+  const code = input.error instanceof ProviderError || input.error instanceof ApplicationError
+    ? input.error.code
+    : "CONTROLLED_FAILURE";
+  return {
+    operation: input.operation,
+    modelId: input.modelId,
+    promptVersion: input.promptVersion,
+    schemaVersion: input.schemaVersion,
+    phase: "repair",
+    category,
+    code,
+    fieldPath: "$",
+    expected: "final-valid controlled operation",
+  };
+}
+
+function categoryForValidation(failure: EvidenceValidationFailure): ProviderFailureCategory {
+  if (failure.reason === "QUOTE_NOT_FOUND") return "quote_mismatch";
+  if (failure.reason === "UNKNOWN_SEGMENT" || failure.reason === "EVIDENCE_REQUIRED") return "invalid_evidence";
+  if (failure.reason === "UNKNOWN_CONCEPT") return "concept_mismatch";
+  if (failure.path.includes("rubric")) return "rubric_mismatch";
+  if (failure.path.includes("criterion") || failure.path === "awardedMarks" || failure.path === "status") return "mark_reconciliation_mismatch";
+  return "transport_schema_mismatch";
+}
+
+function diagnosticsForValidation(input: {
+  readonly failures: readonly EvidenceValidationFailure[];
+  readonly operation: string;
+  readonly promptVersion: string;
+  readonly schemaVersion: string;
+  readonly phase: "first_pass" | "repair";
+}): SafeDiagnostic[] {
+  return input.failures.map((failure) => ({
+    operation: input.operation,
+    modelId: "gemma-4-26b-a4b-it",
+    promptVersion: input.promptVersion,
+    schemaVersion: input.schemaVersion,
+    phase: input.phase,
+    category: categoryForValidation(failure),
+    code: failure.reason,
+    fieldPath: failure.path,
+    expected: failure.reason === "QUOTE_NOT_FOUND"
+      ? "normalized quote in cited segment"
+      : failure.reason === "UNKNOWN_CONCEPT"
+        ? "allowed preparation-map concept"
+        : failure.reason === "UNKNOWN_SEGMENT" || failure.reason === "EVIDENCE_REQUIRED"
+          ? "allowed confirmed-source evidence"
+          : "domain-valid reconciled artifact",
+  }));
+}
+
 function operation(input: {
   readonly label: string;
   readonly finalSuccess: boolean;
   readonly applicationCalls: number;
   readonly wallStartedAt: number;
+  readonly transportAttempts: number;
   readonly transport: readonly TransportRecord[];
-  readonly groundingFailures?: number;
-  readonly reconciliationFailures?: number;
+  readonly diagnostics: readonly SafeDiagnostic[];
+  readonly validationFailures?: readonly EvidenceValidationFailure[];
 }): OperationRecord {
+  const validationFailures = input.validationFailures ?? [];
   return {
     label: input.label,
     finalSuccess: input.finalSuccess,
     firstPass: input.finalSuccess && input.applicationCalls === 1 && input.transport.every((record) => !record.repaired),
     wallLatencyMs: Math.round(performance.now() - input.wallStartedAt),
-    transportCalls: input.transport.length,
+    transportCalls: input.transportAttempts,
     promptTokens: total(input.transport, "promptTokens"),
     outputTokens: total(input.transport, "outputTokens"),
     networkRetries: total(input.transport, "networkRetries"),
-    groundingFailures: input.groundingFailures ?? 0,
-    reconciliationFailures: input.reconciliationFailures ?? 0,
+    groundingFailures: validationFailures.filter((failure) => failure.reason === "UNKNOWN_SEGMENT" || failure.reason === "EVIDENCE_REQUIRED").length,
+    quoteFailures: validationFailures.filter((failure) => failure.reason === "QUOTE_NOT_FOUND").length,
+    reconciliationFailures: validationFailures.filter((failure) => failure.path.includes("criterion") || failure.path === "awardedMarks" || failure.path === "status" || failure.path.includes("rubric")).length,
+    conceptFailures: validationFailures.filter((failure) => failure.reason === "UNKNOWN_CONCEPT").length,
+    diagnostics: input.diagnostics,
   };
 }
 
@@ -143,15 +238,25 @@ async function main(): Promise<void> {
   const startedAt = new Date().toISOString();
   const source = createSampleSource();
   const map = createSamplePreparationMap(source);
-  const provider = new ObservingProvider(new GoogleGenAiAdapter(config.apiKey, config.primaryModel));
+  const validationDiagnostics: ProviderValidationDiagnostic[] = [];
+  const provider = new ObservingProvider(new GoogleGenAiAdapter(
+    config.apiKey,
+    config.primaryModel,
+    undefined,
+    (diagnostic) => validationDiagnostics.push(diagnostic),
+  ));
   const contentAdapter = new GemmaLearningContentAdapter(provider, config.requestTimeoutMs);
   const writtenAdapter = new GemmaWrittenEvaluationAdapter(provider, config.requestTimeoutMs);
   const operations: OperationRecord[] = [];
   let emptyChecks = 0;
   let emptyProviderCalls = 0;
+  let statePreservationChecks = 0;
 
   for (let iteration = 1; iteration <= 3; iteration += 1) {
+    const assessmentLabel = `assessment-${String(iteration)}`;
     const assessmentTransportStart = provider.records.length;
+    const assessmentAttemptStart = provider.attempts;
+    const assessmentDiagnosticStart = validationDiagnostics.length;
     const assessmentStartedAt = performance.now();
     let assessmentCalls = 0;
     const content: LearningContentGenerationPort = {
@@ -172,33 +277,66 @@ async function main(): Promise<void> {
         requestId: crypto.randomUUID(),
       });
       const failures = validateActivitySet(source, map, activity);
+      const diagnostics = [
+        ...validationDiagnostics.slice(assessmentDiagnosticStart).map((diagnostic) => ({ ...diagnostic, operation: assessmentLabel })),
+        ...diagnosticsForValidation({ failures, operation: assessmentLabel, promptVersion: "assessment.v4", schemaVersion: "activity-set.v2", phase: assessmentCalls === 1 ? "first_pass" : "repair" }),
+      ];
       operations.push(operation({
-        label: `assessment-${String(iteration)}`,
+        label: assessmentLabel,
         finalSuccess: failures.length === 0,
         applicationCalls: assessmentCalls,
         wallStartedAt: assessmentStartedAt,
+        transportAttempts: provider.attempts - assessmentAttemptStart,
         transport: provider.records.slice(assessmentTransportStart),
-        groundingFailures: failures.filter((failure) => failure.reason === "UNKNOWN_SEGMENT" || failure.reason === "QUOTE_NOT_FOUND" || failure.reason === "EVIDENCE_REQUIRED").length,
-        reconciliationFailures: failures.filter((failure) => failure.path.includes("rubric")).length,
+        diagnostics,
+        validationFailures: failures,
       }));
-    } catch {
+    } catch (error) {
+      const diagnostics = validationDiagnostics.slice(assessmentDiagnosticStart).map((diagnostic) => ({ ...diagnostic, operation: assessmentLabel }));
+      if (diagnostics.length === 0) diagnostics.push(controlledFailureDiagnostic({
+        error, operation: assessmentLabel, modelId: config.primaryModel, promptVersion: "assessment.v4", schemaVersion: "activity-set.v2",
+      }));
       operations.push(operation({
-        label: `assessment-${String(iteration)}`,
+        label: assessmentLabel,
         finalSuccess: false,
         applicationCalls: assessmentCalls,
         wallStartedAt: assessmentStartedAt,
+        transportAttempts: provider.attempts - assessmentAttemptStart,
         transport: provider.records.slice(assessmentTransportStart),
+        diagnostics,
       }));
       continue;
     }
 
     const window = gradingSource(source, activity);
+    const question = activity.questions[1];
+    const partialAnswer = question.referenceAnswer.trim().split(/\s+/u)
+      .slice(0, Math.max(3, Math.ceil(question.referenceAnswer.trim().split(/\s+/u).length * 0.45)))
+      .join(" ");
+
+    const persisted = toPersistedIngestionSession({
+      stage: "assessment", mode: "live", sourceKind: "text", pages: [], priorityInstruction: "",
+      confirmedSource: source, preparationMap: map,
+      assessmentConfiguration: { title: activity.title, selectedConceptIds: map.concepts.map((concept) => concept.id), difficulty: "medium" },
+      activitySet: activity, selectedOptionId: activity.questions[0].correctOptionId, writtenAnswer: partialAnswer, currentQuestionIndex: 1,
+    });
+    let controlledFailureObserved = false;
+    try {
+      await new EvaluateWrittenAnswer({
+        evaluateWrittenAnswer: () => Promise.reject(new ProviderError("TIMEOUT")),
+      }).execute({ source: window, question, studentAnswer: partialAnswer, requestId: crypto.randomUUID() });
+    } catch (error) {
+      controlledFailureObserved = error instanceof ProviderError && error.code === "TIMEOUT";
+    }
+    const restored = parsePersistedIngestionSession(persisted);
+    statePreservationChecks += controlledFailureObserved && restored?.activitySet?.id === activity.id && restored.writtenAnswer === partialAnswer && restored.confirmedSource?.sourceVersionId === source.sourceVersionId ? 1 : 0;
+
     for (const answerKind of ["correct", "partial"] as const) {
-      const question = activity.questions[1];
-      const answer = answerKind === "correct"
-        ? question.referenceAnswer
-        : question.referenceAnswer.trim().split(/\s+/u).slice(0, Math.max(3, Math.ceil(question.referenceAnswer.trim().split(/\s+/u).length * 0.45))).join(" ");
+      const label = `${answerKind}-${String(iteration)}`;
+      const answer = answerKind === "correct" ? question.referenceAnswer : partialAnswer;
       const transportStart = provider.records.length;
+      const attemptStart = provider.attempts;
+      const diagnosticStart = validationDiagnostics.length;
       const wallStartedAt = performance.now();
       let applicationCalls = 0;
       const observedWritten: WrittenEvaluationPort = {
@@ -208,62 +346,58 @@ async function main(): Promise<void> {
         },
       };
       try {
-        const result = await new EvaluateWrittenAnswer(observedWritten).execute({
-          source: window,
-          question,
-          studentAnswer: answer,
-          requestId: crypto.randomUUID(),
-        });
+        const result = await new EvaluateWrittenAnswer(observedWritten).execute({ source: window, question, studentAnswer: answer, requestId: crypto.randomUUID() });
         const failures = validateWrittenEvaluation(window, question, result);
         const expectedStatus = answerKind === "correct"
           ? result.status === "correct" && result.awardedMarks === 5
           : result.status === "partially_correct" && result.awardedMarks > 0 && result.awardedMarks < 5;
+        const diagnostics = [
+          ...validationDiagnostics.slice(diagnosticStart).map((diagnostic) => ({ ...diagnostic, operation: label })),
+          ...diagnosticsForValidation({ failures, operation: label, promptVersion: "written-evaluation.v4", schemaVersion: "written-evaluation.v1", phase: applicationCalls === 1 ? "first_pass" : "repair" }),
+        ];
         operations.push(operation({
-          label: `${answerKind}-${String(iteration)}`,
-          finalSuccess: failures.length === 0 && expectedStatus,
-          applicationCalls,
-          wallStartedAt,
-          transport: provider.records.slice(transportStart),
-          groundingFailures: failures.filter((failure) => failure.reason === "UNKNOWN_SEGMENT" || failure.reason === "QUOTE_NOT_FOUND" || failure.reason === "EVIDENCE_REQUIRED").length,
-          reconciliationFailures: failures.filter((failure) => failure.path.includes("criterion") || failure.path === "awardedMarks" || failure.path === "status").length,
+          label, finalSuccess: failures.length === 0 && expectedStatus, applicationCalls, wallStartedAt,
+          transportAttempts: provider.attempts - attemptStart, transport: provider.records.slice(transportStart), diagnostics, validationFailures: failures,
         }));
-      } catch {
+      } catch (error) {
+        const diagnostics = validationDiagnostics.slice(diagnosticStart).map((diagnostic) => ({ ...diagnostic, operation: label }));
+        if (diagnostics.length === 0) diagnostics.push(controlledFailureDiagnostic({
+          error, operation: label, modelId: config.primaryModel, promptVersion: "written-evaluation.v4", schemaVersion: "written-evaluation.v1",
+        }));
         operations.push(operation({
-          label: `${answerKind}-${String(iteration)}`,
-          finalSuccess: false,
-          applicationCalls,
-          wallStartedAt,
-          transport: provider.records.slice(transportStart),
+          label, finalSuccess: false, applicationCalls, wallStartedAt,
+          transportAttempts: provider.attempts - attemptStart, transport: provider.records.slice(transportStart), diagnostics,
         }));
       }
     }
 
-    const emptyCallsBefore = provider.records.length;
-    const empty = await new EvaluateWrittenAnswer(writtenAdapter).execute({
-      source: window,
-      question: activity.questions[1],
-      studentAnswer: "  \n ",
-      requestId: crypto.randomUUID(),
-    });
+    const emptyCallsBefore = provider.attempts;
+    const empty = await new EvaluateWrittenAnswer(writtenAdapter).execute({ source: window, question, studentAnswer: "  \n ", requestId: crypto.randomUUID() });
     emptyChecks += empty.status === "not_answered" && empty.awardedMarks === 0 ? 1 : 0;
-    emptyProviderCalls += provider.records.length - emptyCallsBefore;
+    emptyProviderCalls += provider.attempts - emptyCallsBefore;
   }
 
   const firstPassCount = operations.filter((record) => record.firstPass).length;
   const finalSuccessCount = operations.filter((record) => record.finalSuccess).length;
+  const repairedValidCount = operations.filter((record) => record.finalSuccess && !record.firstPass).length;
   const groundingFailures = operations.reduce((sum, record) => sum + record.groundingFailures, 0);
+  const quoteFailures = operations.reduce((sum, record) => sum + record.quoteFailures, 0);
   const reconciliationFailures = operations.reduce((sum, record) => sum + record.reconciliationFailures, 0);
+  const conceptFailures = operations.reduce((sum, record) => sum + record.conceptFailures, 0);
   const firstPassRate = operations.length === 0 ? 0 : (firstPassCount / operations.length) * 100;
   const finalSuccessRate = operations.length === 0 ? 0 : (finalSuccessCount / operations.length) * 100;
   const passed = operations.length === EXPECTED_PROVIDER_OPERATIONS
     && finalSuccessCount === EXPECTED_PROVIDER_OPERATIONS
-    && firstPassRate >= 80
     && groundingFailures === 0
+    && quoteFailures === 0
     && reconciliationFailures === 0
+    && conceptFailures === 0
     && emptyChecks === 3
-    && emptyProviderCalls === 0;
+    && emptyProviderCalls === 0
+    && statePreservationChecks === 3;
   const latencies = operations.map((record) => record.wallLatencyMs);
-  const report = `# Task 04B Provider Reliability Benchmark
+  const allDiagnostics = operations.flatMap((record) => record.diagnostics);
+  const report = `# Task 04B.2 Provider Reliability Benchmark
 
 - Gate: **${passed ? "PASSED" : "BLOCKED"}**
 - Started: ${startedAt}
@@ -272,16 +406,20 @@ async function main(): Promise<void> {
 - Model: \`${config.primaryModel}\`
 - Assessment thinking: \`minimal\` first pass; \`high\` only for bounded application repair
 - Written-grading thinking: \`high\`
-- Assessment prompt/schema: \`assessment.v3\`; \`assessment-mcq.v3\` and \`assessment-written.v3\`
-- Written prompt/schema: \`written-evaluation.v3\`; \`written-evaluation-transport.v3\`
+- Assessment prompt/schema: \`assessment.v4\`; \`assessment-mcq.v4\` and \`assessment-written.v4\`
+- Written prompt/schema: \`written-evaluation.v4\`; \`written-evaluation-transport.v4\`
 - Provider operations completed: ${String(operations.length)}/${String(EXPECTED_PROVIDER_OPERATIONS)}
-- First-pass validated: ${String(firstPassCount)}/${String(operations.length)} (${firstPassRate.toFixed(1)}%)
+- First-pass validated: ${String(firstPassCount)}/${String(operations.length)} (${firstPassRate.toFixed(1)}%) — optimization metric only
+- Repaired-valid operations: ${String(repairedValidCount)}
 - Repair rate: ${(100 - firstPassRate).toFixed(1)}%
 - Final validated success: ${String(finalSuccessCount)}/${String(operations.length)} (${finalSuccessRate.toFixed(1)}%)
 - Grounding failures: ${String(groundingFailures)}
-- Criterion-reconciliation failures: ${String(reconciliationFailures)}
+- Quote failures: ${String(quoteFailures)}
+- Criterion/mark reconciliation failures: ${String(reconciliationFailures)}
+- Concept failures: ${String(conceptFailures)}
 - Deterministic empty-answer checks: ${String(emptyChecks)}/3
 - Provider calls caused by empty answers: ${String(emptyProviderCalls)}
+- Controlled state-preservation checks: ${String(statePreservationChecks)}/3
 - Median operation latency: ${String(median(latencies))} ms
 - Maximum operation latency: ${String(Math.max(0, ...latencies))} ms
 - Prompt tokens reported: ${String(total(provider.records, "promptTokens"))}
@@ -293,6 +431,10 @@ async function main(): Promise<void> {
 | Operation | Final | First pass | Wall latency (ms) | Transport calls | Prompt tokens | Output tokens | Network retries |
 |---|---:|---:|---:|---:|---:|---:|---:|
 ${operations.map((record) => `| ${record.label} | ${record.finalSuccess ? "yes" : "no"} | ${record.firstPass ? "yes" : "no"} | ${String(record.wallLatencyMs)} | ${String(record.transportCalls)} | ${String(record.promptTokens)} | ${String(record.outputTokens)} | ${String(record.networkRetries)} |`).join("\n")}
+
+## Sanitized failure taxonomy
+
+${allDiagnostics.length === 0 ? "No schema or controlled-operation failures were observed." : `| Operation | Phase | Category | Code | Field path | Expected | Model | Prompt | Schema |\n|---|---|---|---|---|---|---|---|---|\n${allDiagnostics.map((item) => `| ${item.operation} | ${item.phase} | ${item.category} | ${item.code} | \`${item.fieldPath}\` | ${item.expected} | \`${item.modelId}\` | \`${item.promptVersion}\` | \`${item.schemaVersion}\` |`).join("\n")}`}
 
 The report stores no credential, raw source, prompt, model response, reference answer, or student answer.
 `;

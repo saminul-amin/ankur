@@ -17,7 +17,7 @@ export class GemmaWrittenEvaluationAdapter implements WrittenEvaluationPort {
       criterionMaximumMarks: input.question.rubric.map((criterion) => criterion.maximumMarks),
     });
     const result = await this.model.generateStructured({
-      task: "structured_generation", modelId: MODEL, promptVersion, schemaVersion: "written-evaluation-transport.v3",
+      task: "structured_generation", modelId: MODEL, promptVersion, schemaVersion: "written-evaluation-transport.v4",
       thinkingLevel: "high", temperature: 0.1, maxOutputTokens: 1_800, timeoutMs: this.timeoutMs,
       contents: [{ kind: "text", text: buildWrittenEvaluationPrompt(input) }], outputMode: "native",
       jsonSchema: transport.jsonSchema, schema: transport.schema, maxSchemaRepairs: 1,
@@ -25,10 +25,16 @@ export class GemmaWrittenEvaluationAdapter implements WrittenEvaluationPort {
     const exactReferenceAnswer = normalizeSourceText(input.studentAnswer).toLocaleLowerCase() ===
       normalizeSourceText(input.question.referenceAnswer).toLocaleLowerCase();
     const criterionResults = input.question.rubric.map((criterion, index) => {
-      const providerAwardedMarks = result.value.criterionAwardedMarks[index];
+      const providerJudgment = result.value.criterionJudgments[index];
       const providerReason = result.value.criterionReasons[index];
-      if (providerAwardedMarks === undefined || providerReason === undefined) throw new ProviderError("INVALID_OUTPUT");
-      const awardedMarks = exactReferenceAnswer ? criterion.maximumMarks : providerAwardedMarks;
+      if (providerJudgment === undefined || providerReason === undefined) throw new ProviderError("INVALID_OUTPUT");
+      const awardedMarks = exactReferenceAnswer
+        ? criterion.maximumMarks
+        : providerJudgment === "met"
+          ? criterion.maximumMarks
+          : providerJudgment === "partial"
+            ? criterion.maximumMarks / 2
+            : 0;
       const reason = exactReferenceAnswer
         ? "The submitted answer matches the source-grounded reference answer for this criterion."
         : providerReason;

@@ -13,6 +13,11 @@ import type {
   ThinkingLevel,
 } from "../../application/ports/generative-model-port";
 import { ProviderError, mapProviderError } from "../../shared/errors/provider-error";
+import type {
+  ProviderDiagnosticObserver,
+  ProviderFailureCategory,
+  ProviderValidationDiagnostic,
+} from "./provider-diagnostics";
 
 interface GenAiModelsClient {
   generateContent(parameters: Parameters<GoogleGenAI["models"]["generateContent"]>[0]): Promise<GenerateContentResponse>;
@@ -44,6 +49,11 @@ function extractText(response: GenerateContentResponse): string {
   return text;
 }
 
+function structuredText(response: GenerateContentResponse): string | undefined {
+  const text = response.text?.trim();
+  return text && text.length > 0 ? text : undefined;
+}
+
 function metadata(
   response: GenerateContentResponse,
   request: Pick<TextGenerationRequest, "modelId" | "thinkingLevel">,
@@ -58,6 +68,32 @@ function metadata(
     thinkingLevel: request.thinkingLevel,
     latencyMs,
     networkRetryCount,
+    ...(promptTokenCount === undefined ? {} : { promptTokenCount }),
+    ...(outputTokenCount === undefined ? {} : { outputTokenCount }),
+  };
+}
+
+function repairedMetadata(
+  first: { readonly response: GenerateContentResponse; readonly latencyMs: number; readonly networkRetryCount: number },
+  repaired: { readonly response: GenerateContentResponse; readonly latencyMs: number; readonly networkRetryCount: number },
+  request: Pick<TextGenerationRequest, "modelId" | "thinkingLevel">,
+): GenerationMetadata {
+  const firstPrompt = first.response.usageMetadata?.promptTokenCount;
+  const repairedPrompt = repaired.response.usageMetadata?.promptTokenCount;
+  const firstOutput = first.response.usageMetadata?.candidatesTokenCount;
+  const repairedOutput = repaired.response.usageMetadata?.candidatesTokenCount;
+  const promptTokenCount = firstPrompt === undefined && repairedPrompt === undefined
+    ? undefined
+    : (firstPrompt ?? 0) + (repairedPrompt ?? 0);
+  const outputTokenCount = firstOutput === undefined && repairedOutput === undefined
+    ? undefined
+    : (firstOutput ?? 0) + (repairedOutput ?? 0);
+  return {
+    provider: "gemini_api",
+    modelId: request.modelId,
+    thinkingLevel: request.thinkingLevel,
+    latencyMs: first.latencyMs + repaired.latencyMs,
+    networkRetryCount: first.networkRetryCount + repaired.networkRetryCount,
     ...(promptTokenCount === undefined ? {} : { promptTokenCount }),
     ...(outputTokenCount === undefined ? {} : { outputTokenCount }),
   };
@@ -84,11 +120,70 @@ function validationMessage(error: unknown): string {
     .join("; ");
 }
 
+interface ValidationFailure {
+  readonly category: ProviderFailureCategory;
+  readonly code: string;
+  readonly fieldPath: string;
+  readonly expected: string;
+  readonly repairMessage: string;
+}
+
+type ValidationResult<T> = { success: true; value: T } | ({ success: false } & ValidationFailure);
+
+function safeFieldPath(issue: unknown): string {
+  if (typeof issue !== "object" || issue === null) return "$";
+  const path = Reflect.get(issue, "path") as unknown;
+  if (!Array.isArray(path) || path.length === 0) return "$";
+  return `$.${(path as unknown[]).map((part) => typeof part === "number"
+    ? String(part)
+    : typeof part === "string"
+      ? part.replace(/[^a-zA-Z0-9_-]/gu, "_")
+      : "field").join(".")}`;
+}
+
+function expectedCategory(issue: unknown): string {
+  if (typeof issue !== "object" || issue === null) return "schema-valid value";
+  const expected = Reflect.get(issue, "expected") as unknown;
+  if (typeof expected === "string" && /^(?:string|number|boolean|object|array|record|map|set|date|bigint|int|unknown)$/u.test(expected)) {
+    return expected;
+  }
+  const code = Reflect.get(issue, "code") as unknown;
+  if (code === "invalid_value") return "allowed enum value";
+  if (code === "invalid_format") return "valid identifier format";
+  if (code === "too_small" || code === "too_big") return "value within configured bounds";
+  return "schema-valid value";
+}
+
+function classifySchemaFailure(error: unknown): Omit<ValidationFailure, "repairMessage"> {
+  if (typeof error !== "object" || error === null) {
+    return { category: "transport_schema_mismatch", code: "SCHEMA_MISMATCH", fieldPath: "$", expected: "schema-valid object" };
+  }
+  const issues = Reflect.get(error, "issues") as unknown;
+  const issue: unknown = Array.isArray(issues) ? (issues as unknown[])[0] : undefined;
+  if (typeof issue !== "object" || issue === null) {
+    return { category: "transport_schema_mismatch", code: "SCHEMA_MISMATCH", fieldPath: "$", expected: "schema-valid object" };
+  }
+  const code = Reflect.get(issue, "code") as unknown;
+  const message = Reflect.get(issue, "message") as unknown;
+  if (code === "invalid_type" && typeof message === "string" && /received undefined/iu.test(message)) {
+    return { category: "missing_scalar", code: "MISSING_SCALAR", fieldPath: safeFieldPath(issue), expected: expectedCategory(issue) };
+  }
+  if (code === "invalid_value" || code === "invalid_format") {
+    return { category: "invalid_enum_or_identifier", code: "INVALID_ENUM_OR_IDENTIFIER", fieldPath: safeFieldPath(issue), expected: expectedCategory(issue) };
+  }
+  return { category: "transport_schema_mismatch", code: "SCHEMA_MISMATCH", fieldPath: safeFieldPath(issue), expected: expectedCategory(issue) };
+}
+
 export class GoogleGenAiAdapter implements GenerativeModelPort {
   readonly #models: GenAiModelsClient;
   readonly #configuredModel: TextGenerationRequest["modelId"];
 
-  constructor(apiKey: string, configuredModel: TextGenerationRequest["modelId"], models?: GenAiModelsClient) {
+  constructor(
+    apiKey: string,
+    configuredModel: TextGenerationRequest["modelId"],
+    models?: GenAiModelsClient,
+    private readonly diagnosticObserver?: ProviderDiagnosticObserver,
+  ) {
     if (apiKey.length === 0) {
       throw new ProviderError("CONFIGURATION_ERROR");
     }
@@ -146,8 +241,17 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
     mode: "native" | "json_prompt",
   ): Promise<StructuredGenerationResult<T>> {
     const first = await this.#call(request, mode === "native");
-    const firstText = extractText(first.response);
-    const firstValidation = this.#parseAndValidate(firstText, request);
+    const firstText = structuredText(first.response);
+    const firstValidation: ValidationResult<T> = firstText === undefined
+      ? {
+          success: false,
+          category: "empty_response",
+          code: "EMPTY_RESPONSE",
+          fieldPath: "$",
+          expected: "non-empty JSON object",
+          repairMessage: "Response was empty.",
+        }
+      : this.#parseAndValidate(firstText, request);
     if (firstValidation.success) {
       return {
         value: firstValidation.value,
@@ -157,32 +261,39 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
       };
     }
 
+    this.#recordDiagnostic(request, "first_pass", firstValidation);
+
     if (request.maxSchemaRepairs === 0) {
-      throw new ProviderError("INVALID_OUTPUT", { cause: new Error(firstValidation.error) });
+      throw new ProviderError("INVALID_OUTPUT", { cause: new Error(firstValidation.repairMessage) });
     }
 
-    const repairContents: readonly GenerationContentPart[] = [
-      ...request.contents,
-      {
-        kind: "text",
-        text: `Repair this invalid JSON object so it satisfies the supplied output contract. Return JSON only.\n\nVALIDATION ERRORS\n${firstValidation.error}\n\nINVALID OBJECT\n${firstText}`,
-      },
-    ];
+    const repairContents: readonly GenerationContentPart[] = [{
+      kind: "text",
+      text: `Repair this invalid JSON object so it satisfies the supplied native output schema. Preserve its supported semantic content, fill only required fields, and return JSON only. Do not include hidden reasoning.\n\nVALIDATION ERRORS\n${firstValidation.repairMessage}\n\nINVALID OBJECT\n${firstText ?? "{}"}`,
+    }];
     const repaired = await this.#call({ ...request, contents: repairContents }, mode === "native");
-    const repairedText = extractText(repaired.response);
+    const repairedText = structuredText(repaired.response);
+    if (repairedText === undefined) {
+      const failure: ValidationFailure = {
+        category: "repair_response_invalid", code: "REPAIR_RESPONSE_INVALID", fieldPath: "$", expected: "non-empty schema-valid repair response",
+        repairMessage: "Repair response was empty.",
+      };
+      this.#recordDiagnostic(request, "repair", failure);
+      throw new ProviderError("INVALID_OUTPUT");
+    }
     const repairedValidation = this.#parseAndValidate(repairedText, request);
     if (!repairedValidation.success) {
-      throw new ProviderError("INVALID_OUTPUT", { cause: new Error(repairedValidation.error) });
+      this.#recordDiagnostic(request, "repair", {
+        ...repairedValidation,
+        category: "repair_response_invalid",
+        code: "REPAIR_RESPONSE_INVALID",
+      });
+      throw new ProviderError("INVALID_OUTPUT", { cause: new Error(repairedValidation.repairMessage) });
     }
 
     return {
       value: repairedValidation.value,
-      metadata: metadata(
-        repaired.response,
-        request,
-        first.latencyMs + repaired.latencyMs,
-        first.networkRetryCount + repaired.networkRetryCount,
-      ),
+      metadata: repairedMetadata(first, repaired, request),
       structuredOutputMode: mode,
       repaired: true,
     };
@@ -191,17 +302,45 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
   #parseAndValidate<T>(
     text: string,
     request: StructuredGenerationRequest<T>,
-  ): { success: true; value: T } | { success: false; error: string } {
+  ): ValidationResult<T> {
     try {
       const value: unknown = JSON.parse(text);
       const result = request.schema.safeParse(value);
       if (result.success) {
         return { success: true, value: result.data };
       }
-      return { success: false, error: validationMessage(result.error) };
+      return {
+        success: false,
+        ...classifySchemaFailure(result.error),
+        repairMessage: validationMessage(result.error),
+      };
     } catch {
-      return { success: false, error: "Response was not valid JSON." };
+      return {
+        success: false,
+        category: "invalid_json",
+        code: "INVALID_JSON",
+        fieldPath: "$",
+        expected: "valid JSON object",
+        repairMessage: "Response was not valid JSON.",
+      };
     }
+  }
+
+  #recordDiagnostic<T>(
+    request: StructuredGenerationRequest<T>,
+    phase: ProviderValidationDiagnostic["phase"],
+    failure: ValidationFailure,
+  ): void {
+    this.diagnosticObserver?.({
+      modelId: request.modelId,
+      promptVersion: request.promptVersion,
+      schemaVersion: request.schemaVersion,
+      phase,
+      category: failure.category,
+      code: failure.code,
+      fieldPath: failure.fieldPath,
+      expected: failure.expected,
+    });
   }
 
   async #call(

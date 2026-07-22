@@ -50,7 +50,10 @@ describe("provider transport hardening", () => {
         prompt: "সালোকসংশ্লেষণে কোন পদার্থ নির্গত হয়?",
         conceptId: "concept-photosynthesis-result",
         explanation: "উৎসে অক্সিজেন নির্গমনের কথা বলা হয়েছে।",
-        options: ["পানি", "কার্বন ডাই-অক্সাইড", "ক্লোরোফিল", "অক্সিজেন"],
+        optionA: "পানি",
+        optionB: "কার্বন ডাই-অক্সাইড",
+        optionC: "ক্লোরোফিল",
+        optionD: "অক্সিজেন",
         correctOptionId: "D",
         evidenceSegmentId: "M01-P003-S001",
       },
@@ -83,7 +86,7 @@ describe("provider transport hardening", () => {
     expect(activity.questions[1].rubric.map((criterion) => criterion.maximumMarks)).toEqual([2, 2, 1]);
     expect(activity.questions[1].requiredConceptIds).toEqual(map.concepts.map((concept) => concept.id));
     expect(validateActivitySet(source, map, activity)).toEqual([]);
-    expect(provider.requests.map((request) => request.schemaVersion)).toEqual(["assessment-mcq.v3", "assessment-written.v3"]);
+    expect(provider.requests.map((request) => request.schemaVersion)).toEqual(["assessment-mcq.v4", "assessment-written.v4"]);
     expect(JSON.stringify(provider.requests[0]?.jsonSchema)).toContain("concept-photosynthesis-result");
     expect(JSON.stringify(provider.requests[1]?.jsonSchema)).not.toContain("criterion1MaximumMarks");
     expect(provider.requests[1]?.contents[0]).toMatchObject({ kind: "text" });
@@ -101,14 +104,14 @@ describe("provider transport hardening", () => {
       segments: fullSource.segments.filter((segment) => allowed.has(segment.id)),
     });
     const provider = new QueueProvider([{
-      criterion1AwardedMarks: 2,
+      criterion1Judgment: "met",
       criterion1Reason: "The first criterion is fully supported.",
-      criterion2AwardedMarks: 1,
+      criterion2Judgment: "partial",
       criterion2Reason: "The second criterion is only partly explained.",
-      criterion3AwardedMarks: 0,
+      criterion3Judgment: "not_met",
       criterion3Reason: "The final required outcome is missing.",
-      incorrectClaims: [],
-      unsupportedClaims: [],
+      incorrectClaim: "",
+      unsupportedClaim: "",
       feedback: "Connect the missing outcome to the described process.",
       status: "partially_correct",
     }]);
@@ -125,8 +128,9 @@ describe("provider transport hardening", () => {
     expect(new Set([...result.coveredConceptIds, ...result.missingConceptIds])).toEqual(new Set(question.requiredConceptIds));
     expect(result.recommendedRevisionConceptIds).toEqual(result.missingConceptIds);
     expect(validateWrittenEvaluation(source, question, result)).toEqual([]);
-    expect(provider.requests[0]?.schemaVersion).toBe("written-evaluation-transport.v3");
+    expect(provider.requests[0]?.schemaVersion).toBe("written-evaluation-transport.v4");
     expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toContain('"status"');
+    expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toContain("AwardedMarks");
   });
 
   it("deterministically reconciles an exact reference answer to full marks", async () => {
@@ -140,14 +144,14 @@ describe("provider transport hardening", () => {
       segments: fullSource.segments.filter((segment) => allowed.has(segment.id)),
     });
     const provider = new QueueProvider([{
-      criterion1AwardedMarks: 0,
+      criterion1Judgment: "not_met",
       criterion1Reason: "Provider under-awarded criterion one.",
-      criterion2AwardedMarks: 0,
+      criterion2Judgment: "not_met",
       criterion2Reason: "Provider under-awarded criterion two.",
-      criterion3AwardedMarks: 0,
+      criterion3Judgment: "not_met",
       criterion3Reason: "Provider under-awarded criterion three.",
-      incorrectClaims: ["Contradictory provider claim."],
-      unsupportedClaims: ["Contradictory provider claim."],
+      incorrectClaim: "Contradictory provider claim.",
+      unsupportedClaim: "Contradictory provider claim.",
       feedback: "Contradictory provider feedback.",
     }]);
 
@@ -166,19 +170,19 @@ describe("provider transport hardening", () => {
     expect(validateWrittenEvaluation(source, question, result)).toEqual([]);
   });
 
-  it("rejects transport over-awards before domain mapping", () => {
+  it("rejects numeric marks because only semantic judgments cross the transport", () => {
     const contract = createWrittenEvaluationProviderContract({
       criterionMaximumMarks: [2, 2, 1],
     });
     const candidate = {
-      criterion1AwardedMarks: 3,
+      criterion1AwardedMarks: 2,
       criterion1Reason: "Reason",
-      criterion2AwardedMarks: 2,
+      criterion2Judgment: "met",
       criterion2Reason: "Reason",
-      criterion3AwardedMarks: 1,
+      criterion3Judgment: "met",
       criterion3Reason: "Reason",
-      incorrectClaims: [],
-      unsupportedClaims: [],
+      incorrectClaim: "",
+      unsupportedClaim: "",
       feedback: "Feedback",
     };
     expect(contract.schema.safeParse(candidate).success).toBe(false);

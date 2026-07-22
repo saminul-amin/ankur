@@ -1,4 +1,4 @@
-import { readFile, readdir } from "node:fs/promises";
+import { access, readFile, readdir } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
@@ -23,14 +23,17 @@ describe("public release hygiene", () => {
     expect(readme).not.toContain("Codex must");
   });
 
-  it("defines provider-free least-privilege CI", async () => {
-    const workflow = await readFile(resolve(".github/workflows/ci.yml"), "utf8");
-    expect(workflow).toContain("permissions:\n  contents: read");
-    expect(workflow).toContain("node-version: 24.12.0");
+  it("documents the locked manual gate and keeps hosted CI deferred", async () => {
+    const readme = await readFile(resolve("README.md"), "utf8");
+    await expect(access(resolve(".github/workflows/ci.yml"))).rejects.toThrow();
     for (const command of ["npm ci", "npm run lint", "npm run typecheck", "npm test", "npm run build"]) {
-      expect(workflow).toContain(command);
+      expect(readme).toContain(command);
     }
-    expect(workflow).not.toMatch(/GEMINI_API_KEY|verify:|benchmark:|vercel/u);
+    for (const command of ["npm run test:e2e", "npm audit --audit-level=moderate", "git diff --check"]) {
+      expect(readme).toContain(command);
+    }
+    expect(readme).toContain("local, GitHub, and production build IDs match");
+    expect(readme).not.toMatch(/billing[- ]lock|credit card|payment method/iu);
   });
 
   it("contains no personal email address in judge-facing Markdown", async () => {

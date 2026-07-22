@@ -98,17 +98,24 @@ Copy-Item .env.example .env.local
 
 `GEMINI_API_KEY` is required only for explicitly enabled live operations. Keep it in the server environment and never prefix it with `NEXT_PUBLIC_`.
 
-Quality checks do not require provider access:
+## Manual release verification
+
+The hackathon release uses a locked, provider-free manual gate. Run it from the exact committed tree that will be deployed:
 
 ```bash
+npm ci
 npm run lint
 npm run typecheck
 npm test
 npm run build
 npm run test:e2e
+npm audit --audit-level=moderate
+git diff --check
 ```
 
-Live verification and reliability commands require their own explicit opt-in flags and are intentionally excluded from ordinary tests and CI.
+Hosted CI is intentionally deferred for this prototype; it is not replaced by another CI service. Maintainers run every command above locally, push the verified commit, deploy that same commit to Vercel, and confirm that the local, GitHub, and production build IDs match.
+
+Live verification and reliability commands require their own explicit opt-in flags and are separate from the provider-free manual gate.
 
 ## Evaluation evidence
 
@@ -118,7 +125,7 @@ Repository-owned reports record only redacted, reproducible metadata:
 - Document ingestion: digital, scanned, mixed-PDF, and standalone-image routing passed.
 - Mixed assessment: correct `5/5`, partial `2/5`, and deterministic empty `0/5` written results reconciled successfully.
 - Current offline matrix: 84 Vitest tests and 20 applicable Playwright cases passed; the dependency audit reported zero vulnerabilities.
-- The latest Task 04B provider sample did not meet its release gate (8/9 final-valid and 3/9 first-pass), so live AI remains feature-gated while the provider-free sample stays available.
+- The latest explicit-opt-in provider benchmark reached 9/9 final-valid operations with zero grounding, quote, concept, or mark-reconciliation failures. First-pass validity was 6/9 and remains an optimization metric, not a separate release blocker.
 
 See the [evaluation directory](evaluation) for the recorded fixtures, methodology, screenshots, and limitations. These are bounded prototype measurements, not claims of universal accuracy.
 
@@ -134,7 +141,7 @@ See the [evaluation directory](evaluation) for the recorded fixtures, methodolog
 
 ## Limitations
 
-The current release supports one source session and a fixed two-question assessment. Provider latency and quota vary; measured live operations can approach 80 seconds and the current reliability benchmark is blocked, so production live AI may be disabled. In-memory rate limiting is not durable across serverless instances. Authentication, cloud history, revision notes, weak-area retry, timers, negative marking, and additional question types are not part of this release.
+The current release supports one source session and a fixed two-question assessment. Provider latency and quota vary, and production live AI may be disabled after verification while the labelled sample remains available. In-memory rate limiting is not durable across serverless instances. Authentication, cloud history, revision notes, weak-area retry, timers, negative marking, and additional question types are not part of this release.
 
 Read the complete [limitations and release boundaries](docs/LIMITATIONS.md).
 

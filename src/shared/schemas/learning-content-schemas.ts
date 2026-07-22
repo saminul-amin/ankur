@@ -61,7 +61,10 @@ export const mcqCandidateProviderSchema = z.object({
   prompt: z.string().min(1).max(500),
   conceptId: conceptIdSchema,
   explanation: z.string().min(1).max(600),
-  options: z.array(z.string().min(1).max(240)).length(4),
+  optionA: z.string().min(1).max(240),
+  optionB: z.string().min(1).max(240),
+  optionC: z.string().min(1).max(240),
+  optionD: z.string().min(1).max(240),
   correctOptionId: z.enum(["A", "B", "C", "D"]),
   evidenceSegmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
 }).strict();
@@ -103,10 +106,10 @@ export function createMcqCandidateProviderJsonSchema(input: {
     type: "object", additionalProperties: false,
     properties: {
       prompt: { type: "string" }, conceptId: { type: "string", enum: input.conceptIds }, explanation: { type: "string" },
-      options: { type: "array", minItems: 4, maxItems: 4, items: { type: "string" } },
+      optionA: { type: "string" }, optionB: { type: "string" }, optionC: { type: "string" }, optionD: { type: "string" },
       correctOptionId: { type: "string", enum: ["A", "B", "C", "D"] }, evidenceSegmentId: { type: "string", enum: input.segmentIds },
     },
-    required: ["prompt", "conceptId", "explanation", "options", "correctOptionId", "evidenceSegmentId"],
+    required: ["prompt", "conceptId", "explanation", "optionA", "optionB", "optionC", "optionD", "correctOptionId", "evidenceSegmentId"],
   } as const;
 }
 

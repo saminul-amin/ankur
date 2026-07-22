@@ -43,9 +43,9 @@ Only `src/infrastructure/gemma/*` may import the Google SDK.
 |---|---|---|---|---|
 | Page transcription | `transcription.v1` | `transcription.v1` | minimal | 26B A4B |
 | Material analysis | `analysis.v1` | `preparation-map.v1` | high | 26B A4B |
-| Assessment generation | `assessment.v3` | `assessment-mcq.v3` / `assessment-written.v3` | minimal | 26B A4B |
-| Candidate review/repair | `assessment-evidence-repair.v3` | `activity-set.v2` | high | 26B A4B |
-| Written evaluation | `written-evaluation.v3` | `written-evaluation-transport.v3` | high | 26B A4B |
+| Assessment generation | `assessment.v4` | `assessment-mcq.v4` / `assessment-written.v4` | minimal | 26B A4B |
+| Candidate review/repair | `assessment-evidence-repair.v4` | `activity-set.v2` | high | 26B A4B |
+| Written evaluation | `written-evaluation.v4` | `written-evaluation-transport.v4` | high | 26B A4B |
 | Revision and retry | `revision.v1` | `revision-plan.v1` | high | 26B A4B |
 
 Thinking levels reflect official Gemma 4 hosted controls: `high` for enabled and `minimal` for disabled/minimal behavior.
@@ -189,6 +189,8 @@ Output must include:
 - evidence.
 
 The model cannot change the question, rubric, maximum marks, or concept definitions.
+
+The P0 written-evaluation transport returns only a categorical `met`, `partial`, or `not_met` judgment and bounded reason for each fixed rubric criterion, plus bounded claim/feedback scalars. Application code deterministically derives criterion marks, totals, status, concept partitions, evidence, and artifact metadata.
 
 ### 7.5 Revision and retry
 

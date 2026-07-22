@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 export interface WrittenEvaluationProviderOutput {
-  readonly criterionAwardedMarks: readonly number[];
+  readonly criterionJudgments: readonly ("met" | "partial" | "not_met")[];
   readonly criterionReasons: readonly string[];
   readonly incorrectClaims: readonly string[];
   readonly unsupportedClaims: readonly string[];
   readonly feedback: string;
 }
 
-function fieldName(index: number, suffix: "AwardedMarks" | "Reason"): string {
+function fieldName(index: number, suffix: "Judgment" | "Reason"): string {
   return `criterion${String(index + 1)}${suffix}`;
 }
 
@@ -24,31 +24,31 @@ export function createWrittenEvaluationProviderContract(input: {
   const shape: Record<string, z.ZodType> = {};
   const properties: Record<string, unknown> = {};
   const required: string[] = [];
-  for (const [index, maximumMarks] of input.criterionMaximumMarks.entries()) {
-    const marksField = fieldName(index, "AwardedMarks");
+  for (const [index] of input.criterionMaximumMarks.entries()) {
+    const judgmentField = fieldName(index, "Judgment");
     const reasonField = fieldName(index, "Reason");
-    shape[marksField] = z.number().min(0).max(maximumMarks);
+    shape[judgmentField] = z.enum(["met", "partial", "not_met"]);
     shape[reasonField] = z.string().min(1).max(400);
-    properties[marksField] = { type: "number", minimum: 0, maximum: maximumMarks };
+    properties[judgmentField] = { type: "string", enum: ["met", "partial", "not_met"] };
     properties[reasonField] = { type: "string" };
-    required.push(marksField, reasonField);
+    required.push(judgmentField, reasonField);
   }
-  shape["incorrectClaims"] = z.array(z.string().min(1).max(500)).max(8).default([]);
-  shape["unsupportedClaims"] = z.array(z.string().min(1).max(500)).max(8).default([]);
+  shape["incorrectClaim"] = z.string().max(500);
+  shape["unsupportedClaim"] = z.string().max(500);
   shape["feedback"] = z.string().min(1).max(800);
-  properties["incorrectClaims"] = { type: "array", maxItems: 8, items: { type: "string" } };
-  properties["unsupportedClaims"] = { type: "array", maxItems: 8, items: { type: "string" } };
+  properties["incorrectClaim"] = { type: "string" };
+  properties["unsupportedClaim"] = { type: "string" };
   properties["feedback"] = { type: "string" };
-  required.push("feedback");
+  required.push("incorrectClaim", "unsupportedClaim", "feedback");
 
   // Derived totals or status fields are never consumed; strip them while keeping
   // all authoritative criterion values validated against their fixed bounds.
   const rawSchema = z.object(shape);
   const schema = rawSchema.transform((value): WrittenEvaluationProviderOutput => ({
-    criterionAwardedMarks: input.criterionMaximumMarks.map((_, index) => Number(value[fieldName(index, "AwardedMarks")])),
+    criterionJudgments: input.criterionMaximumMarks.map((_, index) => value[fieldName(index, "Judgment")] as "met" | "partial" | "not_met"),
     criterionReasons: input.criterionMaximumMarks.map((_, index) => String(value[fieldName(index, "Reason")])),
-    incorrectClaims: value["incorrectClaims"] as string[],
-    unsupportedClaims: value["unsupportedClaims"] as string[],
+    incorrectClaims: String(value["incorrectClaim"]).trim().length === 0 ? [] : [String(value["incorrectClaim"])],
+    unsupportedClaims: String(value["unsupportedClaim"]).trim().length === 0 ? [] : [String(value["unsupportedClaim"])],
     feedback: String(value["feedback"]),
   }));
 

@@ -35,13 +35,17 @@ Configure the same non-secret values and the private key in Vercel environment s
 7. Open `/api/runtime-status`.
 8. Run the provider spike script explicitly.
 
-## 3. Pre-deployment checklist
+## 3. Locked manual release gate
 
 ```bash
+npm ci
 npm run lint
 npm run typecheck
 npm test
 npm run build
+npm run test:e2e
+npm audit --audit-level=moderate
+git diff --check
 ```
 
 Then:
@@ -53,6 +57,9 @@ Then:
 - verify sample assets contain no private/copyrighted content;
 - review environment variables by target environment.
 - verify the health `buildId` matches the intended release commit.
+- verify local `HEAD`, `origin/main`, and the Vercel `buildId` are the same commit.
+
+Hosted CI is intentionally deferred for the hackathon prototype and is not replaced by another CI service. Run this gate from the exact committed tree before deploying it.
 
 ## 4. Production smoke test
 
