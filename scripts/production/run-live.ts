@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
-import { createSampleSource } from "../../src/application/sample/sample-vertical-slice.js";
+import { createSampleSource, SAMPLE_PARTIAL_WRITTEN_ANSWER } from "../../src/application/sample/sample-vertical-slice.js";
 import { calculateConceptPerformance, reconcileAssessmentTotal, weakConcepts } from "../../src/domain/assessments/concept-performance.js";
 import { gradeMcq, validateActivitySet } from "../../src/domain/assessments/mcq.js";
 import { validateWrittenEvaluation } from "../../src/domain/assessments/written-evaluation.js";
@@ -35,6 +35,11 @@ interface FlowResult {
   readonly conceptFailures: number;
   readonly sourceOrAnswerLoss: number;
   readonly persistedResult: boolean;
+  readonly mcqCorrect: boolean;
+  readonly writtenStatus: string;
+  readonly awardedMarks: number;
+  readonly weakConceptCount: number;
+  readonly totalsReconcile: boolean;
 }
 
 function recordData(value: unknown): unknown {
@@ -100,9 +105,9 @@ async function writeReport(input: {
 
 ## Per-flow validation
 
-| Run | Passed | Activity failures | Written failures | Grounding | Quotes | Reconciliation | Concepts | Persisted |
-|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-${input.flows.map((flow) => `| ${String(flow.run)} | ${flow.passed ? "yes" : "no"} | ${String(flow.activityFailures)} | ${String(flow.writtenFailures)} | ${String(flow.groundingFailures)} | ${String(flow.quoteFailures)} | ${String(flow.reconciliationFailures)} | ${String(flow.conceptFailures)} | ${flow.persistedResult ? "yes" : "no"} |`).join("\n")}
+| Run | Passed | MCQ | Written status | Written marks | Weak concepts | Totals | Grounding | Quotes | Concepts | Persisted |
+|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|
+${input.flows.map((flow) => `| ${String(flow.run)} | ${flow.passed ? "yes" : "no"} | ${flow.mcqCorrect ? "correct" : "failed"} | ${flow.writtenStatus} | ${String(flow.awardedMarks)}/5 | ${String(flow.weakConceptCount)} | ${flow.totalsReconcile ? "yes" : "no"} | ${String(flow.groundingFailures)} | ${String(flow.quoteFailures)} | ${String(flow.conceptFailures)} | ${flow.persistedResult ? "yes" : "no"} |`).join("\n")}
 
 ## Safe phase metadata
 
@@ -183,8 +188,7 @@ async function main(): Promise<void> {
       ]);
       const evidenceSegments = segments.filter((segment) => allowedIds.has(segment.id));
       const window = rehydrateEvidenceWindow({ sourceVersionId: source.sourceVersionId, language: source.language, segments: evidenceSegments });
-      const answerWords = question.referenceAnswer.trim().split(/\s+/u);
-      const partialAnswer = answerWords.slice(0, Math.max(3, Math.ceil(answerWords.length * 0.45))).join(" ");
+      const partialAnswer = SAMPLE_PARTIAL_WRITTEN_ANSWER;
       const written = writtenEvaluationApiSchema.parse(await requestJson(phases, baseUrl, run, "written-partial", "/api/written-evaluations", {
         method: "POST",
         body: JSON.stringify({
@@ -207,6 +211,7 @@ async function main(): Promise<void> {
       const totalsReconcile = reconcileAssessmentTotal({ mcqGrade, writtenEvaluation: written, performance: conceptPerformance });
       const conceptIds = new Set(map.concepts.map((concept) => concept.id));
       const conceptFailures = conceptPerformance.filter((item) => !conceptIds.has(item.conceptId)).length;
+      const weakConceptCount = weakConcepts(conceptPerformance).length;
       const serialized = toPersistedIngestionSession({
         stage: "results", mode: "live", sourceKind: "text", pages: [], priorityInstruction: "",
         confirmedSource: source, preparationMap: map,
@@ -227,7 +232,7 @@ async function main(): Promise<void> {
         && written.awardedMarks > 0
         && written.awardedMarks < 5
         && mcqGrade.status === "correct"
-        && weakConcepts(conceptPerformance).length > 0
+        && weakConceptCount > 0
         && counts.grounding === 0
         && counts.quotes === 0
         && reconciliationFailures === 0
@@ -238,6 +243,8 @@ async function main(): Promise<void> {
         run, passed: flowPassed, activityFailures: activityValidation.length, writtenFailures: writtenValidation.length,
         groundingFailures: counts.grounding, quoteFailures: counts.quotes, reconciliationFailures,
         conceptFailures: counts.concepts + conceptFailures, sourceOrAnswerLoss, persistedResult,
+        mcqCorrect: mcqGrade.status === "correct", writtenStatus: written.status, awardedMarks: written.awardedMarks,
+        weakConceptCount, totalsReconcile,
       });
       if (!flowPassed) break;
     }
