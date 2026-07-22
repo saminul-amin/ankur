@@ -30,15 +30,15 @@ export function createWrittenEvaluationProviderContract(input: {
     shape[judgmentField] = z.enum(["met", "partial", "not_met"]);
     shape[reasonField] = z.string().min(1).max(400);
     properties[judgmentField] = { type: "string", enum: ["met", "partial", "not_met"] };
-    properties[reasonField] = { type: "string" };
+    properties[reasonField] = { type: "string", minLength: 1, maxLength: 400 };
     required.push(judgmentField, reasonField);
   }
   shape["incorrectClaim"] = z.string().max(500);
   shape["unsupportedClaim"] = z.string().max(500);
   shape["feedback"] = z.string().min(1).max(800);
-  properties["incorrectClaim"] = { type: "string" };
-  properties["unsupportedClaim"] = { type: "string" };
-  properties["feedback"] = { type: "string" };
+  properties["incorrectClaim"] = { type: "string", maxLength: 500 };
+  properties["unsupportedClaim"] = { type: "string", maxLength: 500 };
+  properties["feedback"] = { type: "string", minLength: 1, maxLength: 800 };
   required.push("incorrectClaim", "unsupportedClaim", "feedback");
 
   // Derived totals or status fields are never consumed; strip them while keeping

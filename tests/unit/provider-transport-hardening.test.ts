@@ -131,6 +131,12 @@ describe("provider transport hardening", () => {
     expect(provider.requests[0]?.schemaVersion).toBe("written-evaluation-transport.v4");
     expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toContain('"status"');
     expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toContain("AwardedMarks");
+    expect(provider.requests[0]?.jsonSchema).toMatchObject({
+      properties: {
+        criterion1Reason: { minLength: 1, maxLength: 400 },
+        feedback: { minLength: 1, maxLength: 800 },
+      },
+    });
   });
 
   it("deterministically reconciles an exact reference answer to full marks", async () => {

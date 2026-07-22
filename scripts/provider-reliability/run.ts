@@ -31,6 +31,7 @@ import { readRuntimeConfig } from "../../src/shared/config/runtime-config.js";
 
 const RESULTS_PATH = resolve("evaluation/provider-reliability/RESULTS.md");
 const EXPECTED_PROVIDER_OPERATIONS = 9;
+const COMPLETE_CORRECT_ANSWER = "সালোকসংশ্লেষণে উদ্ভিদ পানি ও কার্বন ডাই-অক্সাইড গ্রহণ করে। পাতার ক্লোরোফিল সূর্যের আলো শোষণ করে প্রক্রিয়াটি চালায়। এতে উদ্ভিদের খাদ্য তৈরি হয় এবং অক্সিজেন বাইরে যায়।";
 
 interface TransportRecord {
   readonly schemaVersion: string;
@@ -333,7 +334,7 @@ async function main(): Promise<void> {
 
     for (const answerKind of ["correct", "partial"] as const) {
       const label = `${answerKind}-${String(iteration)}`;
-      const answer = answerKind === "correct" ? question.referenceAnswer : partialAnswer;
+      const answer = answerKind === "correct" ? COMPLETE_CORRECT_ANSWER : partialAnswer;
       const transportStart = provider.records.length;
       const attemptStart = provider.attempts;
       const diagnosticStart = validationDiagnostics.length;
@@ -403,9 +404,11 @@ async function main(): Promise<void> {
 - Started: ${startedAt}
 - Completed: ${new Date().toISOString()}
 - Fixture: team-authored repository photosynthesis source
+- Correct-answer fixture: team-authored complete paraphrase, not the generated reference text
 - Model: \`${config.primaryModel}\`
 - Assessment thinking: \`minimal\` first pass; \`high\` only for bounded application repair
 - Written-grading thinking: \`high\`
+- Non-empty structural schema-repair thinking: \`minimal\`
 - Assessment prompt/schema: \`assessment.v4\`; \`assessment-mcq.v4\` and \`assessment-written.v4\`
 - Written prompt/schema: \`written-evaluation.v4\`; \`written-evaluation-transport.v4\`
 - Provider operations completed: ${String(operations.length)}/${String(EXPECTED_PROVIDER_OPERATIONS)}

@@ -16,7 +16,7 @@ describe("Google GenAI structured repair", () => {
       modelId: "gemma-4-26b-a4b-it",
       promptVersion: "repair-context.v1",
       schemaVersion: "repair-context.v1",
-      thinkingLevel: "minimal",
+      thinkingLevel: "high",
       temperature: 0,
       maxOutputTokens: 200,
       timeoutMs: 10_000,
@@ -38,6 +38,8 @@ describe("Google GenAI structured repair", () => {
     expect(JSON.stringify(repairRequest)).not.toContain("ALLOWED SEGMENT: M01-P001-S001");
     expect(JSON.stringify(repairRequest)).toContain("not-a-segment");
     expect(JSON.stringify(repairRequest)).toContain("VALIDATION ERRORS");
+    expect(generateContent.mock.calls[0]?.[0].config?.thinkingConfig).toMatchObject({ thinkingLevel: "HIGH" });
+    expect(repairRequest?.config).toMatchObject({ temperature: 0, maxOutputTokens: 200, thinkingConfig: { thinkingLevel: "MINIMAL" } });
   });
 
   it("emits only sanitized schema diagnostics for first-pass and failed repair output", async () => {
@@ -68,6 +70,26 @@ describe("Google GenAI structured repair", () => {
     expect(JSON.stringify(diagnostics)).not.toContain("PRIVATE SOURCE CONTENT");
     expect(JSON.stringify(diagnostics)).not.toContain("not-a-segment");
     expect(JSON.stringify(diagnostics)).not.toContain("not json");
+  });
+
+  it("retains task context only when an empty response must be regenerated", async () => {
+    const generateContent = vi.fn<GoogleGenAI["models"]["generateContent"]>()
+      .mockResolvedValueOnce({ text: "", candidates: [{ finishReason: "RECITATION" }] } as GenerateContentResponse)
+      .mockResolvedValueOnce({ text: JSON.stringify({ judgment: "met" }) } as GenerateContentResponse);
+    const adapter = new GoogleGenAiAdapter("unit-test-key", "gemma-4-26b-a4b-it", { generateContent });
+    const schema = z.object({ judgment: z.literal("met") }).strict();
+    const result = await adapter.generateStructured({
+      task: "structured_generation", modelId: "gemma-4-26b-a4b-it", promptVersion: "empty-repair.v1",
+      schemaVersion: "empty-repair.v1", thinkingLevel: "high", temperature: 0.1, maxOutputTokens: 800,
+      timeoutMs: 10_000, contents: [{ kind: "text", text: "ORIGINAL GRADING CONTEXT" }], outputMode: "native",
+      jsonSchema: { type: "object", properties: { judgment: { type: "string", enum: ["met"] } }, required: ["judgment"] },
+      schema, maxSchemaRepairs: 1,
+    });
+
+    expect(result).toMatchObject({ value: { judgment: "met" }, repaired: true });
+    const repairRequest = generateContent.mock.calls[1]?.[0];
+    expect(JSON.stringify(repairRequest)).toContain("ORIGINAL GRADING CONTEXT");
+    expect(repairRequest?.config?.thinkingConfig).toMatchObject({ thinkingLevel: "HIGH" });
   });
 
   it("retries one transient provider failure and records the bounded retry", async () => {

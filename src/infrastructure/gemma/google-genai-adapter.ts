@@ -54,6 +54,13 @@ function structuredText(response: GenerateContentResponse): string | undefined {
   return text && text.length > 0 ? text : undefined;
 }
 
+function diagnosticCode(code: string, response: GenerateContentResponse): string {
+  const finishReason = response.candidates?.[0]?.finishReason;
+  return typeof finishReason === "string" && /^[A-Z_]{2,40}$/u.test(finishReason)
+    ? `${code}_${finishReason}`
+    : code;
+}
+
 function metadata(
   response: GenerateContentResponse,
   request: Pick<TextGenerationRequest, "modelId" | "thinkingLevel">,
@@ -261,17 +268,32 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
       };
     }
 
-    this.#recordDiagnostic(request, "first_pass", firstValidation);
+    this.#recordDiagnostic(request, "first_pass", {
+      ...firstValidation,
+      code: diagnosticCode(firstValidation.code, first.response),
+    });
 
     if (request.maxSchemaRepairs === 0) {
       throw new ProviderError("INVALID_OUTPUT", { cause: new Error(firstValidation.repairMessage) });
     }
 
-    const repairContents: readonly GenerationContentPart[] = [{
+    const repairFromEmptyResponse = firstText === undefined;
+    const repairInstruction: GenerationContentPart = {
       kind: "text",
-      text: `Repair this invalid JSON object so it satisfies the supplied native output schema. Preserve its supported semantic content, fill only required fields, and return JSON only. Do not include hidden reasoning.\n\nVALIDATION ERRORS\n${firstValidation.repairMessage}\n\nINVALID OBJECT\n${firstText ?? "{}"}`,
-    }];
-    const repaired = await this.#call({ ...request, contents: repairContents }, mode === "native");
+      text: repairFromEmptyResponse
+        ? "The previous response was empty. Complete the original task now and return only one object satisfying the supplied native output schema. Do not include hidden reasoning."
+        : `Repair this invalid JSON object so it satisfies the supplied native output schema. Preserve its supported semantic content, fill only required fields, and return JSON only. Do not include hidden reasoning.\n\nVALIDATION ERRORS\n${firstValidation.repairMessage}\n\nINVALID OBJECT\n${firstText}`,
+    };
+    const repairContents: readonly GenerationContentPart[] = repairFromEmptyResponse
+      ? [...request.contents, repairInstruction]
+      : [repairInstruction];
+    const repaired = await this.#call({
+      ...request,
+      thinkingLevel: repairFromEmptyResponse ? request.thinkingLevel : "minimal",
+      temperature: repairFromEmptyResponse ? request.temperature : 0,
+      maxOutputTokens: repairFromEmptyResponse ? request.maxOutputTokens : Math.min(request.maxOutputTokens, 1_600),
+      contents: repairContents,
+    }, mode === "native");
     const repairedText = structuredText(repaired.response);
     if (repairedText === undefined) {
       const failure: ValidationFailure = {
@@ -286,7 +308,7 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
       this.#recordDiagnostic(request, "repair", {
         ...repairedValidation,
         category: "repair_response_invalid",
-        code: "REPAIR_RESPONSE_INVALID",
+        code: diagnosticCode("REPAIR_RESPONSE_INVALID", repaired.response),
       });
       throw new ProviderError("INVALID_OUTPUT", { cause: new Error(repairedValidation.repairMessage) });
     }

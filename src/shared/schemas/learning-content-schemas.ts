@@ -105,8 +105,10 @@ export function createMcqCandidateProviderJsonSchema(input: {
   return {
     type: "object", additionalProperties: false,
     properties: {
-      prompt: { type: "string" }, conceptId: { type: "string", enum: input.conceptIds }, explanation: { type: "string" },
-      optionA: { type: "string" }, optionB: { type: "string" }, optionC: { type: "string" }, optionD: { type: "string" },
+      prompt: { type: "string", minLength: 1, maxLength: 500 }, conceptId: { type: "string", enum: input.conceptIds },
+      explanation: { type: "string", minLength: 1, maxLength: 600 },
+      optionA: { type: "string", minLength: 1, maxLength: 240 }, optionB: { type: "string", minLength: 1, maxLength: 240 },
+      optionC: { type: "string", minLength: 1, maxLength: 240 }, optionD: { type: "string", minLength: 1, maxLength: 240 },
       correctOptionId: { type: "string", enum: ["A", "B", "C", "D"] }, evidenceSegmentId: { type: "string", enum: input.segmentIds },
     },
     required: ["prompt", "conceptId", "explanation", "optionA", "optionB", "optionC", "optionD", "correctOptionId", "evidenceSegmentId"],
@@ -122,11 +124,11 @@ export function createWrittenCandidateProviderJsonSchema(input: {
   return {
     type: "object", additionalProperties: false,
     properties: {
-      prompt: { type: "string" }, explanation: { type: "string" },
-      expectedLength: { type: "string", enum: ["one_sentence", "short_paragraph"] }, referenceAnswer: { type: "string" },
-      criterion1Description: { type: "string" }, criterion1RequiredConceptId: conceptId, criterion1EvidenceSegmentId: segmentId,
-      criterion2Description: { type: "string" }, criterion2RequiredConceptId: conceptId, criterion2EvidenceSegmentId: segmentId,
-      criterion3Description: { type: "string" }, criterion3RequiredConceptId: conceptId, criterion3EvidenceSegmentId: segmentId,
+      prompt: { type: "string", minLength: 1, maxLength: 700 }, explanation: { type: "string", minLength: 1, maxLength: 700 },
+      expectedLength: { type: "string", enum: ["one_sentence", "short_paragraph"] }, referenceAnswer: { type: "string", minLength: 1, maxLength: 1_200 },
+      criterion1Description: { type: "string", minLength: 1, maxLength: 400 }, criterion1RequiredConceptId: conceptId, criterion1EvidenceSegmentId: segmentId,
+      criterion2Description: { type: "string", minLength: 1, maxLength: 400 }, criterion2RequiredConceptId: conceptId, criterion2EvidenceSegmentId: segmentId,
+      criterion3Description: { type: "string", minLength: 1, maxLength: 400 }, criterion3RequiredConceptId: conceptId, criterion3EvidenceSegmentId: segmentId,
     },
     required: ["prompt", "explanation", "expectedLength", "referenceAnswer", "criterion1Description", "criterion1RequiredConceptId", "criterion1EvidenceSegmentId", "criterion2Description", "criterion2RequiredConceptId", "criterion2EvidenceSegmentId", "criterion3Description", "criterion3RequiredConceptId", "criterion3EvidenceSegmentId"],
   } as const;

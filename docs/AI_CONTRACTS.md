@@ -237,6 +237,7 @@ Configuration must be centralized by task. No Route Handler may invent ad hoc mo
 
 - At most one repair call.
 - Repair input includes only the invalid object, expected contract, and validation errors—not the entire conversational history unless required.
+- Non-empty schema repair is a structural task and uses minimal thinking even when the original semantic task used high thinking. If the provider returns no object, the single regeneration attempt retains the original task context and thinking level because there is no semantic object to repair.
 
 ### Evidence repair
 
