@@ -271,7 +271,7 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
     this.#recordDiagnostic(request, "first_pass", {
       ...firstValidation,
       code: diagnosticCode(firstValidation.code, first.response),
-    });
+    }, firstText?.length ?? 0, first.response.usageMetadata?.candidatesTokenCount, first.latencyMs, request.maxSchemaRepairs === 1);
 
     if (request.maxSchemaRepairs === 0) {
       throw new ProviderError("INVALID_OUTPUT", { cause: new Error(firstValidation.repairMessage) });
@@ -300,7 +300,7 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
         category: "repair_response_invalid", code: "REPAIR_RESPONSE_INVALID", fieldPath: "$", expected: "non-empty schema-valid repair response",
         repairMessage: "Repair response was empty.",
       };
-      this.#recordDiagnostic(request, "repair", failure);
+      this.#recordDiagnostic(request, "repair", failure, 0, repaired.response.usageMetadata?.candidatesTokenCount, repaired.latencyMs, true);
       throw new ProviderError("INVALID_OUTPUT");
     }
     const repairedValidation = this.#parseAndValidate(repairedText, request);
@@ -309,7 +309,7 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
         ...repairedValidation,
         category: "repair_response_invalid",
         code: diagnosticCode("REPAIR_RESPONSE_INVALID", repaired.response),
-      });
+      }, repairedText.length, repaired.response.usageMetadata?.candidatesTokenCount, repaired.latencyMs, true);
       throw new ProviderError("INVALID_OUTPUT", { cause: new Error(repairedValidation.repairMessage) });
     }
 
@@ -352,6 +352,10 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
     request: StructuredGenerationRequest<T>,
     phase: ProviderValidationDiagnostic["phase"],
     failure: ValidationFailure,
+    responseCharacterCount: number,
+    responseTokenCount: number | undefined,
+    latencyMs: number,
+    repairAttempted: boolean,
   ): void {
     this.diagnosticObserver?.({
       modelId: request.modelId,
@@ -362,6 +366,10 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
       code: failure.code,
       fieldPath: failure.fieldPath,
       expected: failure.expected,
+      responseCharacterCount,
+      ...(responseTokenCount === undefined ? {} : { responseTokenCount }),
+      latencyMs,
+      repairAttempted,
     });
   }
 

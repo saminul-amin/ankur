@@ -8,7 +8,8 @@ import type {
   TextGenerationRequest,
   TextGenerationResult,
 } from "../../src/application/ports/generative-model-port.js";
-import { createSamplePreparationMap, createSampleSource } from "../../src/application/sample/sample-vertical-slice.js";
+import { createSampleSource } from "../../src/application/sample/sample-vertical-slice.js";
+import { AnalyzeConfirmedSource } from "../../src/application/use-cases/analyze-confirmed-source.js";
 import { EvaluateWrittenAnswer } from "../../src/application/use-cases/evaluate-written-answer.js";
 import { GenerateMixedAssessment } from "../../src/application/use-cases/generate-mixed-assessment.js";
 import { GeneratePersonalizedRevision } from "../../src/application/use-cases/generate-personalized-revision.js";
@@ -25,8 +26,9 @@ import { readRuntimeConfig } from "../../src/shared/config/runtime-config.js";
 import { ApplicationError } from "../../src/shared/errors/application-error.js";
 import { ProviderError } from "../../src/shared/errors/provider-error.js";
 import { parsePersistedIngestionSession, toPersistedIngestionSession } from "../../src/presentation/persistence/ingestion-session.js";
+import type { RevisionValidationDiagnostic } from "../../src/application/diagnostics/revision-validation-diagnostic.js";
 
-const RESULTS_PATH = resolve("evaluation/adaptive-loop/RESULTS.md");
+const RESULTS_PATH = resolve(process.env["ANKUR_ADAPTIVE_RESULTS_PATH"] ?? "evaluation/adaptive-loop/RESULTS.md");
 
 interface SafeProviderStats {
   calls: number;
@@ -91,12 +93,17 @@ async function main() {
   const observed = new ObservedProvider(new GoogleGenAiAdapter(config.apiKey, config.primaryModel));
   const learningAdapter = new GemmaLearningContentAdapter(observed, config.requestTimeoutMs);
   const writtenAdapter = new GemmaWrittenEvaluationAdapter(observed, config.requestTimeoutMs);
-  const revisionAdapter = new GemmaRevisionGenerationAdapter(observed, learningAdapter, config.requestTimeoutMs);
+  const revisionAdapter = new GemmaRevisionGenerationAdapter(observed, config.requestTimeoutMs);
   const generateAssessment = new GenerateMixedAssessment(learningAdapter);
+  const analyzeSource = new AnalyzeConfirmedSource(learningAdapter);
   const evaluateWritten = new EvaluateWrittenAnswer(writtenAdapter);
-  const generateRevision = new GeneratePersonalizedRevision(revisionAdapter);
+  const revisionDiagnostics: RevisionValidationDiagnostic[] = [];
+  const generateRevision = new GeneratePersonalizedRevision(revisionAdapter, (diagnostic) => {
+    revisionDiagnostics.push(diagnostic);
+    process.stderr.write(`REVISION_VALIDATION_DIAGNOSTIC ${JSON.stringify(diagnostic)}\n`);
+  });
   const source = createSampleSource();
-  const map = createSamplePreparationMap(source);
+  const map = await analyzeSource.execute({ source, requestId: "adaptive-analysis" });
   const originalActivity = await generateAssessment.execute({
     source,
     preparationMap: map,
@@ -184,6 +191,11 @@ async function main() {
   const counts = failureCounts([...activityFailures, ...planFailures, ...retryWrittenFailures]);
   const conceptIds = new Set(map.concepts.map((concept) => concept.id));
   const conceptReferenceFailures = counts.concepts + plan.targetConceptIds.filter((id) => !conceptIds.has(id)).length + retryPerformance.filter((item) => !conceptIds.has(item.conceptId)).length;
+  const permittedEvidenceIds = [...new Set(plan.items.flatMap((item) => item.evidence.map((reference) => reference.segmentId)))];
+  const permittedEvidenceCharacters = source.segments
+    .filter((segment) => permittedEvidenceIds.includes(segment.id))
+    .reduce((sum, segment) => sum + segment.text.length, 0);
+  const applicationRepairUsed = revisionDiagnostics.some((diagnostic) => diagnostic.phase === "first_pass");
   const passed = activityFailures.length === 0 && planFailures.length === 0 && retryWrittenFailures.length === 0
     && counts.grounding === 0 && counts.quotes === 0 && counts.reconciliation === 0 && counts.duplicates === 0
     && conceptReferenceFailures === 0 && retryTotalsReconcile && retryMcqGrade.correct
@@ -215,7 +227,31 @@ async function main() {
 - Output tokens reported: ${String(observed.stats.outputTokens)}
 - Network retries: ${String(observed.stats.networkRetries)}
 - Provider schema repairs: ${String(observed.stats.repairedStructuredCalls)}
-- Application repair used: ${plan.artifact.repaired ? "yes" : "no"}
+- Application-level revision repair used: ${applicationRepairUsed ? "yes" : "no"}
+- Final revision artifact repaired: ${plan.artifact.repaired ? "yes" : "no"}
+
+## Safe revision operation metadata
+
+- Build ID: ${process.env["ANKUR_BUILD_ID"]?.slice(0, 12) ?? "local-working-tree"}
+- Source version ID: ${source.sourceVersionId}
+- Revision prompt version: ${plan.artifact.promptVersion}
+- Revision schema version: ${plan.schemaVersion}
+- Thinking level: ${plan.artifact.thinkingLevel}
+- Output-token budgets: memory cue 650; retry MCQ 900; retry written 900; retry rubric 900
+- Target concept IDs: ${plan.targetConceptIds.join(", ")}
+- Permitted evidence segment IDs: ${permittedEvidenceIds.join(", ")}
+- Permitted evidence segments: ${String(permittedEvidenceIds.length)}
+- Permitted evidence characters: ${String(permittedEvidenceCharacters)}
+- Provider configured: yes
+- Repair context: original prompts supplied as exclusion data; invalid repair component bounded to its shallow scalar transport
+- Provider timeout: ${String(config.requestTimeoutMs)} ms
+- Revision route maximum duration: 180000 ms
+
+## Sanitized revision validation diagnostics
+
+| Stage | Code | Field | Expected | Targets | Evidence segments | Evidence characters | Response characters | Latency (ms) | Repair attempted |
+|---|---|---|---|---:|---:|---:|---:|---:|---|
+${revisionDiagnostics.length === 0 ? "| - | - | - | - | 0 | 0 | 0 | 0 | 0 | no |" : revisionDiagnostics.map((diagnostic) => `| ${diagnostic.phase} | ${diagnostic.validationCode} | ${diagnostic.fieldPath} | ${diagnostic.expected} | ${String(diagnostic.targetConceptCount)} | ${String(diagnostic.permittedEvidenceSegmentCount)} | ${String(diagnostic.permittedEvidenceCharacterCount)} | ${String(diagnostic.responseCharacterCount)} | ${String(diagnostic.latencyMs)} | ${diagnostic.repairAttempted ? "yes" : "no"} |`).join("\n")}
 
 No credential, raw source, prompt, provider body, generated question, reference answer, learner answer, or feedback is stored in this report.
 `;

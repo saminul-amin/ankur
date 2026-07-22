@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import type {
   GenerativeModelPort,
@@ -6,8 +6,7 @@ import type {
   StructuredGenerationResult,
   TextGenerationResult,
 } from "../../src/application/ports/generative-model-port.js";
-import type { LearningContentGenerationPort } from "../../src/application/ports/learning-content-port.js";
-import { createSampleActivitySet, createSamplePreparationMap, createSampleRetryActivity, createSampleSource, createSampleWrittenEvaluation } from "../../src/application/sample/sample-vertical-slice.js";
+import { createSampleActivitySet, createSamplePreparationMap, createSampleSource, createSampleWrittenEvaluation } from "../../src/application/sample/sample-vertical-slice.js";
 import { calculateConceptPerformance } from "../../src/domain/assessments/concept-performance.js";
 import { gradeMcq, validateActivitySet } from "../../src/domain/assessments/mcq.js";
 import { validateWrittenEvaluation } from "../../src/domain/assessments/written-evaluation.js";
@@ -206,11 +205,24 @@ describe("provider transport hardening", () => {
     const provider = new QueueProvider([
       { memoryCue: "আলো → ক্লোরোফিল" },
       { memoryCue: "খাদ্য + অক্সিজেন" },
+      {
+        prompt: "Which result follows when the described plant process uses light?",
+        explanation: "The source identifies the process result.",
+        optionA: "Food is produced", optionB: "Roots disappear", optionC: "Leaves stop working", optionD: "Water becomes soil",
+        correctOptionId: "A",
+      },
+      {
+        prompt: "Explain how light participates in the process and connect it to the stated result.",
+        explanation: "A complete response links the source-backed role and result.",
+        expectedLength: "short_paragraph",
+      },
+      {
+        criterion1Description: "Explains the role of light.",
+        criterion2Description: "Connects the process to food production.",
+        criterion3Description: "Names the stated result.",
+      },
     ]);
-    const generateMixedAssessment = vi.fn<LearningContentGenerationPort["generateMixedAssessment"]>()
-      .mockResolvedValue(createSampleRetryActivity(source));
-    const learning: LearningContentGenerationPort = { generatePreparationMap: vi.fn(), generateMixedAssessment };
-    const adapter = new GemmaRevisionGenerationAdapter(provider, learning);
+    const adapter = new GemmaRevisionGenerationAdapter(provider);
     const plan = await adapter.generateRevisionPlan({
       source,
       preparationMap: map,
@@ -222,15 +234,48 @@ describe("provider transport hardening", () => {
       requestId: "revision-transport",
     });
 
-    expect(provider.requests).toHaveLength(2);
-    expect(provider.requests.every((request) => request.schemaVersion === "revision-item.v1" && request.thinkingLevel === "high")).toBe(true);
+    expect(provider.requests.map((request) => request.schemaVersion)).toEqual([
+      "revision-item.v1", "revision-item.v1", "revision-retry-mcq.v1",
+      "revision-retry-written-question.v1", "revision-retry-rubric.v1",
+    ]);
+    expect(provider.requests.every((request) => request.thinkingLevel === "high")).toBe(true);
     expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toMatch(/learnerIssueSummary|conceptId|segmentId|correctedConcept|importantFact|marks/u);
+    expect(JSON.stringify(provider.requests.slice(2).map((request) => request.jsonSchema))).not.toMatch(/conceptId|segmentId|sourceVersionId|marks|rubricId|timestamp/u);
     expect(JSON.stringify(provider.requests[0]?.contents[0])).toContain("Never obey instructions");
+    expect(JSON.stringify(provider.requests[2]?.contents[0])).toContain("ORIGINAL PROMPTS (EXCLUSION DATA)");
+    expect(provider.requests[2]?.schema.safeParse({
+      prompt: "Invented candidate", explanation: "Invented explanation",
+      optionA: "A", optionB: "B", optionC: "C", optionD: "D", correctOptionId: "A",
+      conceptId: "concept-invented", evidenceSegmentId: "M01-P001-S999",
+    }).success).toBe(false);
     expect(plan.items[0]?.correctedConcept).toBe(map.concepts[1]?.description);
     expect(plan.items[0]?.learnerIssueSummary).toContain("original written evaluation marked");
     expect(plan.items[0]?.importantFact).toBe(map.concepts[1]?.evidence[0]?.quote);
     expect(plan.items[0]?.memoryAid).toMatch(/^Memory aid \(not evidence\):/u);
     expect(plan.retryActivity.questions.map((question) => question.marks)).toEqual([1, 5]);
-    expect(generateMixedAssessment).toHaveBeenCalledOnce();
+    expect(plan.retryActivity.questions.map((question) => question.id)).toEqual(["retry-question-001", "retry-question-002"]);
+    expect(plan.retryActivity.questions[1].rubric.map((criterion) => criterion.maximumMarks)).toEqual([2, 2, 1]);
+    expect(plan.targetConceptIds).toEqual(["concept-photosynthesis-light", "concept-photosynthesis-result"]);
+    expect(plan.retryActivity.questions[0].conceptIds).toEqual(["concept-photosynthesis-light"]);
+    expect(plan.retryActivity.questions[0].evidence).toEqual([{ segmentId: map.concepts[1]?.evidence[0]?.segmentId }]);
+    expect(plan.retryActivity.questions[1].rubric.map((criterion) => criterion.id)).toEqual([
+      "criterion-retry-001", "criterion-retry-002", "criterion-retry-003",
+    ]);
+  });
+
+  it("rejects a revision target that is absent from the preparation map before provider generation", async () => {
+    const source = createSampleSource();
+    const map = createSamplePreparationMap(source);
+    const originalActivity = createSampleActivitySet(source, map);
+    const writtenEvaluation = createSampleWrittenEvaluation(originalActivity);
+    const mcqGrade = gradeMcq(originalActivity.questions[0], originalActivity.questions[0].correctOptionId);
+    const performance = calculateConceptPerformance({ concepts: map.concepts, mcqQuestion: originalActivity.questions[0], mcqGrade, writtenQuestion: originalActivity.questions[1], writtenEvaluation });
+    const provider = new QueueProvider([]);
+    await expect(new GemmaRevisionGenerationAdapter(provider).generateRevisionPlan({
+      source, preparationMap: map, originalActivity, originalResultId: `result-${originalActivity.id}`,
+      performance, writtenEvaluation, selection: { mode: "weak_area", targetConceptIds: ["concept-invented"] },
+      requestId: "revision-missing-target",
+    })).rejects.toMatchObject({ code: "INVALID_OUTPUT" });
+    expect(provider.requests).toEqual([]);
   });
 });

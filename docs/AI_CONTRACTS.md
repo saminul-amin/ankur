@@ -46,7 +46,7 @@ Only `src/infrastructure/gemma/*` may import the Google SDK.
 | Assessment generation | `assessment.v5` | `assessment-mcq.v5` / `assessment-written-question.v5` / `assessment-written-rubric.v5` | minimal | 26B A4B |
 | Candidate review/repair | `assessment-evidence-repair.v5` | `activity-set.v2` | high | 26B A4B |
 | Written evaluation | `written-evaluation.v5` | `written-evaluation-transport.v5` | high | 26B A4B |
-| Revision and retry | `revision.v1` | `revision-plan.v1` | high | 26B A4B |
+| Revision and retry | `revision.v2` / `revision-repair.v2` | `revision-item.v1` / `revision-retry-mcq.v1` / `revision-retry-written-question.v1` / `revision-retry-rubric.v1`; application `revision-plan.v1` | high | 26B A4B |
 
 Thinking levels reflect official Gemma 4 hosted controls: `high` for enabled and `minimal` for disabled/minimal behavior.
 

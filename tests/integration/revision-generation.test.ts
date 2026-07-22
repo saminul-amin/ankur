@@ -12,6 +12,7 @@ import { GeneratePersonalizedRevision } from "../../src/application/use-cases/ge
 import { calculateConceptPerformance } from "../../src/domain/assessments/concept-performance.js";
 import { gradeMcq } from "../../src/domain/assessments/mcq.js";
 import { ProviderError } from "../../src/shared/errors/provider-error.js";
+import type { RevisionValidationDiagnostic } from "../../src/application/diagnostics/revision-validation-diagnostic.js";
 
 describe("revision generation use case", () => {
   const source = createSampleSource();
@@ -28,6 +29,21 @@ describe("revision generation use case", () => {
   });
   const originalResultId = `result-${activity.id}`;
   const valid = createSampleRevisionPlan({ source, preparationMap: map, originalActivity: activity, originalResultId, performance, writtenEvaluation });
+
+  const request = {
+    source, preparationMap: map, originalActivity: activity, originalResultId,
+    originalMcqGrade: mcqGrade, performance, writtenEvaluation,
+  } as const;
+
+  it("accepts a valid first-pass revision plan without invoking bounded repair", async () => {
+    const generateRevisionPlan = vi.fn<RevisionGenerationPort["generateRevisionPlan"]>().mockResolvedValue(valid);
+    const result = await new GeneratePersonalizedRevision({ generateRevisionPlan }).execute({
+      ...request, requestId: "revision-first-valid",
+    });
+    expect(result).toEqual(valid);
+    expect(generateRevisionPlan).toHaveBeenCalledOnce();
+    expect(generateRevisionPlan.mock.calls[0]?.[0].repair).toBeUndefined();
+  });
 
   it("repairs one invalid evidence artifact and returns the complete grounded plan", async () => {
     const invalid = { ...valid, items: valid.items.map((item, index) => index === 0 ? { ...item, evidence: [{ segmentId: "M01-P001-S999" }] } : item) };
@@ -52,11 +68,31 @@ describe("revision generation use case", () => {
         questions: [{ ...valid.retryActivity.questions[0], prompt: activity.questions[0].prompt }, valid.retryActivity.questions[1]] as const,
       },
     };
-    const port: RevisionGenerationPort = { generateRevisionPlan: vi.fn().mockResolvedValue(duplicate) };
-    await expect(new GeneratePersonalizedRevision(port).execute({
-      source, preparationMap: map, originalActivity: activity, originalResultId,
-      originalMcqGrade: mcqGrade, performance, writtenEvaluation, requestId: "revision-request-2",
+    const diagnostics: RevisionValidationDiagnostic[] = [];
+    const generateRevisionPlan = vi.fn<RevisionGenerationPort["generateRevisionPlan"]>().mockResolvedValue(duplicate);
+    const port: RevisionGenerationPort = { generateRevisionPlan };
+    await expect(new GeneratePersonalizedRevision(port, (diagnostic) => diagnostics.push(diagnostic)).execute({
+      ...request, requestId: "revision-request-2",
     })).rejects.toMatchObject({ code: "MODEL_OUTPUT_INVALID" });
+    expect(generateRevisionPlan).toHaveBeenCalledTimes(2);
+    expect(diagnostics).toHaveLength(2);
+    expect(diagnostics.map(({ phase, validationCode, fieldPath }) => ({ phase, validationCode, fieldPath }))).toEqual([
+      { phase: "first_pass", validationCode: "DUPLICATE_PROMPT", fieldPath: "retryActivity.questions[0].prompt" },
+      { phase: "repair", validationCode: "DUPLICATE_PROMPT", fieldPath: "retryActivity.questions[0].prompt" },
+    ]);
+    const serialized = JSON.stringify(diagnostics);
+    expect(serialized).not.toContain(activity.questions[0].prompt);
+    expect(serialized).not.toContain(source.segments[0]?.text);
+    expect(serialized).not.toContain("learner-answer-private");
+  });
+
+  it("rejects invalid evidence after repair with only a safe public error", async () => {
+    const invalid = { ...valid, items: valid.items.map((item, index) => index === 0 ? { ...item, evidence: [{ segmentId: "M01-P001-S999" }] } : item) };
+    const generateRevisionPlan = vi.fn<RevisionGenerationPort["generateRevisionPlan"]>().mockResolvedValue(invalid);
+    await expect(new GeneratePersonalizedRevision({ generateRevisionPlan }).execute({
+      ...request, requestId: "revision-invalid-evidence",
+    })).rejects.toMatchObject({ code: "EVIDENCE_INVALID" });
+    expect(generateRevisionPlan).toHaveBeenCalledTimes(2);
   });
 
   it("rejects source-version mismatch before calling the provider", async () => {

@@ -13,7 +13,7 @@ import { activitySetApiSchema, preparationMapApiSchema, revisionPlanApiSchema, w
 const RESULTS_PATH = resolve(process.env["ANKUR_PRODUCTION_ADAPTIVE_RESULTS_PATH"] ?? "evaluation/production-adaptive/RESULTS.md");
 const DEFAULT_BASE_URL = "https://ankur-gamma.vercel.app";
 
-interface Phase { readonly name: string; readonly status: number; readonly latencyMs: number }
+interface Phase { readonly name: string; readonly status: number; readonly latencyMs: number; readonly errorCode?: string }
 
 function dataOf(value: unknown): unknown {
   if (typeof value !== "object" || value === null || Reflect.get(value, "ok") !== true) throw new Error("Production returned a non-success envelope.");
@@ -26,8 +26,18 @@ async function requestJson(phases: Phase[], baseUrl: string, name: string, path:
   headers.set("Content-Type", "application/json");
   headers.set("x-ankur-session-id", "production-adaptive-verifier");
   const response = await fetch(`${baseUrl}${path}`, { ...init, headers, signal: AbortSignal.timeout(200_000) });
-  phases.push({ name, status: response.status, latencyMs: Math.round(performance.now() - started) });
   const value: unknown = await response.json();
+  const safeError: unknown = typeof value === "object" && value !== null ? Reflect.get(value, "error") : undefined;
+  const candidateCode: unknown = typeof safeError === "object" && safeError !== null ? Reflect.get(safeError, "code") as unknown : undefined;
+  const safeCode = typeof candidateCode === "string"
+    ? candidateCode
+    : undefined;
+  phases.push({
+    name,
+    status: response.status,
+    latencyMs: Math.round(performance.now() - started),
+    ...(safeCode === undefined ? {} : { errorCode: safeCode }),
+  });
   if (!response.ok) throw new Error(`Production phase ${name} returned HTTP ${String(response.status)}.`);
   return dataOf(value);
 }
@@ -168,9 +178,9 @@ async function main() {
 
 ## Safe phase metadata
 
-| Phase | HTTP | Wall latency (ms) |
-|---|---:|---:|
-${phases.map((phase) => `| ${phase.name} | ${String(phase.status)} | ${String(phase.latencyMs)} |`).join("\n")}
+| Phase | HTTP | Safe code | Wall latency (ms) |
+|---|---:|---|---:|
+${phases.map((phase) => `| ${phase.name} | ${String(phase.status)} | ${phase.errorCode ?? "-"} | ${String(phase.latencyMs)} |`).join("\n")}
 
 No credential, raw source, prompt, provider body, question, reference answer, learner answer, or feedback is stored in this report.
 `;

@@ -16,6 +16,11 @@ import {
 } from "../../domain/revision/revision-plan";
 import { rehydrateEvidenceWindow, type ConfirmedSource } from "../../domain/source/confirmed-source";
 import { ApplicationError } from "../../shared/errors/application-error";
+import {
+  revisionExpectedCategory,
+  sanitizeRevisionFieldPath,
+  type RevisionDiagnosticObserver,
+} from "../diagnostics/revision-validation-diagnostic";
 import type { RevisionGenerationPort } from "../ports/revision-generation-port";
 
 function failureMessages(failures: ReturnType<typeof validateRevisionPlan>): string[] {
@@ -53,7 +58,39 @@ function samePerformance(
 }
 
 export class GeneratePersonalizedRevision {
-  constructor(private readonly generator: RevisionGenerationPort) {}
+  constructor(
+    private readonly generator: RevisionGenerationPort,
+    private readonly diagnosticObserver?: RevisionDiagnosticObserver,
+  ) {}
+
+  private recordFailures(input: {
+    readonly failures: ReturnType<typeof validateRevisionPlan>;
+    readonly plan: RevisionPlan;
+    readonly source: ConfirmedSource;
+    readonly targetConceptCount: number;
+    readonly phase: "first_pass" | "repair";
+  }): void {
+    const responseCharacterCount = JSON.stringify(input.plan).length;
+    const permittedEvidenceCharacterCount = input.source.segments.reduce((sum, segment) => sum + segment.text.length, 0);
+    for (const failure of input.failures) {
+      this.diagnosticObserver?.({
+        modelId: input.plan.artifact.modelId,
+        promptVersion: input.plan.artifact.promptVersion,
+        schemaVersion: input.plan.schemaVersion,
+        sourceVersionId: input.source.sourceVersionId,
+        targetConceptCount: input.targetConceptCount,
+        permittedEvidenceSegmentCount: input.source.segments.length,
+        permittedEvidenceCharacterCount,
+        phase: input.phase,
+        validationCode: failure.reason,
+        fieldPath: sanitizeRevisionFieldPath(failure.path),
+        expected: revisionExpectedCategory(failure.reason),
+        responseCharacterCount,
+        latencyMs: input.plan.artifact.latencyMs,
+        repairAttempted: true,
+      });
+    }
+  }
 
   async execute(input: {
     readonly source: ConfirmedSource;
@@ -143,6 +180,13 @@ export class GeneratePersonalizedRevision {
       plan: first,
     });
     if (firstFailures.length === 0) return first;
+    this.recordFailures({
+      failures: firstFailures,
+      plan: first,
+      source: evidenceWindow,
+      targetConceptCount: selection.targetConceptIds.length,
+      phase: "first_pass",
+    });
 
     const repaired = await this.generator.generateRevisionPlan({
       ...generationInput,
@@ -158,6 +202,13 @@ export class GeneratePersonalizedRevision {
       plan: repaired,
     });
     if (repairedFailures.length > 0) {
+      this.recordFailures({
+        failures: repairedFailures,
+        plan: repaired,
+        source: evidenceWindow,
+        targetConceptCount: selection.targetConceptIds.length,
+        phase: "repair",
+      });
       throw new ApplicationError(evidenceFailure(repairedFailures) ? "EVIDENCE_INVALID" : "MODEL_OUTPUT_INVALID");
     }
     return repaired;

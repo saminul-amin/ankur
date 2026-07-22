@@ -30,6 +30,10 @@ export interface ProviderValidationDiagnostic {
   readonly code: string;
   readonly fieldPath: string;
   readonly expected: string;
+  readonly responseCharacterCount?: number;
+  readonly responseTokenCount?: number;
+  readonly latencyMs?: number;
+  readonly repairAttempted?: boolean;
 }
 
 export type ProviderDiagnosticObserver = (diagnostic: ProviderValidationDiagnostic) => void;
