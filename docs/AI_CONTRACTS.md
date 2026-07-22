@@ -43,9 +43,9 @@ Only `src/infrastructure/gemma/*` may import the Google SDK.
 |---|---|---|---|---|
 | Page transcription | `transcription.v1` | `transcription.v1` | minimal | 26B A4B |
 | Material analysis | `analysis.v1` | `preparation-map.v1` | high | 26B A4B |
-| Assessment generation | `assessment.v4` | `assessment-mcq.v4` / `assessment-written.v4` | minimal | 26B A4B |
-| Candidate review/repair | `assessment-evidence-repair.v4` | `activity-set.v2` | high | 26B A4B |
-| Written evaluation | `written-evaluation.v4` | `written-evaluation-transport.v4` | high | 26B A4B |
+| Assessment generation | `assessment.v5` | `assessment-mcq.v5` / `assessment-written-question.v5` / `assessment-written-rubric.v5` | minimal | 26B A4B |
+| Candidate review/repair | `assessment-evidence-repair.v5` | `activity-set.v2` | high | 26B A4B |
+| Written evaluation | `written-evaluation.v5` | `written-evaluation-transport.v5` | high | 26B A4B |
 | Revision and retry | `revision.v1` | `revision-plan.v1` | high | 26B A4B |
 
 Thinking levels reflect official Gemma 4 hosted controls: `high` for enabled and `minimal` for disabled/minimal behavior.
@@ -171,6 +171,8 @@ Quality rules:
 - all questions answerable from confirmed evidence;
 - rubric criteria independently gradeable and mark-bounded.
 
+The P0 assessment transport uses three shallow native-schema calls: MCQ wording/options, written-question wording, and three rubric descriptions. Application code assembles the fixed reference answer from selected preparation-map concept descriptions, prepends each rubric description with a bounded concept anchor, then deterministically assigns the selected concept IDs, their already validated immutable evidence segment IDs, and criterion marks. Provider output cannot introduce or alter those values.
+
 ### 7.4 Written evaluation
 
 Input is minimized to:
@@ -190,7 +192,7 @@ Output must include:
 
 The model cannot change the question, rubric, maximum marks, or concept definitions.
 
-The P0 written-evaluation transport returns only a categorical `met`, `partial`, or `not_met` judgment and bounded reason for each fixed rubric criterion, plus bounded claim/feedback scalars. Application code deterministically derives criterion marks, totals, status, concept partitions, evidence, and artifact metadata.
+The P0 written-evaluation transport returns only a categorical `met`, `partial`, or `not_met` judgment and bounded reason for each fixed rubric criterion. Application code deterministically derives criterion marks, totals, status, concept partitions, claims, feedback, evidence, and artifact metadata.
 
 ### 7.5 Revision and retry
 

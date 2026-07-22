@@ -33,23 +33,15 @@ export function createWrittenEvaluationProviderContract(input: {
     properties[reasonField] = { type: "string", minLength: 1, maxLength: 400 };
     required.push(judgmentField, reasonField);
   }
-  shape["incorrectClaim"] = z.string().max(500);
-  shape["unsupportedClaim"] = z.string().max(500);
-  shape["feedback"] = z.string().min(1).max(800);
-  properties["incorrectClaim"] = { type: "string", maxLength: 500 };
-  properties["unsupportedClaim"] = { type: "string", maxLength: 500 };
-  properties["feedback"] = { type: "string", minLength: 1, maxLength: 800 };
-  required.push("incorrectClaim", "unsupportedClaim", "feedback");
-
-  // Derived totals or status fields are never consumed; strip them while keeping
-  // all authoritative criterion values validated against their fixed bounds.
-  const rawSchema = z.object(shape);
+  // The provider owns only semantic judgments and bounded reasons. Application
+  // code derives every other result field from this fixed rubric transport.
+  const rawSchema = z.object(shape).strict();
   const schema = rawSchema.transform((value): WrittenEvaluationProviderOutput => ({
     criterionJudgments: input.criterionMaximumMarks.map((_, index) => value[fieldName(index, "Judgment")] as "met" | "partial" | "not_met"),
     criterionReasons: input.criterionMaximumMarks.map((_, index) => String(value[fieldName(index, "Reason")])),
-    incorrectClaims: String(value["incorrectClaim"]).trim().length === 0 ? [] : [String(value["incorrectClaim"])],
-    unsupportedClaims: String(value["unsupportedClaim"]).trim().length === 0 ? [] : [String(value["unsupportedClaim"])],
-    feedback: String(value["feedback"]),
+    incorrectClaims: [],
+    unsupportedClaims: [],
+    feedback: input.criterionMaximumMarks.map((_, index) => String(value[fieldName(index, "Reason")])).join(" "),
   }));
 
   return {

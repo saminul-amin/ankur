@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
-import { createSampleSource, SAMPLE_PARTIAL_WRITTEN_ANSWER } from "../../src/application/sample/sample-vertical-slice.js";
+import { createSampleSource } from "../../src/application/sample/sample-vertical-slice.js";
 import { calculateConceptPerformance, reconcileAssessmentTotal, weakConcepts } from "../../src/domain/assessments/concept-performance.js";
 import { gradeMcq, validateActivitySet } from "../../src/domain/assessments/mcq.js";
 import { validateWrittenEvaluation } from "../../src/domain/assessments/written-evaluation.js";
@@ -16,6 +16,7 @@ import {
 const RESULTS_PATH = resolve(process.env["ANKUR_PRODUCTION_RESULTS_PATH"] ?? "evaluation/production/RESULTS.md");
 const DEFAULT_BASE_URL = "https://ankur-gamma.vercel.app";
 const REQUIRED_RUNS = 3;
+const PARTIAL_PARAPHRASE_ANSWER = "খাদ্য বানাতে উদ্ভিদ পানি এবং কার্বন ডাই-অক্সাইডকে উপকরণ হিসেবে ব্যবহার করে।";
 
 interface Phase {
   readonly run: number;
@@ -188,7 +189,7 @@ async function main(): Promise<void> {
       ]);
       const evidenceSegments = segments.filter((segment) => allowedIds.has(segment.id));
       const window = rehydrateEvidenceWindow({ sourceVersionId: source.sourceVersionId, language: source.language, segments: evidenceSegments });
-      const partialAnswer = SAMPLE_PARTIAL_WRITTEN_ANSWER;
+      const partialAnswer = PARTIAL_PARAPHRASE_ANSWER;
       const written = writtenEvaluationApiSchema.parse(await requestJson(phases, baseUrl, run, "written-partial", "/api/written-evaluations", {
         method: "POST",
         body: JSON.stringify({

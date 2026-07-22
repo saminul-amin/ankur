@@ -18,7 +18,7 @@
 - Source-ID and quote validation proves that evidence exists, not that every generated interpretation is pedagogically ideal.
 - Written grading is a criterion-level AI estimate and must not be treated as an official academic grade.
 - Provider latency, rate limits, availability, and quota vary by project and time. The provider-free sample is therefore intentionally retained.
-- The latest bounded Task 04B.2 run achieved 9/9 final-valid operations with zero grounding, quote, concept, or mark-reconciliation failures. First-pass validity was 6/9; all three assessment generations required the one bounded JSON repair. First-pass validity is an optimization metric, not an independent release blocker.
+- The latest bounded Task 04B.2 run achieved 9/9 final-valid operations and 9/9 first-pass validity with zero grounding, quote, concept, or mark-reconciliation failures. First-pass validity is an optimization metric, not an independent release blocker, and a single bounded repair remains available for provider variability.
 
 ## Document limitations
 

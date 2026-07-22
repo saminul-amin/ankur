@@ -32,6 +32,7 @@ import { readRuntimeConfig } from "../../src/shared/config/runtime-config.js";
 const RESULTS_PATH = resolve("evaluation/provider-reliability/RESULTS.md");
 const EXPECTED_PROVIDER_OPERATIONS = 9;
 const COMPLETE_CORRECT_ANSWER = "সালোকসংশ্লেষণে উদ্ভিদ পানি ও কার্বন ডাই-অক্সাইড গ্রহণ করে। পাতার ক্লোরোফিল সূর্যের আলো শোষণ করে প্রক্রিয়াটি চালায়। এতে উদ্ভিদের খাদ্য তৈরি হয় এবং অক্সিজেন বাইরে যায়।";
+const PARTIAL_PARAPHRASE_ANSWER = "খাদ্য বানাতে উদ্ভিদ পানি এবং কার্বন ডাই-অক্সাইডকে উপকরণ হিসেবে ব্যবহার করে।";
 
 interface TransportRecord {
   readonly schemaVersion: string;
@@ -311,9 +312,7 @@ async function main(): Promise<void> {
 
     const window = gradingSource(source, activity);
     const question = activity.questions[1];
-    const partialAnswer = question.referenceAnswer.trim().split(/\s+/u)
-      .slice(0, Math.max(3, Math.ceil(question.referenceAnswer.trim().split(/\s+/u).length * 0.45)))
-      .join(" ");
+    const partialAnswer = PARTIAL_PARAPHRASE_ANSWER;
 
     const persisted = toPersistedIngestionSession({
       stage: "assessment", mode: "live", sourceKind: "text", pages: [], priorityInstruction: "",
@@ -348,13 +347,16 @@ async function main(): Promise<void> {
       };
       try {
         const result = await new EvaluateWrittenAnswer(observedWritten).execute({ source: window, question, studentAnswer: answer, requestId: crypto.randomUUID() });
-        const failures = validateWrittenEvaluation(window, question, result);
+        const validationFailures = validateWrittenEvaluation(window, question, result);
         const expectedStatus = answerKind === "correct"
           ? result.status === "correct" && result.awardedMarks === 5
           : result.status === "partially_correct" && result.awardedMarks > 0 && result.awardedMarks < 5;
+        const failures: EvidenceValidationFailure[] = expectedStatus
+          ? validationFailures
+          : [...validationFailures, { path: "awardedMarks", reason: "INVARIANT_VIOLATION" }];
         const diagnostics = [
           ...validationDiagnostics.slice(diagnosticStart).map((diagnostic) => ({ ...diagnostic, operation: label })),
-          ...diagnosticsForValidation({ failures, operation: label, promptVersion: "written-evaluation.v4", schemaVersion: "written-evaluation.v1", phase: applicationCalls === 1 ? "first_pass" : "repair" }),
+          ...diagnosticsForValidation({ failures, operation: label, promptVersion: "written-evaluation.v5", schemaVersion: "written-evaluation.v1", phase: applicationCalls === 1 ? "first_pass" : "repair" }),
         ];
         operations.push(operation({
           label, finalSuccess: failures.length === 0 && expectedStatus, applicationCalls, wallStartedAt,
@@ -363,7 +365,7 @@ async function main(): Promise<void> {
       } catch (error) {
         const diagnostics = validationDiagnostics.slice(diagnosticStart).map((diagnostic) => ({ ...diagnostic, operation: label }));
         if (diagnostics.length === 0) diagnostics.push(controlledFailureDiagnostic({
-          error, operation: label, modelId: config.primaryModel, promptVersion: "written-evaluation.v4", schemaVersion: "written-evaluation.v1",
+          error, operation: label, modelId: config.primaryModel, promptVersion: "written-evaluation.v5", schemaVersion: "written-evaluation.v1",
         }));
         operations.push(operation({
           label, finalSuccess: false, applicationCalls, wallStartedAt,
@@ -405,12 +407,13 @@ async function main(): Promise<void> {
 - Completed: ${new Date().toISOString()}
 - Fixture: team-authored repository photosynthesis source
 - Correct-answer fixture: team-authored complete paraphrase, not the generated reference text
+- Partial-answer fixture: team-authored incomplete paraphrase, not source or generated-reference text
 - Model: \`${config.primaryModel}\`
 - Assessment thinking: \`minimal\` first pass; \`high\` only for bounded application repair
 - Written-grading thinking: \`high\`
 - Non-empty structural schema-repair thinking: \`minimal\`
-- Assessment prompt/schema: \`assessment.v4\`; \`assessment-mcq.v4\` and \`assessment-written.v4\`
-- Written prompt/schema: \`written-evaluation.v4\`; \`written-evaluation-transport.v4\`
+- Assessment prompt/schema: \`assessment.v5\`; \`assessment-mcq.v5\`, \`assessment-written-question.v5\`, and \`assessment-written-rubric.v5\`
+- Written prompt/schema: \`written-evaluation.v5\`; \`written-evaluation-transport.v5\`
 - Provider operations completed: ${String(operations.length)}/${String(EXPECTED_PROVIDER_OPERATIONS)}
 - First-pass validated: ${String(firstPassCount)}/${String(operations.length)} (${firstPassRate.toFixed(1)}%) — optimization metric only
 - Repaired-valid operations: ${String(repairedValidCount)}

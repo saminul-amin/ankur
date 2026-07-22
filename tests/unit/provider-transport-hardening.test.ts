@@ -42,36 +42,28 @@ class QueueProvider implements GenerativeModelPort {
 }
 
 describe("provider transport hardening", () => {
-  it("constrains generated IDs and deterministically assembles the five-mark rubric", async () => {
+  it("keeps grounding IDs out of provider output and deterministically assembles the five-mark rubric", async () => {
     const source = createSampleSource();
     const map = createSamplePreparationMap(source);
     const provider = new QueueProvider([
       {
         prompt: "সালোকসংশ্লেষণে কোন পদার্থ নির্গত হয়?",
-        conceptId: "concept-photosynthesis-result",
         explanation: "উৎসে অক্সিজেন নির্গমনের কথা বলা হয়েছে।",
         optionA: "পানি",
         optionB: "কার্বন ডাই-অক্সাইড",
         optionC: "ক্লোরোফিল",
         optionD: "অক্সিজেন",
         correctOptionId: "D",
-        evidenceSegmentId: "M01-P003-S001",
       },
       {
         prompt: "সালোকসংশ্লেষণের উপকরণ, আলোর ভূমিকা এবং ফলাফল ব্যাখ্যা কর।",
         explanation: "উত্তরে প্রক্রিয়াটির তিনটি দিক যুক্ত করতে হবে।",
         expectedLength: "short_paragraph",
-        referenceAnswer: "পানি ও কার্বন ডাই-অক্সাইড ব্যবহার করে, ক্লোরোফিল সূর্যালোক শোষণ করে, খাদ্য তৈরি ও অক্সিজেন নির্গত হয়।",
+      },
+      {
         criterion1Description: "উপকরণ উল্লেখ করে।",
-        criterion1RequiredConceptId: "concept-photosynthesis-inputs",
-        criterion1EvidenceSegmentId: "M01-P001-S001",
         criterion2Description: "আলো ও ক্লোরোফিলের ভূমিকা ব্যাখ্যা করে।",
-        criterion2RequiredConceptId: "concept-photosynthesis-light",
-        criterion2EvidenceSegmentId: "M01-P002-S001",
         criterion3Description: "ফলাফল উল্লেখ করে।",
-        criterion3RequiredConceptId: "concept-photosynthesis-result",
-        criterion3EvidenceSegmentId: "M01-P003-S001",
-        totalMarks: 5,
       },
     ]);
     const activity = await new GemmaLearningContentAdapter(provider).generateMixedAssessment({
@@ -84,11 +76,24 @@ describe("provider transport hardening", () => {
     });
 
     expect(activity.questions[1].rubric.map((criterion) => criterion.maximumMarks)).toEqual([2, 2, 1]);
+    for (const [index, concept] of map.concepts.entries()) {
+      expect(activity.questions[1].rubric[index]?.description).toContain(concept.description);
+    }
     expect(activity.questions[1].requiredConceptIds).toEqual(map.concepts.map((concept) => concept.id));
+    expect(activity.questions[1].referenceAnswer).toBe(map.concepts.map((concept) => concept.description).join(" "));
     expect(validateActivitySet(source, map, activity)).toEqual([]);
-    expect(provider.requests.map((request) => request.schemaVersion)).toEqual(["assessment-mcq.v4", "assessment-written.v4"]);
-    expect(JSON.stringify(provider.requests[0]?.jsonSchema)).toContain("concept-photosynthesis-result");
+    expect(provider.requests.map((request) => request.schemaVersion)).toEqual([
+      "assessment-mcq.v5",
+      "assessment-written-question.v5",
+      "assessment-written-rubric.v5",
+    ]);
+    expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toContain("conceptId");
+    expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toContain("evidenceSegmentId");
+    expect(JSON.stringify(provider.requests[1]?.jsonSchema)).not.toContain("RequiredConceptId");
+    expect(JSON.stringify(provider.requests[1]?.jsonSchema)).not.toContain("EvidenceSegmentId");
     expect(JSON.stringify(provider.requests[1]?.jsonSchema)).not.toContain("criterion1MaximumMarks");
+    expect(JSON.stringify(provider.requests[2]?.jsonSchema)).not.toContain("criterion1MaximumMarks");
+    expect(JSON.stringify(provider.requests[0]?.contents[0])).toContain("concept-photosynthesis-inputs");
     expect(provider.requests[1]?.contents[0]).toMatchObject({ kind: "text" });
     expect(JSON.stringify(provider.requests[1]?.contents[0])).toContain("সালোকসংশ্লেষণে কোন পদার্থ নির্গত হয়");
   });
@@ -110,10 +115,6 @@ describe("provider transport hardening", () => {
       criterion2Reason: "The second criterion is only partly explained.",
       criterion3Judgment: "not_met",
       criterion3Reason: "The final required outcome is missing.",
-      incorrectClaim: "",
-      unsupportedClaim: "",
-      feedback: "Connect the missing outcome to the described process.",
-      status: "partially_correct",
     }]);
     const result = await new GemmaWrittenEvaluationAdapter(provider).evaluateWrittenAnswer({
       source,
@@ -128,13 +129,14 @@ describe("provider transport hardening", () => {
     expect(new Set([...result.coveredConceptIds, ...result.missingConceptIds])).toEqual(new Set(question.requiredConceptIds));
     expect(result.recommendedRevisionConceptIds).toEqual(result.missingConceptIds);
     expect(validateWrittenEvaluation(source, question, result)).toEqual([]);
-    expect(provider.requests[0]?.schemaVersion).toBe("written-evaluation-transport.v4");
+    expect(provider.requests[0]?.schemaVersion).toBe("written-evaluation-transport.v5");
     expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toContain('"status"');
     expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toContain("AwardedMarks");
+    expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toContain("feedback");
+    expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toContain("Claim");
     expect(provider.requests[0]?.jsonSchema).toMatchObject({
       properties: {
         criterion1Reason: { minLength: 1, maxLength: 400 },
-        feedback: { minLength: 1, maxLength: 800 },
       },
     });
   });
@@ -156,9 +158,6 @@ describe("provider transport hardening", () => {
       criterion2Reason: "Provider under-awarded criterion two.",
       criterion3Judgment: "not_met",
       criterion3Reason: "Provider under-awarded criterion three.",
-      incorrectClaim: "Contradictory provider claim.",
-      unsupportedClaim: "Contradictory provider claim.",
-      feedback: "Contradictory provider feedback.",
     }]);
 
     const result = await new GemmaWrittenEvaluationAdapter(provider).evaluateWrittenAnswer({

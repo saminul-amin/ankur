@@ -17,8 +17,8 @@ export class GemmaWrittenEvaluationAdapter implements WrittenEvaluationPort {
       criterionMaximumMarks: input.question.rubric.map((criterion) => criterion.maximumMarks),
     });
     const result = await this.model.generateStructured({
-      task: "structured_generation", modelId: MODEL, promptVersion, schemaVersion: "written-evaluation-transport.v4",
-      thinkingLevel: "high", temperature: 0.1, maxOutputTokens: 1_800, timeoutMs: this.timeoutMs,
+      task: "structured_generation", modelId: MODEL, promptVersion, schemaVersion: "written-evaluation-transport.v5",
+      thinkingLevel: "high", temperature: 0.1, maxOutputTokens: 1_800, timeoutMs: Math.min(this.timeoutMs, 55_000),
       contents: [{ kind: "text", text: buildWrittenEvaluationPrompt(input) }], outputMode: "native",
       jsonSchema: transport.jsonSchema, schema: transport.schema, maxSchemaRepairs: 1,
     });

@@ -124,8 +124,8 @@ Repository-owned reports record only redacted, reproducible metadata:
 - Provider Gate 1: Bengali text, Bengali image transcription, native structured output, thinking controls, and typed error mapping passed.
 - Document ingestion: digital, scanned, mixed-PDF, and standalone-image routing passed.
 - Mixed assessment: correct `5/5`, partial `2/5`, and deterministic empty `0/5` written results reconciled successfully.
-- Current offline matrix: 84 Vitest tests and 20 applicable Playwright cases passed; the dependency audit reported zero vulnerabilities.
-- The latest explicit-opt-in provider benchmark reached 9/9 final-valid operations with zero grounding, quote, concept, or mark-reconciliation failures. First-pass validity was 6/9 and remains an optimization metric, not a separate release blocker.
+- Current offline matrix: 86 Vitest tests and 20 applicable Playwright cases passed; the dependency audit reported zero vulnerabilities.
+- The latest explicit-opt-in provider benchmark reached 9/9 final-valid operations with zero grounding, quote, concept, or mark-reconciliation failures. First-pass validity was 9/9 in that bounded run and remains an optimization metric, not a separate release blocker.
 
 See the [evaluation directory](evaluation) for the recorded fixtures, methodology, screenshots, and limitations. These are bounded prototype measurements, not claims of universal accuracy.
 

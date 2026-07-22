@@ -59,31 +59,32 @@ export const preparationMapProviderSchema = z.object({
 
 export const mcqCandidateProviderSchema = z.object({
   prompt: z.string().min(1).max(500),
-  conceptId: conceptIdSchema,
   explanation: z.string().min(1).max(600),
   optionA: z.string().min(1).max(240),
   optionB: z.string().min(1).max(240),
   optionC: z.string().min(1).max(240),
   optionD: z.string().min(1).max(240),
   correctOptionId: z.enum(["A", "B", "C", "D"]),
-  evidenceSegmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
 }).strict();
 
-// Gemma can append harmless derived fields despite an additionalProperties:false
-// native schema. Zod strips them while still validating every consumed field.
-export const writtenCandidateProviderSchema = z.object({
+// These shallow transports accept only semantic wording; application code owns
+// all identifiers, evidence, marks, and artifact metadata.
+export const writtenQuestionCandidateProviderSchema = z.object({
   prompt: z.string().min(1).max(700),
   explanation: z.string().min(1).max(700),
   expectedLength: z.enum(["one_sentence", "short_paragraph"]),
-  referenceAnswer: z.string().min(1).max(1_200),
-  criterion1Description: z.string().min(1).max(400), criterion1RequiredConceptId: conceptIdSchema, criterion1EvidenceSegmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
-  criterion2Description: z.string().min(1).max(400), criterion2RequiredConceptId: conceptIdSchema, criterion2EvidenceSegmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
-  criterion3Description: z.string().min(1).max(400), criterion3RequiredConceptId: conceptIdSchema, criterion3EvidenceSegmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
-});
+}).strict();
+
+export const writtenRubricCandidateProviderSchema = z.object({
+  criterion1Description: z.string().min(1).max(400),
+  criterion2Description: z.string().min(1).max(400),
+  criterion3Description: z.string().min(1).max(400),
+}).strict();
 
 export type PreparationMapProviderOutput = z.infer<typeof preparationMapProviderSchema>;
 export type McqCandidateProviderOutput = z.infer<typeof mcqCandidateProviderSchema>;
-export type WrittenCandidateProviderOutput = z.infer<typeof writtenCandidateProviderSchema>;
+export type WrittenQuestionCandidateProviderOutput = z.infer<typeof writtenQuestionCandidateProviderSchema>;
+export type WrittenRubricCandidateProviderOutput = z.infer<typeof writtenRubricCandidateProviderSchema>;
 
 export const preparationMapProviderJsonSchema = {
   type: "object", additionalProperties: false,
@@ -98,38 +99,39 @@ export const preparationMapProviderJsonSchema = {
   required: ["schemaVersion", "sourceVersionId", "title", "language", "domain", "topicId", "topicName", "topicPriority", "conceptId", "conceptName", "conceptDescription", "conceptPriority", "objectiveId", "objectiveDescription", "evidenceSegmentId", "evidenceQuote", "warnings"],
 } as const;
 
-export function createMcqCandidateProviderJsonSchema(input: {
-  readonly conceptIds: readonly string[];
-  readonly segmentIds: readonly string[];
-}) {
+export function createMcqCandidateProviderJsonSchema() {
   return {
     type: "object", additionalProperties: false,
     properties: {
-      prompt: { type: "string", minLength: 1, maxLength: 500 }, conceptId: { type: "string", enum: input.conceptIds },
+      prompt: { type: "string", minLength: 1, maxLength: 500 },
       explanation: { type: "string", minLength: 1, maxLength: 600 },
       optionA: { type: "string", minLength: 1, maxLength: 240 }, optionB: { type: "string", minLength: 1, maxLength: 240 },
       optionC: { type: "string", minLength: 1, maxLength: 240 }, optionD: { type: "string", minLength: 1, maxLength: 240 },
-      correctOptionId: { type: "string", enum: ["A", "B", "C", "D"] }, evidenceSegmentId: { type: "string", enum: input.segmentIds },
+      correctOptionId: { type: "string", enum: ["A", "B", "C", "D"] },
     },
-    required: ["prompt", "conceptId", "explanation", "optionA", "optionB", "optionC", "optionD", "correctOptionId", "evidenceSegmentId"],
+    required: ["prompt", "explanation", "optionA", "optionB", "optionC", "optionD", "correctOptionId"],
   } as const;
 }
 
-export function createWrittenCandidateProviderJsonSchema(input: {
-  readonly conceptIds: readonly string[];
-  readonly segmentIds: readonly string[];
-}) {
-  const conceptId = { type: "string", enum: input.conceptIds } as const;
-  const segmentId = { type: "string", enum: input.segmentIds } as const;
+export function createWrittenQuestionCandidateProviderJsonSchema() {
   return {
     type: "object", additionalProperties: false,
     properties: {
       prompt: { type: "string", minLength: 1, maxLength: 700 }, explanation: { type: "string", minLength: 1, maxLength: 700 },
-      expectedLength: { type: "string", enum: ["one_sentence", "short_paragraph"] }, referenceAnswer: { type: "string", minLength: 1, maxLength: 1_200 },
-      criterion1Description: { type: "string", minLength: 1, maxLength: 400 }, criterion1RequiredConceptId: conceptId, criterion1EvidenceSegmentId: segmentId,
-      criterion2Description: { type: "string", minLength: 1, maxLength: 400 }, criterion2RequiredConceptId: conceptId, criterion2EvidenceSegmentId: segmentId,
-      criterion3Description: { type: "string", minLength: 1, maxLength: 400 }, criterion3RequiredConceptId: conceptId, criterion3EvidenceSegmentId: segmentId,
+      expectedLength: { type: "string", enum: ["one_sentence", "short_paragraph"] },
     },
-    required: ["prompt", "explanation", "expectedLength", "referenceAnswer", "criterion1Description", "criterion1RequiredConceptId", "criterion1EvidenceSegmentId", "criterion2Description", "criterion2RequiredConceptId", "criterion2EvidenceSegmentId", "criterion3Description", "criterion3RequiredConceptId", "criterion3EvidenceSegmentId"],
+    required: ["prompt", "explanation", "expectedLength"],
+  } as const;
+}
+
+export function createWrittenRubricCandidateProviderJsonSchema() {
+  return {
+    type: "object", additionalProperties: false,
+    properties: {
+      criterion1Description: { type: "string", minLength: 1, maxLength: 400 },
+      criterion2Description: { type: "string", minLength: 1, maxLength: 400 },
+      criterion3Description: { type: "string", minLength: 1, maxLength: 400 },
+    },
+    required: ["criterion1Description", "criterion2Description", "criterion3Description"],
   } as const;
 }
