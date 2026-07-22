@@ -26,7 +26,9 @@ import {
 
 const MODEL = "gemma-4-26b-a4b-it" as const;
 
-const RETRY_OUTPUT_TOKEN_BUDGET = 900;
+const RETRY_MCQ_OUTPUT_TOKEN_BUDGET = 1_800;
+const RETRY_WRITTEN_OUTPUT_TOKEN_BUDGET = 1_800;
+const RETRY_RUBRIC_OUTPUT_TOKEN_BUDGET = 1_600;
 
 function optionsWithDistinctOrder(input: {
   readonly values: readonly [string, string, string, string];
@@ -111,13 +113,13 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
     } as const;
     const mcqResult = await this.model.generateStructured({
       task: "structured_generation", modelId: MODEL, promptVersion, schemaVersion: "revision-retry-mcq.v1",
-      thinkingLevel: "high", temperature: 0.1, maxOutputTokens: RETRY_OUTPUT_TOKEN_BUDGET, timeoutMs: this.timeoutMs,
+      thinkingLevel: "high", temperature: 0.1, maxOutputTokens: RETRY_MCQ_OUTPUT_TOKEN_BUDGET, timeoutMs: this.timeoutMs,
       contents: [{ kind: "text", text: buildRevisionRetryPrompt(basePromptInput, "mcq", assignment) }], outputMode: "native",
       jsonSchema: createMcqCandidateProviderJsonSchema(), schema: mcqCandidateProviderSchema, maxSchemaRepairs: 1,
     });
     const writtenResult = await this.model.generateStructured({
       task: "structured_generation", modelId: MODEL, promptVersion, schemaVersion: "revision-retry-written-question.v1",
-      thinkingLevel: "high", temperature: 0.1, maxOutputTokens: RETRY_OUTPUT_TOKEN_BUDGET, timeoutMs: this.timeoutMs,
+      thinkingLevel: "high", temperature: 0.1, maxOutputTokens: RETRY_WRITTEN_OUTPUT_TOKEN_BUDGET, timeoutMs: this.timeoutMs,
       contents: [{ kind: "text", text: buildRevisionRetryPrompt(basePromptInput, "written_question", assignment, mcqResult.value.prompt) }], outputMode: "native",
       jsonSchema: createWrittenQuestionCandidateProviderJsonSchema(), schema: writtenQuestionCandidateProviderSchema, maxSchemaRepairs: 1,
     });
@@ -126,7 +128,7 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
     if (referenceAnswer.length === 0) throw new ProviderError("INVALID_OUTPUT");
     const rubricResult = await this.model.generateStructured({
       task: "structured_generation", modelId: MODEL, promptVersion, schemaVersion: "revision-retry-rubric.v1",
-      thinkingLevel: "high", temperature: 0.1, maxOutputTokens: RETRY_OUTPUT_TOKEN_BUDGET, timeoutMs: this.timeoutMs,
+      thinkingLevel: "high", temperature: 0.1, maxOutputTokens: RETRY_RUBRIC_OUTPUT_TOKEN_BUDGET, timeoutMs: this.timeoutMs,
       contents: [{ kind: "text", text: buildRevisionRetryPrompt(basePromptInput, "written_rubric", assignment, referenceAnswer) }], outputMode: "native",
       jsonSchema: createWrittenRubricCandidateProviderJsonSchema(), schema: writtenRubricCandidateProviderSchema, maxSchemaRepairs: 1,
     });

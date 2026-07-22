@@ -97,7 +97,7 @@ OUTPUT CONTRACT
 ${outputContract}
 
 QUALITY RULES
-Use the source language. Stay answerable only from SOURCE DATA. Paraphrase source meaning instead of copying source sentences. Avoid adding external facts. Keep all scalar text concise.${repair}`;
+Use the source language. Stay answerable only from SOURCE DATA. Paraphrase source meaning instead of copying source sentences. For an MCQ, make all four option texts non-empty and pairwise distinct. Avoid adding external facts. Keep all scalar text concise.${repair}`;
 }
 
 export function buildRevisionItemPrompt(input: {

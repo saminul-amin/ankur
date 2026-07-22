@@ -26,12 +26,23 @@ No source text, learner answer, generated revision content, invalid response obj
 
 The local reproduction and production failure used the same commit/build, model, team-authored source fixture, source version, one target concept, permitted evidence count/size, provider configuration, 90000 ms provider timeout, and 180000 ms route duration. Both used high thinking for the memory cue, then the generic assessment transport (`assessment.v5`) with minimal thinking on first pass and high thinking on application repair. Output budgets were 650 tokens for the cue and 900/1800/1200 for MCQ/written/rubric. The repair received the invalid retry activity and validation paths but not the original questions, so it could not reliably satisfy cross-attempt distinctness. Production returned controlled HTTP 422 responses in approximately 14–16 seconds; the matching local reproduction returned the same safe `MODEL_OUTPUT_INVALID` category.
 
+## Provider-schema failure exposed by the first corrected deployment
+
+Build `3dd2b0201f6b` fixed the duplicate-prompt defect, but its first production adaptive verification reached revision and returned controlled HTTP 502 `MODEL_OUTPUT_INVALID` after 40199 ms. A production-equivalent local run classified the final provider failure as follows:
+
+| Stage | Prompt | Schema | Category/code | Safe field path | Response characters | Output tokens | Latency (ms) | Repair attempted |
+|---|---|---|---|---|---:|---:|---:|---|
+| First pass | `revision.v2` | `revision-retry-mcq.v1` | `invalid_json` / `INVALID_JSON_MAX_TOKENS` | `$` | 3006 | 900 | 20236 | yes |
+| Repair | `revision-repair.v2` | `revision-retry-mcq.v1` | `repair_response_invalid` / `REPAIR_RESPONSE_INVALID` | `$` | 0 | unavailable | 39765 | yes |
+
+The high-thinking retry MCQ exhausted the original 900-token budget before producing valid JSON, and the single bounded repair was empty. The correction increases only the revision-specific scalar budgets and explicitly requires pairwise-distinct MCQ options; it does not change the provider adapter's one-repair limit or any assessment/written-grading transport.
+
 ## Correction
 
 - Revision prompt versions: `revision.v2` and `revision-repair.v2`
 - Provider transports: `revision-item.v1`, `revision-retry-mcq.v1`, `revision-retry-written-question.v1`, and `revision-retry-rubric.v1`
 - Thinking: high for the measured adaptive-revision operation
-- Output budgets: 650 for each memory cue; 900 each for retry MCQ, written prompt, and rubric
+- Output budgets: 650 for each memory cue; 1800 for retry MCQ; 1800 for retry written; 1600 for retry rubric
 - Repair context: original questions supplied as exclusion data; previous invalid content bounded to the affected shallow component
 
 Gemma supplies only memory-aid text, retry wording/options/explanations, and rubric wording. Application code owns source version, target ordering and IDs, evidence IDs, plan/item/question/rubric IDs, marks and rubric allocations, timestamps, artifact metadata, and deterministic grounding assignments. Native structured output, Zod validation, one provider-schema repair, one application repair, grounding/quote validation, and atomic rejection remain intact.
@@ -40,8 +51,8 @@ Gemma supplies only memory-aid text, retry wording/options/explanations, and rub
 
 | Run | Final valid | Wall duration (ms) | Provider latency sum (ms) | Grounding | Quotes | Concepts | Reconciliation | Duplicates | State loss | Persistence |
 |---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| 1 | yes | 36659 | 36615 | 0 | 0 | 0 | 0 | 0 | 0 | passed |
-| 2 | yes | 76086 | 76048 | 0 | 0 | 0 | 0 | 0 | 0 | passed |
-| 3 | yes | 59463 | 59419 | 0 | 0 | 0 | 0 | 0 | 0 | passed |
+| 1 | yes | 75833 | 75788 | 0 | 0 | 0 | 0 | 0 | 0 | passed |
+| 2 | yes | 122451 | 122401 | 0 | 0 | 0 | 0 | 0 | 0 | passed |
+| 3 | yes | 61445 | 61392 | 0 | 0 | 0 | 0 | 0 | 0 | passed |
 
-Result: 3/3 revision operations were final-valid. A fourth post-clean-install verification also passed in 55794 ms wall time with zero validation, persistence, or state-loss failures. The final safe result is recorded in `evaluation/adaptive-loop/RESULTS.md`.
+Result: 3/3 revision operations were final-valid with zero grounding, quotation, concept-reference, mark-reconciliation, duplicate, persistence, or state-loss failures. Runs 1 and 2 used bounded provider-schema repair; run 2 also used the single application repair. First-pass validity remains an optimization metric, while every final artifact satisfied the unchanged domain and evidence validators. The final safe result is recorded in `evaluation/adaptive-loop/RESULTS.md`.

@@ -27,6 +27,7 @@ import { ApplicationError } from "../../src/shared/errors/application-error.js";
 import { ProviderError } from "../../src/shared/errors/provider-error.js";
 import { parsePersistedIngestionSession, toPersistedIngestionSession } from "../../src/presentation/persistence/ingestion-session.js";
 import type { RevisionValidationDiagnostic } from "../../src/application/diagnostics/revision-validation-diagnostic.js";
+import type { ProviderValidationDiagnostic } from "../../src/infrastructure/gemma/provider-diagnostics.js";
 
 const RESULTS_PATH = resolve(process.env["ANKUR_ADAPTIVE_RESULTS_PATH"] ?? "evaluation/adaptive-loop/RESULTS.md");
 
@@ -90,7 +91,11 @@ async function main() {
     return;
   }
   const startedAt = new Date().toISOString();
-  const observed = new ObservedProvider(new GoogleGenAiAdapter(config.apiKey, config.primaryModel));
+  const providerDiagnostics: ProviderValidationDiagnostic[] = [];
+  const observed = new ObservedProvider(new GoogleGenAiAdapter(config.apiKey, config.primaryModel, undefined, (diagnostic) => {
+    providerDiagnostics.push(diagnostic);
+    process.stderr.write(`PROVIDER_VALIDATION_DIAGNOSTIC ${JSON.stringify(diagnostic)}\n`);
+  }));
   const learningAdapter = new GemmaLearningContentAdapter(observed, config.requestTimeoutMs);
   const writtenAdapter = new GemmaWrittenEvaluationAdapter(observed, config.requestTimeoutMs);
   const revisionAdapter = new GemmaRevisionGenerationAdapter(observed, config.requestTimeoutMs);
@@ -237,7 +242,7 @@ async function main() {
 - Revision prompt version: ${plan.artifact.promptVersion}
 - Revision schema version: ${plan.schemaVersion}
 - Thinking level: ${plan.artifact.thinkingLevel}
-- Output-token budgets: memory cue 650; retry MCQ 900; retry written 900; retry rubric 900
+- Output-token budgets: memory cue 650; retry MCQ 1800; retry written 1800; retry rubric 1600
 - Target concept IDs: ${plan.targetConceptIds.join(", ")}
 - Permitted evidence segment IDs: ${permittedEvidenceIds.join(", ")}
 - Permitted evidence segments: ${String(permittedEvidenceIds.length)}
@@ -252,6 +257,12 @@ async function main() {
 | Stage | Code | Field | Expected | Targets | Evidence segments | Evidence characters | Response characters | Latency (ms) | Repair attempted |
 |---|---|---|---|---:|---:|---:|---:|---:|---|
 ${revisionDiagnostics.length === 0 ? "| - | - | - | - | 0 | 0 | 0 | 0 | 0 | no |" : revisionDiagnostics.map((diagnostic) => `| ${diagnostic.phase} | ${diagnostic.validationCode} | ${diagnostic.fieldPath} | ${diagnostic.expected} | ${String(diagnostic.targetConceptCount)} | ${String(diagnostic.permittedEvidenceSegmentCount)} | ${String(diagnostic.permittedEvidenceCharacterCount)} | ${String(diagnostic.responseCharacterCount)} | ${String(diagnostic.latencyMs)} | ${diagnostic.repairAttempted ? "yes" : "no"} |`).join("\n")}
+
+## Sanitized provider-schema diagnostics
+
+| Prompt | Schema | Stage | Code | Field | Expected | Response characters | Response tokens | Latency (ms) | Repair attempted |
+|---|---|---|---|---|---|---:|---:|---:|---|
+${providerDiagnostics.length === 0 ? "| - | - | - | - | - | - | 0 | 0 | 0 | no |" : providerDiagnostics.map((diagnostic) => `| ${diagnostic.promptVersion} | ${diagnostic.schemaVersion} | ${diagnostic.phase} | ${diagnostic.code} | ${diagnostic.fieldPath} | ${diagnostic.expected} | ${String(diagnostic.responseCharacterCount ?? 0)} | ${String(diagnostic.responseTokenCount ?? 0)} | ${String(diagnostic.latencyMs ?? 0)} | ${diagnostic.repairAttempted === true ? "yes" : "no"} |`).join("\n")}
 
 No credential, raw source, prompt, provider body, generated question, reference answer, learner answer, or feedback is stored in this report.
 `;

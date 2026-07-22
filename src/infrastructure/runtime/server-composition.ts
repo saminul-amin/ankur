@@ -13,6 +13,7 @@ import { GemmaPageTranscriptionAdapter } from "../gemma/gemma-page-transcription
 import { GemmaRevisionGenerationAdapter } from "../gemma/gemma-revision-generation-adapter";
 import { GemmaWrittenEvaluationAdapter } from "../gemma/gemma-written-evaluation-adapter";
 import { GoogleGenAiAdapter } from "../gemma/google-genai-adapter";
+import type { ProviderValidationDiagnostic } from "../gemma/provider-diagnostics";
 
 export function createServerApplication() {
   const config = readRuntimeConfig();
@@ -22,7 +23,10 @@ export function createServerApplication() {
   if (config.apiKey === undefined) {
     throw new ProviderError("CONFIGURATION_ERROR");
   }
-  const provider = new GoogleGenAiAdapter(config.apiKey, config.primaryModel);
+  const recordProviderDiagnostic = (diagnostic: ProviderValidationDiagnostic): void => {
+    console.warn(JSON.stringify({ event: "ankur.provider_validation_failure", ...diagnostic }));
+  };
+  const provider = new GoogleGenAiAdapter(config.apiKey, config.primaryModel, undefined, recordProviderDiagnostic);
   const learningContent = new GemmaLearningContentAdapter(provider, config.requestTimeoutMs);
   const pageTranscription = new GemmaPageTranscriptionAdapter(provider, config.requestTimeoutMs);
   const writtenEvaluation = new GemmaWrittenEvaluationAdapter(provider, config.requestTimeoutMs);
