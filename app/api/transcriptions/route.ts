@@ -5,7 +5,7 @@ import { ApplicationError } from "../../../src/shared/errors/application-error";
 import { transcriptionRequestSchema } from "../../../src/shared/schemas/api-contracts";
 
 export const runtime = "nodejs";
-export const maxDuration = 120;
+export const maxDuration = 180;
 
 export function POST(request: Request) {
   return handleAiRoute({

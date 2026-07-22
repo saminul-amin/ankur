@@ -11,3 +11,11 @@ tsconfig.tsbuildinfo
 *.log
 
 .vercel
+
+# Internal project authority and orchestration material. Kept locally, never published.
+/AGENTS.md
+/ANKUR_PRE_CODEX_ARCHITECTURE_PACK_COMBINED.md
+/ANKUR_SSOT.md
+/MANIFEST.json
+/SSOT_UPDATE_v1.2.0.md
+/codex/

@@ -43,9 +43,9 @@ Only `src/infrastructure/gemma/*` may import the Google SDK.
 |---|---|---|---|---|
 | Page transcription | `transcription.v1` | `transcription.v1` | minimal | 26B A4B |
 | Material analysis | `analysis.v1` | `preparation-map.v1` | high | 26B A4B |
-| Assessment generation | `assessment.v1` | `activity-set.v1` | high | 26B A4B |
-| Candidate review/repair | `assessment-review.v1` | `assessment-review.v1` | high | 26B A4B |
-| Written evaluation | `written-evaluation.v1` | `written-evaluation.v1` | high | benchmark-controlled |
+| Assessment generation | `assessment.v3` | `assessment-mcq.v3` / `assessment-written.v3` | minimal | 26B A4B |
+| Candidate review/repair | `assessment-evidence-repair.v3` | `activity-set.v2` | high | 26B A4B |
+| Written evaluation | `written-evaluation.v3` | `written-evaluation-transport.v3` | high | 26B A4B |
 | Revision and retry | `revision.v1` | `revision-plan.v1` | high | 26B A4B |
 
 Thinking levels reflect official Gemma 4 hosted controls: `high` for enabled and `minimal` for disabled/minimal behavior.

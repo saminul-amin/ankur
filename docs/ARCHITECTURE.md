@@ -153,7 +153,6 @@ ankur/
 │   ├── integration/
 │   └── e2e/
 ├── public/samples/
-├── AGENTS.md
 ├── .env.example
 └── package.json
 ```
@@ -247,7 +246,8 @@ Every pending state must have an error transition back to the last stable state.
 - Provider key is configured in Vercel environment secrets.
 - `ANKUR_LIVE_AI_ENABLED` is a kill switch.
 - `ANKUR_SAMPLE_MODE_ENABLED` controls the transparent pre-generated fallback.
-- Function maximum duration is configured only after confirming the deployed plan and measured P95 latency.
+- Fluid Compute is verified for the linked Vercel project. AI Route Handlers use a bounded 180-second maximum duration, while each provider attempt retains the narrower 90-second application timeout.
+- Health and runtime-status responses expose only a sanitized abbreviated Git/deployment build identifier for release verification.
 - No server-side response may approach the 4.5 MB platform limit.
 
 ## 11. Performance strategy

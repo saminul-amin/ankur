@@ -3,8 +3,8 @@ import type { PreparationMap } from "../../domain/preparation/preparation-map";
 import type { ConfirmedSource } from "../../domain/source/confirmed-source";
 
 export const LEARNING_PROMPT_VERSIONS = {
-  analysis: "analysis.v1", assessment: "assessment.v2",
-  analysisEvidenceRepair: "analysis-evidence-repair.v1", assessmentEvidenceRepair: "assessment-evidence-repair.v2",
+  analysis: "analysis.v1", assessment: "assessment.v3",
+  analysisEvidenceRepair: "analysis-evidence-repair.v1", assessmentEvidenceRepair: "assessment-evidence-repair.v3",
 } as const;
 
 function sourceData(source: ConfirmedSource): string {
@@ -24,12 +24,16 @@ export function buildAssessmentPrompt(input: {
   readonly title: string;
   readonly difficulty: "easy" | "medium" | "hard";
   readonly repair?: { invalidArtifact: ActivitySet; validationErrors: readonly string[] };
-}, target: "mcq" | "written"): string {
+}, target: "mcq" | "written", priorMcqPrompt?: string): string {
+  const selectedConcepts = input.preparationMap.concepts
+    .filter((concept) => input.selectedConceptIds.includes(concept.id))
+    .map(({ id, name, description, priority }) => ({ id, name, description, priority }));
+  const allowedSegmentIds = input.source.segments.map((segment) => segment.id);
   const task = target === "mcq"
     ? "Generate the single-answer MCQ component worth 1 mark."
-    : "Generate the short-written component worth 5 marks. It must test a materially different angle from the MCQ described in any repair artifact.";
+    : `Generate the short-written component worth 5 marks. It must test a materially different angle from this MCQ prompt: ${priorMcqPrompt ?? "Unavailable; choose an explanatory multi-concept angle."}`;
   const outputContract = target === "mcq"
-    ? "Return only the native-schema MCQ candidate. Supply four normalized-unique option strings, one correct option ID, selected concept IDs, and exact allowed segment IDs."
-    : "Return only the native-schema written candidate. Supply a concise reference answer and exactly three rubric criteria in the criterion1*, criterion2*, and criterion3* fields. Their integer maximum marks must sum exactly to 5. Use exact allowed segment IDs. Criterion IDs are assigned deterministically by the application and are not provider fields.";
-  return `ROLE\nYou are Ankur's source-grounded P0 assessment designer.\n\nTRUST BOUNDARY\n${TRUST_BOUNDARY}\n\nTASK\n${task}\n\nCONFIGURATION\nTitle: ${input.title}\nDifficulty: ${input.difficulty}\nSelected concept IDs: ${input.selectedConceptIds.join(", ")}\nSource version: ${input.source.sourceVersionId}\n\nPREPARATION MAP\n${JSON.stringify(input.preparationMap)}\n\nSOURCE DATA\n${sourceData(input.source)}\n\nOUTPUT CONTRACT\n${outputContract}\n\nQUALITY RULES\nThe question must be answerable only from its cited source, use the source language, and add no external facts.${input.repair === undefined ? "" : `\n\nBOUNDED REVIEW/REPAIR\nCorrect every listed schema, grounding, composition, rubric, or duplicate error relevant to this component and return the complete candidate.\nERRORS\n${input.repair.validationErrors.join("\n")}\nINVALID ACTIVITY SET\n${JSON.stringify(input.repair.invalidArtifact)}`}`;
+    ? "Return only the native-schema MCQ candidate. Supply exactly four distinct options, one correct option ID, one allowed conceptId, and one allowed evidenceSegmentId."
+    : "Return only the native-schema written candidate. Supply a concise reference answer and exactly three independently gradeable criteria in criterion1*, criterion2*, and criterion3*. Each criterion has one allowed required-concept ID and one allowed evidence-segment ID. Do not return marks, warnings, overall concept lists, or overall evidence: the application deterministically assigns 2, 2, and 1 marks and derives those unions.";
+  return `ROLE\nYou are Ankur's source-grounded P0 assessment designer.\n\nTRUST BOUNDARY\n${TRUST_BOUNDARY}\n\nTASK\n${task}\n\nCONFIGURATION\nTitle: ${input.title}\nDifficulty: ${input.difficulty}\nSource version: ${input.source.sourceVersionId}\n\nALLOWED CONCEPTS\n${JSON.stringify(selectedConcepts)}\n\nALLOWED SEGMENT IDS\n${allowedSegmentIds.join(", ")}\n\nSOURCE DATA\n${sourceData(input.source)}\n\nOUTPUT CONTRACT\n${outputContract}\n\nQUALITY RULES\nThe question must be answerable only from its cited source, use the source language, and add no external facts. Every criterion must describe a distinct observable part of the reference answer.${input.repair === undefined ? "" : `\n\nBOUNDED REVIEW/REPAIR\nCorrect every listed schema, grounding, composition, rubric, or duplicate error relevant to this component and return the complete candidate.\nERRORS\n${input.repair.validationErrors.join("\n")}\nINVALID ACTIVITY SET\n${JSON.stringify(input.repair.invalidArtifact)}`}`;
 }

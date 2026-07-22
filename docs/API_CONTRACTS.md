@@ -73,8 +73,9 @@ Response:
   "ok": true,
   "requestId": "...",
   "data": {
-    "status": "healthy",
-    "version": "0.1.0",
+      "status": "healthy",
+      "version": "0.1.0",
+      "buildId": "3c2e226055de",
     "timestamp": "2026-07-22T00:00:00.000Z"
   }
 }
@@ -90,6 +91,7 @@ interface RuntimeStatus {
   sampleModeEnabled: boolean;
   providerConfigured: boolean;
   primaryModel: string;
+  buildId: string;
   status: "ready" | "degraded" | "disabled";
 }
 ```

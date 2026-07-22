@@ -49,6 +49,7 @@ export interface GenerationMetadata {
   readonly latencyMs: number;
   readonly promptTokenCount?: number;
   readonly outputTokenCount?: number;
+  readonly networkRetryCount?: number;
 }
 
 export interface TextGenerationResult {

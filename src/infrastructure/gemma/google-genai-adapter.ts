@@ -48,6 +48,7 @@ function metadata(
   response: GenerateContentResponse,
   request: Pick<TextGenerationRequest, "modelId" | "thinkingLevel">,
   latencyMs: number,
+  networkRetryCount = 0,
 ): GenerationMetadata {
   const promptTokenCount = response.usageMetadata?.promptTokenCount;
   const outputTokenCount = response.usageMetadata?.candidatesTokenCount;
@@ -56,6 +57,7 @@ function metadata(
     modelId: request.modelId,
     thinkingLevel: request.thinkingLevel,
     latencyMs,
+    networkRetryCount,
     ...(promptTokenCount === undefined ? {} : { promptTokenCount }),
     ...(outputTokenCount === undefined ? {} : { outputTokenCount }),
   };
@@ -103,10 +105,10 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
   }
 
   async generateText(request: TextGenerationRequest): Promise<TextGenerationResult> {
-    const { response, latencyMs } = await this.#call(request, false);
+    const { response, latencyMs, networkRetryCount } = await this.#call(request, false);
     return {
       text: extractText(response),
-      metadata: metadata(response, request, latencyMs),
+      metadata: metadata(response, request, latencyMs, networkRetryCount),
     };
   }
 
@@ -149,7 +151,7 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
     if (firstValidation.success) {
       return {
         value: firstValidation.value,
-        metadata: metadata(first.response, request, first.latencyMs),
+        metadata: metadata(first.response, request, first.latencyMs, first.networkRetryCount),
         structuredOutputMode: mode,
         repaired: false,
       };
@@ -175,7 +177,12 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
 
     return {
       value: repairedValidation.value,
-      metadata: metadata(repaired.response, request, first.latencyMs + repaired.latencyMs),
+      metadata: metadata(
+        repaired.response,
+        request,
+        first.latencyMs + repaired.latencyMs,
+        first.networkRetryCount + repaired.networkRetryCount,
+      ),
       structuredOutputMode: mode,
       repaired: true,
     };
@@ -200,17 +207,33 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
   async #call(
     request: TextGenerationRequest | StructuredGenerationRequest<unknown>,
     nativeStructuredOutput: boolean,
-  ): Promise<{ response: GenerateContentResponse; latencyMs: number }> {
+  ): Promise<{ response: GenerateContentResponse; latencyMs: number; networkRetryCount: number }> {
+    const startedAt = performance.now();
+    try {
+      const response = await this.#callOnce(request, nativeStructuredOutput);
+      return { response, latencyMs: Math.round(performance.now() - startedAt), networkRetryCount: 0 };
+    } catch (error) {
+      const mapped = mapProviderError(error);
+      if (mapped.code !== "RATE_LIMITED" && mapped.code !== "UNAVAILABLE") throw mapped;
+      await new Promise((resolve) => setTimeout(resolve, 350 + Math.floor(Math.random() * 300)));
+      const response = await this.#callOnce(request, nativeStructuredOutput);
+      return { response, latencyMs: Math.round(performance.now() - startedAt), networkRetryCount: 1 };
+    }
+  }
+
+  async #callOnce(
+    request: TextGenerationRequest | StructuredGenerationRequest<unknown>,
+    nativeStructuredOutput: boolean,
+  ): Promise<GenerateContentResponse> {
     const abortController = new AbortController();
     let timedOut = false;
     const timeout = setTimeout(() => {
       timedOut = true;
       abortController.abort();
     }, request.timeoutMs);
-    const startedAt = performance.now();
 
     try {
-      const response = await this.#models.generateContent({
+      return await this.#models.generateContent({
         model: request.modelId,
         contents: [{ role: "user", parts: toParts(request.contents) }],
         config: {
@@ -229,7 +252,6 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
             : {}),
         },
       });
-      return { response, latencyMs: Math.round(performance.now() - startedAt) };
     } catch (error) {
       throw mapProviderError(error, timedOut);
     } finally {

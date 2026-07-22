@@ -115,6 +115,7 @@ test("captures the Task 04 mixed-assessment UI inventory", async ({ page }, test
   await page.getByRole("button", { name: "Review and submit" }).click();
   await page.getByRole("button", { name: "Confirm submission" }).click();
   await expect(page.getByText(/Gemma 4 is reconciling each rubric criterion/u)).toBeVisible();
+  await expect(page.getByText(/often take around a minute and may take up to two/u)).toBeVisible();
   await page.screenshot({ path: `${output}/assessment-written-grading-loading.png`, fullPage: true });
   await expect(page.getByRole("heading", { name: "Your mixed assessment result" })).toBeVisible({ timeout: 10_000 });
 

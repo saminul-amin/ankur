@@ -57,33 +57,26 @@ export const preparationMapProviderSchema = z.object({
   warnings: z.array(z.string().max(240)).max(3),
 }).strict();
 
-const providerSegmentIdsSchema = z.array(z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/)).min(1).max(4);
-
 export const mcqCandidateProviderSchema = z.object({
   prompt: z.string().min(1).max(500),
-  conceptIds: z.array(conceptIdSchema).min(1).max(4),
+  conceptId: conceptIdSchema,
   explanation: z.string().min(1).max(600),
   options: z.array(z.string().min(1).max(240)).length(4),
   correctOptionId: z.enum(["A", "B", "C", "D"]),
-  evidenceSegmentIds: providerSegmentIdsSchema,
+  evidenceSegmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
 }).strict();
 
+// Gemma can append harmless derived fields despite an additionalProperties:false
+// native schema. Zod strips them while still validating every consumed field.
 export const writtenCandidateProviderSchema = z.object({
   prompt: z.string().min(1).max(700),
-  conceptIds: z.array(conceptIdSchema).min(1).max(6),
   explanation: z.string().min(1).max(700),
   expectedLength: z.enum(["one_sentence", "short_paragraph"]),
   referenceAnswer: z.string().min(1).max(1_200),
-  requiredConceptIds: z.array(conceptIdSchema).min(1).max(6),
-  evidenceSegmentIds: providerSegmentIdsSchema,
-  criterion1Description: z.string().min(1).max(400), criterion1MaximumMarks: z.number().int().min(1).max(4),
-  criterion1RequiredConceptIds: z.array(conceptIdSchema).min(1).max(4), criterion1EvidenceSegmentIds: providerSegmentIdsSchema,
-  criterion2Description: z.string().min(1).max(400), criterion2MaximumMarks: z.number().int().min(1).max(4),
-  criterion2RequiredConceptIds: z.array(conceptIdSchema).min(1).max(4), criterion2EvidenceSegmentIds: providerSegmentIdsSchema,
-  criterion3Description: z.string().min(1).max(400), criterion3MaximumMarks: z.number().int().min(1).max(4),
-  criterion3RequiredConceptIds: z.array(conceptIdSchema).min(1).max(4), criterion3EvidenceSegmentIds: providerSegmentIdsSchema,
-  warnings: z.array(z.string().max(240)).max(5),
-}).strict();
+  criterion1Description: z.string().min(1).max(400), criterion1RequiredConceptId: conceptIdSchema, criterion1EvidenceSegmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
+  criterion2Description: z.string().min(1).max(400), criterion2RequiredConceptId: conceptIdSchema, criterion2EvidenceSegmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
+  criterion3Description: z.string().min(1).max(400), criterion3RequiredConceptId: conceptIdSchema, criterion3EvidenceSegmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
+});
 
 export type PreparationMapProviderOutput = z.infer<typeof preparationMapProviderSchema>;
 export type McqCandidateProviderOutput = z.infer<typeof mcqCandidateProviderSchema>;
@@ -102,29 +95,36 @@ export const preparationMapProviderJsonSchema = {
   required: ["schemaVersion", "sourceVersionId", "title", "language", "domain", "topicId", "topicName", "topicPriority", "conceptId", "conceptName", "conceptDescription", "conceptPriority", "objectiveId", "objectiveDescription", "evidenceSegmentId", "evidenceQuote", "warnings"],
 } as const;
 
-const segmentIdsJsonSchema = { type: "array", minItems: 1, maxItems: 4, items: { type: "string" } } as const;
-const conceptIdsJsonSchema = { type: "array", minItems: 1, maxItems: 6, items: { type: "string" } } as const;
+export function createMcqCandidateProviderJsonSchema(input: {
+  readonly conceptIds: readonly string[];
+  readonly segmentIds: readonly string[];
+}) {
+  return {
+    type: "object", additionalProperties: false,
+    properties: {
+      prompt: { type: "string" }, conceptId: { type: "string", enum: input.conceptIds }, explanation: { type: "string" },
+      options: { type: "array", minItems: 4, maxItems: 4, items: { type: "string" } },
+      correctOptionId: { type: "string", enum: ["A", "B", "C", "D"] }, evidenceSegmentId: { type: "string", enum: input.segmentIds },
+    },
+    required: ["prompt", "conceptId", "explanation", "options", "correctOptionId", "evidenceSegmentId"],
+  } as const;
+}
 
-export const mcqCandidateProviderJsonSchema = {
-  type: "object", additionalProperties: false,
-  properties: {
-    prompt: { type: "string" }, conceptIds: conceptIdsJsonSchema, explanation: { type: "string" },
-    options: { type: "array", minItems: 4, maxItems: 4, items: { type: "string" } },
-    correctOptionId: { type: "string", enum: ["A", "B", "C", "D"] }, evidenceSegmentIds: segmentIdsJsonSchema,
-  },
-  required: ["prompt", "conceptIds", "explanation", "options", "correctOptionId", "evidenceSegmentIds"],
-} as const;
-
-export const writtenCandidateProviderJsonSchema = {
-  type: "object", additionalProperties: false,
-  properties: {
-    prompt: { type: "string" }, conceptIds: conceptIdsJsonSchema, explanation: { type: "string" },
-    expectedLength: { type: "string", enum: ["one_sentence", "short_paragraph"] }, referenceAnswer: { type: "string" },
-    requiredConceptIds: conceptIdsJsonSchema, evidenceSegmentIds: segmentIdsJsonSchema,
-    criterion1Description: { type: "string" }, criterion1MaximumMarks: { type: "integer", minimum: 1, maximum: 4 }, criterion1RequiredConceptIds: conceptIdsJsonSchema, criterion1EvidenceSegmentIds: segmentIdsJsonSchema,
-    criterion2Description: { type: "string" }, criterion2MaximumMarks: { type: "integer", minimum: 1, maximum: 4 }, criterion2RequiredConceptIds: conceptIdsJsonSchema, criterion2EvidenceSegmentIds: segmentIdsJsonSchema,
-    criterion3Description: { type: "string" }, criterion3MaximumMarks: { type: "integer", minimum: 1, maximum: 4 }, criterion3RequiredConceptIds: conceptIdsJsonSchema, criterion3EvidenceSegmentIds: segmentIdsJsonSchema,
-    warnings: { type: "array", maxItems: 5, items: { type: "string" } },
-  },
-  required: ["prompt", "conceptIds", "explanation", "expectedLength", "referenceAnswer", "requiredConceptIds", "evidenceSegmentIds", "criterion1Description", "criterion1MaximumMarks", "criterion1RequiredConceptIds", "criterion1EvidenceSegmentIds", "criterion2Description", "criterion2MaximumMarks", "criterion2RequiredConceptIds", "criterion2EvidenceSegmentIds", "criterion3Description", "criterion3MaximumMarks", "criterion3RequiredConceptIds", "criterion3EvidenceSegmentIds", "warnings"],
-} as const;
+export function createWrittenCandidateProviderJsonSchema(input: {
+  readonly conceptIds: readonly string[];
+  readonly segmentIds: readonly string[];
+}) {
+  const conceptId = { type: "string", enum: input.conceptIds } as const;
+  const segmentId = { type: "string", enum: input.segmentIds } as const;
+  return {
+    type: "object", additionalProperties: false,
+    properties: {
+      prompt: { type: "string" }, explanation: { type: "string" },
+      expectedLength: { type: "string", enum: ["one_sentence", "short_paragraph"] }, referenceAnswer: { type: "string" },
+      criterion1Description: { type: "string" }, criterion1RequiredConceptId: conceptId, criterion1EvidenceSegmentId: segmentId,
+      criterion2Description: { type: "string" }, criterion2RequiredConceptId: conceptId, criterion2EvidenceSegmentId: segmentId,
+      criterion3Description: { type: "string" }, criterion3RequiredConceptId: conceptId, criterion3EvidenceSegmentId: segmentId,
+    },
+    required: ["prompt", "explanation", "expectedLength", "referenceAnswer", "criterion1Description", "criterion1RequiredConceptId", "criterion1EvidenceSegmentId", "criterion2Description", "criterion2RequiredConceptId", "criterion2EvidenceSegmentId", "criterion3Description", "criterion3RequiredConceptId", "criterion3EvidenceSegmentId"],
+  } as const;
+}

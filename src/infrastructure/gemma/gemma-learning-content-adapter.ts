@@ -4,11 +4,11 @@ import type { ActivitySet } from "../../domain/assessments/mcq";
 import type { ModelArtifactMetadata } from "../../domain/ai/model-artifact";
 import type { PreparationMap } from "../../domain/preparation/preparation-map";
 import {
-  mcqCandidateProviderJsonSchema,
+  createMcqCandidateProviderJsonSchema,
+  createWrittenCandidateProviderJsonSchema,
   mcqCandidateProviderSchema,
   preparationMapProviderJsonSchema,
   preparationMapProviderSchema,
-  writtenCandidateProviderJsonSchema,
   writtenCandidateProviderSchema,
 } from "../../shared/schemas/learning-content-schemas";
 import { ProviderError } from "../../shared/errors/provider-error";
@@ -60,17 +60,19 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
   async generateMixedAssessment(input: Parameters<LearningContentGenerationPort["generateMixedAssessment"]>[0]): Promise<ActivitySet> {
     const promptVersion = input.repair === undefined ? LEARNING_PROMPT_VERSIONS.assessment : LEARNING_PROMPT_VERSIONS.assessmentEvidenceRepair;
     const thinkingLevel = input.repair === undefined ? "minimal" : "high";
+    const allowedSegmentIds = input.source.segments.map((segment) => segment.id);
+    const transportContext = { conceptIds: input.selectedConceptIds, segmentIds: allowedSegmentIds };
     const mcqResult = await this.model.generateStructured({
-      task: "structured_generation", modelId: PRIMARY_MODEL, promptVersion, schemaVersion: "assessment-mcq.v2",
+      task: "structured_generation", modelId: PRIMARY_MODEL, promptVersion, schemaVersion: "assessment-mcq.v3",
       thinkingLevel, temperature: 0.1, maxOutputTokens: 1_800, timeoutMs: this.timeoutMs,
       contents: [{ kind: "text", text: buildAssessmentPrompt(input, "mcq") }], outputMode: "native",
-      jsonSchema: mcqCandidateProviderJsonSchema, schema: mcqCandidateProviderSchema, maxSchemaRepairs: 1,
+      jsonSchema: createMcqCandidateProviderJsonSchema(transportContext), schema: mcqCandidateProviderSchema, maxSchemaRepairs: 1,
     });
     const writtenResult = await this.model.generateStructured({
-      task: "structured_generation", modelId: PRIMARY_MODEL, promptVersion, schemaVersion: "assessment-written.v2",
+      task: "structured_generation", modelId: PRIMARY_MODEL, promptVersion, schemaVersion: "assessment-written.v3",
       thinkingLevel, temperature: 0.1, maxOutputTokens: 3_200, timeoutMs: this.timeoutMs,
-      contents: [{ kind: "text", text: buildAssessmentPrompt(input, "written") }], outputMode: "native",
-      jsonSchema: writtenCandidateProviderJsonSchema, schema: writtenCandidateProviderSchema, maxSchemaRepairs: 1,
+      contents: [{ kind: "text", text: buildAssessmentPrompt(input, "written", mcqResult.value.prompt) }], outputMode: "native",
+      jsonSchema: createWrittenCandidateProviderJsonSchema(transportContext), schema: writtenCandidateProviderSchema, maxSchemaRepairs: 1,
     });
     const optionA = mcqResult.value.options[0];
     const optionB = mcqResult.value.options[1];
@@ -79,18 +81,21 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
     if (optionA === undefined || optionB === undefined || optionC === undefined || optionD === undefined) throw new ProviderError("INVALID_OUTPUT");
     const rubric = [
       {
-        id: "criterion-001", description: writtenResult.value.criterion1Description, maximumMarks: writtenResult.value.criterion1MaximumMarks,
-        requiredConceptIds: writtenResult.value.criterion1RequiredConceptIds, evidence: writtenResult.value.criterion1EvidenceSegmentIds.map((segmentId) => ({ segmentId })),
+        id: "criterion-001", description: writtenResult.value.criterion1Description, maximumMarks: 2,
+        requiredConceptIds: [writtenResult.value.criterion1RequiredConceptId], evidence: [{ segmentId: writtenResult.value.criterion1EvidenceSegmentId }],
       },
       {
-        id: "criterion-002", description: writtenResult.value.criterion2Description, maximumMarks: writtenResult.value.criterion2MaximumMarks,
-        requiredConceptIds: writtenResult.value.criterion2RequiredConceptIds, evidence: writtenResult.value.criterion2EvidenceSegmentIds.map((segmentId) => ({ segmentId })),
+        id: "criterion-002", description: writtenResult.value.criterion2Description, maximumMarks: 2,
+        requiredConceptIds: [writtenResult.value.criterion2RequiredConceptId], evidence: [{ segmentId: writtenResult.value.criterion2EvidenceSegmentId }],
       },
       {
-        id: "criterion-003", description: writtenResult.value.criterion3Description, maximumMarks: writtenResult.value.criterion3MaximumMarks,
-        requiredConceptIds: writtenResult.value.criterion3RequiredConceptIds, evidence: writtenResult.value.criterion3EvidenceSegmentIds.map((segmentId) => ({ segmentId })),
+        id: "criterion-003", description: writtenResult.value.criterion3Description, maximumMarks: 1,
+        requiredConceptIds: [writtenResult.value.criterion3RequiredConceptId], evidence: [{ segmentId: writtenResult.value.criterion3EvidenceSegmentId }],
       },
     ] as const;
+    const writtenConceptIds = [...new Set(rubric.flatMap((criterion) => criterion.requiredConceptIds))];
+    const writtenEvidence = [...new Set(rubric.flatMap((criterion) => criterion.evidence.map((reference) => reference.segmentId)))]
+      .map((segmentId) => ({ segmentId }));
     const metadata: ModelArtifactMetadata = {
       provider: "gemini_api", modelId: PRIMARY_MODEL, task: "assessment_generation", promptVersion,
       schemaVersion: "activity-set.v2", thinkingLevel, requestId: input.requestId, createdAt: new Date().toISOString(),
@@ -103,24 +108,24 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       questions: [
         {
           id: "question-001", type: "single_mcq", sourceVersionId: input.source.sourceVersionId,
-          prompt: mcqResult.value.prompt, conceptIds: mcqResult.value.conceptIds, difficulty: input.difficulty, marks: 1,
+          prompt: mcqResult.value.prompt, conceptIds: [mcqResult.value.conceptId], difficulty: input.difficulty, marks: 1,
           explanation: mcqResult.value.explanation,
           options: [
             { id: "A", text: optionA }, { id: "B", text: optionB },
             { id: "C", text: optionC }, { id: "D", text: optionD },
           ],
-          correctOptionId: mcqResult.value.correctOptionId, evidence: mcqResult.value.evidenceSegmentIds.map((segmentId) => ({ segmentId })), artifact: metadata,
+          correctOptionId: mcqResult.value.correctOptionId, evidence: [{ segmentId: mcqResult.value.evidenceSegmentId }], artifact: metadata,
         },
         {
           id: "question-002", type: "short_written", sourceVersionId: input.source.sourceVersionId,
-          prompt: writtenResult.value.prompt, conceptIds: writtenResult.value.conceptIds, difficulty: input.difficulty, marks: 5,
+          prompt: writtenResult.value.prompt, conceptIds: writtenConceptIds, difficulty: input.difficulty, marks: 5,
           explanation: writtenResult.value.explanation, expectedLength: writtenResult.value.expectedLength,
-          referenceAnswer: writtenResult.value.referenceAnswer, requiredConceptIds: writtenResult.value.requiredConceptIds,
-          evidence: writtenResult.value.evidenceSegmentIds.map((segmentId) => ({ segmentId })),
+          referenceAnswer: writtenResult.value.referenceAnswer, requiredConceptIds: writtenConceptIds,
+          evidence: writtenEvidence,
           rubric, artifact: metadata,
         },
       ],
-      warnings: writtenResult.value.warnings, artifact: metadata,
+      warnings: [], artifact: metadata,
     };
   }
 }

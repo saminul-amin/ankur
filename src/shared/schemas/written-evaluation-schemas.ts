@@ -1,43 +1,59 @@
 import { z } from "zod";
 
-const conceptIdSchema = z.string().regex(/^concept-[a-z0-9-]+$/);
-const segmentIdSchema = z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/);
+export interface WrittenEvaluationProviderOutput {
+  readonly criterionAwardedMarks: readonly number[];
+  readonly criterionReasons: readonly string[];
+  readonly incorrectClaims: readonly string[];
+  readonly unsupportedClaims: readonly string[];
+  readonly feedback: string;
+}
 
-export const writtenEvaluationProviderSchema = z.object({
-  awardedMarks: z.number().min(0).max(5),
-  status: z.enum(["correct", "partially_correct", "incorrect", "needs_review"]),
-  criterionAwardedMarks: z.array(z.number().min(0).max(4)).min(2).max(4),
-  criterionStates: z.array(z.enum(["met", "partial", "not_met"])).min(2).max(4),
-  criterionReasons: z.array(z.string().min(1).max(400)).min(2).max(4),
-  coveredConceptIds: z.array(conceptIdSchema).max(8),
-  missingConceptIds: z.array(conceptIdSchema).max(8),
-  incorrectClaims: z.array(z.string().min(1).max(500)).max(8),
-  unsupportedClaims: z.array(z.string().min(1).max(500)).max(8),
-  feedback: z.string().min(1).max(800),
-  evidenceSegmentIds: z.array(segmentIdSchema).min(1).max(6),
-  recommendedRevisionConceptIds: z.array(conceptIdSchema).max(8),
-}).strict();
+function fieldName(index: number, suffix: "AwardedMarks" | "Reason"): string {
+  return `criterion${String(index + 1)}${suffix}`;
+}
 
-const stringArray = { type: "array", maxItems: 8, items: { type: "string" } } as const;
-const criterionArray = { type: "array", minItems: 2, maxItems: 4, items: { type: "number", minimum: 0, maximum: 4 } } as const;
+export function createWrittenEvaluationProviderContract(input: {
+  readonly criterionMaximumMarks: readonly number[];
+}): {
+  readonly schema: z.ZodType<WrittenEvaluationProviderOutput>;
+  readonly jsonSchema: Readonly<Record<string, unknown>>;
+} {
+  if (input.criterionMaximumMarks.length < 2 || input.criterionMaximumMarks.length > 4) {
+    throw new Error("Written-evaluation transport requires two to four criteria.");
+  }
+  const shape: Record<string, z.ZodType> = {};
+  const properties: Record<string, unknown> = {};
+  const required: string[] = [];
+  for (const [index, maximumMarks] of input.criterionMaximumMarks.entries()) {
+    const marksField = fieldName(index, "AwardedMarks");
+    const reasonField = fieldName(index, "Reason");
+    shape[marksField] = z.number().min(0).max(maximumMarks);
+    shape[reasonField] = z.string().min(1).max(400);
+    properties[marksField] = { type: "number", minimum: 0, maximum: maximumMarks };
+    properties[reasonField] = { type: "string" };
+    required.push(marksField, reasonField);
+  }
+  shape["incorrectClaims"] = z.array(z.string().min(1).max(500)).max(8).default([]);
+  shape["unsupportedClaims"] = z.array(z.string().min(1).max(500)).max(8).default([]);
+  shape["feedback"] = z.string().min(1).max(800);
+  properties["incorrectClaims"] = { type: "array", maxItems: 8, items: { type: "string" } };
+  properties["unsupportedClaims"] = { type: "array", maxItems: 8, items: { type: "string" } };
+  properties["feedback"] = { type: "string" };
+  required.push("feedback");
 
-export const writtenEvaluationProviderJsonSchema = {
-  type: "object", additionalProperties: false,
-  properties: {
-    awardedMarks: { type: "number", minimum: 0, maximum: 5 },
-    status: { type: "string", enum: ["correct", "partially_correct", "incorrect", "needs_review"] },
-    criterionAwardedMarks: criterionArray,
-    criterionStates: { type: "array", minItems: 2, maxItems: 4, items: { type: "string", enum: ["met", "partial", "not_met"] } },
-    criterionReasons: { type: "array", minItems: 2, maxItems: 4, items: { type: "string" } },
-    coveredConceptIds: stringArray,
-    missingConceptIds: stringArray,
-    incorrectClaims: stringArray,
-    unsupportedClaims: stringArray,
-    feedback: { type: "string" },
-    evidenceSegmentIds: { type: "array", minItems: 1, maxItems: 6, items: { type: "string" } },
-    recommendedRevisionConceptIds: stringArray,
-  },
-  required: ["awardedMarks", "status", "criterionAwardedMarks", "criterionStates", "criterionReasons", "coveredConceptIds", "missingConceptIds", "incorrectClaims", "unsupportedClaims", "feedback", "evidenceSegmentIds", "recommendedRevisionConceptIds"],
-} as const;
+  // Derived totals or status fields are never consumed; strip them while keeping
+  // all authoritative criterion values validated against their fixed bounds.
+  const rawSchema = z.object(shape);
+  const schema = rawSchema.transform((value): WrittenEvaluationProviderOutput => ({
+    criterionAwardedMarks: input.criterionMaximumMarks.map((_, index) => Number(value[fieldName(index, "AwardedMarks")])),
+    criterionReasons: input.criterionMaximumMarks.map((_, index) => String(value[fieldName(index, "Reason")])),
+    incorrectClaims: value["incorrectClaims"] as string[],
+    unsupportedClaims: value["unsupportedClaims"] as string[],
+    feedback: String(value["feedback"]),
+  }));
 
-export type WrittenEvaluationProviderOutput = z.infer<typeof writtenEvaluationProviderSchema>;
+  return {
+    schema,
+    jsonSchema: { type: "object", additionalProperties: false, properties, required },
+  };
+}

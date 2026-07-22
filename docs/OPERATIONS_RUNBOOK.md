@@ -17,6 +17,7 @@ GEMMA_NATIVE_STRUCTURED_OUTPUT=auto
 AI_REQUEST_TIMEOUT_MS=90000
 AI_MAX_NETWORK_RETRIES=1
 AI_MAX_SCHEMA_REPAIRS=1
+ANKUR_BUILD_ID=local
 ```
 
 ### Production
@@ -51,6 +52,7 @@ Then:
 - inspect generated client bundle for key fragments;
 - verify sample assets contain no private/copyrighted content;
 - review environment variables by target environment.
+- verify the health `buildId` matches the intended release commit.
 
 ## 4. Production smoke test
 
@@ -146,3 +148,7 @@ Use the kill switch for:
 - Avoid unnecessary live-generation testing after final verification.
 - Preserve the recorded video and sample mode as independent proof.
 - Verify every link from an unauthenticated/incognito session.
+
+## 11. Production live verification
+
+Set `ANKUR_PRODUCTION_LIVE_OPT_IN=true` locally and run `npm run verify:production-live`. The verifier permits only the canonical HTTPS production origin and writes safe phase metadata under `evaluation/production/`. It never stores prompts, source text, answers, provider bodies, or credentials.

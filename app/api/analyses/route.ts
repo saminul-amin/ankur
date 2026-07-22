@@ -4,7 +4,7 @@ import { handleAiRoute } from "../../../src/presentation/api/ai-route";
 import { analysisRequestSchema } from "../../../src/shared/schemas/api-contracts";
 
 export const runtime = "nodejs";
-export const maxDuration = 120;
+export const maxDuration = 180;
 
 export function POST(request: Request) {
   return handleAiRoute({
