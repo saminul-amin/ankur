@@ -11,8 +11,8 @@ import type {
   TextGenerationRequest,
   TextGenerationResult,
   ThinkingLevel,
-} from "../../application/ports/generative-model-port.js";
-import { ProviderError, mapProviderError } from "../../shared/errors/provider-error.js";
+} from "../../application/ports/generative-model-port";
+import { ProviderError, mapProviderError } from "../../shared/errors/provider-error";
 
 interface GenAiModelsClient {
   generateContent(parameters: Parameters<GoogleGenAI["models"]["generateContent"]>[0]): Promise<GenerateContentResponse>;

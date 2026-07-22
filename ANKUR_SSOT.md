@@ -3285,6 +3285,27 @@ The project is complete only when all required conditions are true.
 | D-032 | Local or self-hosted Gemma is rejected for the hackathon runtime | REJECTED | 2026-07-22 | Public judging must not depend on a laptop, tunnel, or team-managed GPU server. |
 | D-033 | A bounded provider feasibility spike precedes application implementation | LOCKED | 2026-07-22 | Model access, Bengali multimodality, structured output, latency, and errors must be measured first. |
 
+
+D-034
+Decision: `gemma-4-26b-a4b-it` is the primary Gemma 4 runtime model for the hackathon MVP.
+Status: LOCKED
+Reason: The provider spike verified Bengali text generation, Bengali image input, native structured output, thinking controls, typed error handling, and acceptable latency.
+
+D-035
+Decision: Gemma 4 31B will not be used as an automatic runtime fallback in the MVP.
+Status: LOCKED
+Reason: The primary model passed Gate 1; automatic model switching would reduce reproducibility and consume unnecessary quota.
+
+D-036
+Decision: Minimal thinking is the default for transcription and straightforward generation; high thinking is reserved for measured complex reasoning tasks such as question review, written grading, misconception analysis, and adaptive revision.
+Status: APPROVED
+Reason: High thinking was approximately 2.5 times slower without visible improvement on the spike’s simple reasoning task.
+
+D-037
+Decision: Raw image transcription is always treated as an editable draft and must be confirmed by the user before assessment generation.
+Status: LOCKED
+Reason: The spike achieved 2.50% CER but still produced semantically meaningful technical-term errors.
+
 ---
 
 # 35. Deprecated and Rejected Concepts

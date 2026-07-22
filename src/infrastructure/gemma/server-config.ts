@@ -4,8 +4,8 @@ import {
   APPROVED_GEMMA_MODELS,
   type ApprovedGemmaModel,
   type StructuredOutputMode,
-} from "../../application/ports/generative-model-port.js";
-import { ProviderError } from "../../shared/errors/provider-error.js";
+} from "../../application/ports/generative-model-port";
+import { ProviderError } from "../../shared/errors/provider-error";
 
 const environmentSchema = z
   .object({
@@ -31,7 +31,7 @@ export interface ProviderSpikeConfig {
 }
 
 export function readProviderSpikeConfig(
-  environment: NodeJS.ProcessEnv = process.env,
+  environment: Readonly<Record<string, string | undefined>> = process.env,
 ): ProviderSpikeConfig {
   const result = environmentSchema.safeParse(environment);
   if (!result.success) {

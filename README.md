@@ -98,9 +98,21 @@ This architecture reflects current official documentation available on 22 July 2
 
 Provider and platform capabilities must still be verified through the spike because quotas and endpoint-specific behavior can vary by project and model.
 
-## 7. Task 01 provider spike
+## 7. Implemented gates
 
-This repository currently implements only the bounded, server-only Gemma 4 provider feasibility spike. It does not contain product screens or Task 02 application work.
+Provider Gate 1 passed. The repository retains the bounded, server-only provider spike and now implements only the Task 02 thin P0 vertical slice:
+
+```text
+pasted text or one one-page digital-text PDF
+→ editable extraction review
+→ confirmed immutable source segments
+→ grounded preparation map
+→ one grounded MCQ
+→ deterministic grading
+→ source-evidence display
+```
+
+The fixed sample journey makes no provider call. Live analysis and assessment use only `gemma-4-26b-a4b-it` through the existing `@google/genai` adapter. Scanned PDFs and later product flows are intentionally absent.
 
 Install and verify the non-live code:
 
@@ -120,3 +132,32 @@ npm run spike:gemma
 ```
 
 The command refuses to run without that flag. It uses `gemma-4-26b-a4b-it`, the Bengali fixture under `evaluation/provider-spike/fixtures/`, and writes a credential-free report to `evaluation/provider-spike/RESULTS.md`. The optional 31B comparison also requires `ANKUR_SPIKE_COMPARE_31B=true`.
+
+## 8. Task 02 local verification
+
+Copy `.env.example` to `.env.local` and keep `GEMINI_API_KEY` server-only. Start the application with:
+
+```bash
+npm run dev
+```
+
+The live Route Handlers stay disabled unless `ANKUR_LIVE_AI_ENABLED=true`. The live end-to-end verifier consumes provider quota and has a second explicit guard:
+
+```powershell
+$env:ANKUR_LIVE_AI_ENABLED = "true"
+$env:ANKUR_PROVIDER_SPIKE_OPT_IN = "true"
+npm run verify:vertical-slice
+```
+
+It refuses to run if either flag or the server-only key is absent, and writes a credential-free report to `evaluation/vertical-slice/RESULTS.md`. Ordinary tests and CI contain no live provider calls.
+
+Run the local quality suite with:
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+For the provider-free Playwright sample smoke test, run the dev server on port 3100 and then run `npm run test:e2e`.
