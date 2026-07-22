@@ -34,6 +34,24 @@ describe("written grading and deterministic diagnosis", () => {
     expect(weakConcepts(performance).map((item) => item.conceptId)).toEqual(["concept-photosynthesis-light", "concept-photosynthesis-result"]);
   });
 
+  it("classifies intentionally low-scoring assessed concepts as weak", () => {
+    const incorrectMcq = gradeMcq(activity.questions[0], "A");
+    const emptyWritten = createEmptyWrittenEvaluation({ question: activity.questions[1], requestId: "low-score" });
+    const performance = calculateConceptPerformance({
+      concepts: map.concepts,
+      mcqQuestion: activity.questions[0],
+      mcqGrade: incorrectMcq,
+      writtenQuestion: activity.questions[1],
+      writtenEvaluation: emptyWritten,
+    });
+
+    expect(performance.length).toBeGreaterThan(0);
+    expect(performance.every((item) => item.percentage < 80)).toBe(true);
+    expect(new Set(weakConcepts(performance).map((item) => item.conceptId))).toEqual(
+      new Set(performance.map((item) => item.conceptId)),
+    );
+  });
+
   it("rejects criterion totals that do not reconcile with the awarded mark", () => {
     const valid = createSampleWrittenEvaluation(activity);
     const invalid = { ...valid, awardedMarks: 4 };

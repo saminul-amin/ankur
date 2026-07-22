@@ -12,6 +12,7 @@ import {
   preparationMapApiSchema,
   writtenEvaluationApiSchema,
 } from "../../src/shared/schemas/api-contracts.js";
+import { productionFlowPasses } from "./verification-rules.js";
 
 const RESULTS_PATH = resolve(process.env["ANKUR_PRODUCTION_RESULTS_PATH"] ?? "evaluation/production/RESULTS.md");
 const DEFAULT_BASE_URL = "https://ankur-gamma.vercel.app";
@@ -33,7 +34,7 @@ interface FlowResult {
   readonly groundingFailures: number;
   readonly quoteFailures: number;
   readonly reconciliationFailures: number;
-  readonly conceptFailures: number;
+  readonly conceptReferenceFailures: number;
   readonly sourceOrAnswerLoss: number;
   readonly persistedResult: boolean;
   readonly mcqCorrect: boolean;
@@ -102,13 +103,14 @@ async function writeReport(input: {
 - Grounding failures: ${String(input.flows.reduce((sum, flow) => sum + flow.groundingFailures, 0))}
 - Quote failures: ${String(input.flows.reduce((sum, flow) => sum + flow.quoteFailures, 0))}
 - Mark reconciliation failures: ${String(input.flows.reduce((sum, flow) => sum + flow.reconciliationFailures, 0))}
-- Concept failures: ${String(input.flows.reduce((sum, flow) => sum + flow.conceptFailures, 0))}
+- Concept-reference failures: ${String(input.flows.reduce((sum, flow) => sum + flow.conceptReferenceFailures, 0))}
+- Weak-concept counts: diagnostic only; zero is valid when deterministic aggregation classifies every assessed concept as mastered
 
 ## Per-flow validation
 
-| Run | Passed | MCQ | Written status | Written marks | Weak concepts | Totals | Grounding | Quotes | Concepts | Persisted |
+| Run | Passed | MCQ | Written status | Written marks | Weak concepts (info) | Totals | Grounding | Quotes | Concept refs | Persisted |
 |---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|
-${input.flows.map((flow) => `| ${String(flow.run)} | ${flow.passed ? "yes" : "no"} | ${flow.mcqCorrect ? "correct" : "failed"} | ${flow.writtenStatus} | ${String(flow.awardedMarks)}/5 | ${String(flow.weakConceptCount)} | ${flow.totalsReconcile ? "yes" : "no"} | ${String(flow.groundingFailures)} | ${String(flow.quoteFailures)} | ${String(flow.conceptFailures)} | ${flow.persistedResult ? "yes" : "no"} |`).join("\n")}
+${input.flows.map((flow) => `| ${String(flow.run)} | ${flow.passed ? "yes" : "no"} | ${flow.mcqCorrect ? "correct" : "failed"} | ${flow.writtenStatus} | ${String(flow.awardedMarks)}/5 | ${String(flow.weakConceptCount)} | ${flow.totalsReconcile ? "yes" : "no"} | ${String(flow.groundingFailures)} | ${String(flow.quoteFailures)} | ${String(flow.conceptReferenceFailures)} | ${flow.persistedResult ? "yes" : "no"} |`).join("\n")}
 
 ## Safe phase metadata
 
@@ -211,7 +213,7 @@ async function main(): Promise<void> {
       });
       const totalsReconcile = reconcileAssessmentTotal({ mcqGrade, writtenEvaluation: written, performance: conceptPerformance });
       const conceptIds = new Set(map.concepts.map((concept) => concept.id));
-      const conceptFailures = conceptPerformance.filter((item) => !conceptIds.has(item.conceptId)).length;
+      const conceptReferenceFailures = conceptPerformance.filter((item) => !conceptIds.has(item.conceptId)).length;
       const weakConceptCount = weakConcepts(conceptPerformance).length;
       const serialized = toPersistedIngestionSession({
         stage: "results", mode: "live", sourceKind: "text", pages: [], priorityInstruction: "",
@@ -227,23 +229,28 @@ async function main(): Promise<void> {
       const combinedValidation = [...activityValidation, ...writtenValidation];
       const counts = failureCounts(combinedValidation);
       const reconciliationFailures = counts.reconciliation + (totalsReconcile ? 0 : 1);
-      const flowPassed = activityValidation.length === 0
-        && writtenValidation.length === 0
-        && written.status === "partially_correct"
-        && written.awardedMarks > 0
-        && written.awardedMarks < 5
-        && mcqGrade.status === "correct"
-        && weakConceptCount > 0
-        && counts.grounding === 0
-        && counts.quotes === 0
-        && reconciliationFailures === 0
-        && counts.concepts + conceptFailures === 0
-        && sourceOrAnswerLoss === 0
-        && persistedResult;
+      const totalConceptReferenceFailures = counts.concepts + conceptReferenceFailures;
+      const flowPassed = productionFlowPasses({
+        activityValidationFailures: activityValidation.length,
+        writtenValidationFailures: writtenValidation.length,
+        conceptPerformanceCount: conceptPerformance.length,
+        groundingFailures: counts.grounding,
+        quoteFailures: counts.quotes,
+        conceptReferenceFailures: totalConceptReferenceFailures,
+        reconciliationFailures,
+        sourceOrAnswerLoss,
+        persistedResult,
+        mcqCorrect: mcqGrade.status === "correct",
+        writtenAnswerPresent: partialAnswer.trim().length > 0,
+        writtenStatus: written.status,
+        awardedMarks: written.awardedMarks,
+        totalsReconcile,
+        weakConceptCount,
+      });
       flows.push({
         run, passed: flowPassed, activityFailures: activityValidation.length, writtenFailures: writtenValidation.length,
         groundingFailures: counts.grounding, quoteFailures: counts.quotes, reconciliationFailures,
-        conceptFailures: counts.concepts + conceptFailures, sourceOrAnswerLoss, persistedResult,
+        conceptReferenceFailures: totalConceptReferenceFailures, sourceOrAnswerLoss, persistedResult,
         mcqCorrect: mcqGrade.status === "correct", writtenStatus: written.status, awardedMarks: written.awardedMarks,
         weakConceptCount, totalsReconcile,
       });
