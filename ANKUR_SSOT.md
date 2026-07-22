@@ -3,9 +3,9 @@
 > **Canonical project specification for Team Hotasha**  
 > **Competition:** Build with Gemma 4: ML, AI, Deep Learning & NLP Community Hackathon  
 > **Document status:** ACTIVE — AUTHORITATIVE  
-> **Version:** 1.2.0  
+> **Version:** 1.2.1  
 > **Created:** 22 July 2026  
-> **Last professionally audited and architecture-locked:** 22 July 2026  
+> **Last professionally audited, architecture-locked, and visual-system-locked:** 22 July 2026  
 > **Official published submission deadline:** **25 July 2026, 23:55** *(organizer page labels the timezone “BST”; verify against the live Kaggle countdown before final submission)*  
 > **Team internal submission target:** **24 July 2026, 22:00 (Asia/Dhaka, UTC+6)**  
 > **Internal feature-freeze target:** **24 July 2026, 16:00 (Asia/Dhaka)**  
@@ -116,6 +116,13 @@ When the architecture pack and this SSOT conflict, use this order:
 7. Existing code
 
 Codex may not silently redesign a locked boundary. A change requires an explicit decision, an ADR update, corresponding contract changes, and an SSOT update.
+
+### 0.8 Visual implementation authority
+
+`docs/UI_UX_DESIGN_SYSTEM.md` is the authoritative visual and interaction contract below this SSOT, `AGENTS.md`, and accepted Architecture Decision Records.
+
+All presentation work must follow that document. No task may create a competing design-token system, component style, typography strategy, motion language, page shell, or visual identity without an explicit decision update.
+
 
 ---
 
@@ -510,6 +517,15 @@ After the user confirms the extracted text:
 8. Page-only citations are acceptable for the UI, but segment-level evidence is required internally.
 
 The trusted priority instruction comes only from the explicit user input field. Instructions found inside uploaded materials are always treated as untrusted document content and must never control model behavior.
+
+## 5.8 Visual excellence is a product requirement
+
+**Status: LOCKED**
+
+Ankur must present a distinctive, production-quality learning experience. Visual design is not deferred decoration. The interface must communicate source confidence, guided progression, and adaptive growth through consistent typography, composition, interaction states, evidence presentation, responsive behavior, and accessible motion.
+
+The product must not resemble an unmodified component-library starter, generic AI chatbot, ordinary academic project, or template dashboard.
+
 
 ---
 
@@ -1531,6 +1547,21 @@ Do not create separate frontend and backend deployments for the hackathon MVP.
 | Notebook | Kaggle Notebook using Python |
 | Repository | Public GitHub repository |
 
+
+## 17.2.1 Visual and interaction stack
+
+| Concern | Decision |
+|---|---|
+| Design tokens | Tailwind-backed semantic CSS variables |
+| Accessible primitives | Customized shadcn/ui open-code components where useful |
+| Motion | Motion for React, used selectively |
+| Icons | One consistent line-icon family |
+| Brand graphics | Original inline SVG |
+| Typography | English/UI font plus Bengali-optimized font through `next/font` |
+| Accessibility | WCAG 2.2 AA target |
+| Dark mode | Deferred until P0 is complete |
+
+
 ## 17.3 Architecture boundaries
 
 ```text
@@ -1949,14 +1980,24 @@ Recommended demo default:
 
 ## 20.1 Brand direction
 
-The visual metaphor is knowledge growth.
+### Locked visual direction
 
-Possible identity:
+**Status: LOCKED**
 
-- A minimal sprout emerging from a document or open page
-- Clean, modern, serious
-- Suitable for both students and professional learners
-- Not childish or nursery-like
+Ankur uses the **Luminous Knowledge Garden** visual language:
+
+- warm paper-like backgrounds;
+- deep botanical ink;
+- restrained sprout-green highlights;
+- selective warm-gold achievement accents;
+- source-page and evidence motifs;
+- abstract growth and branching geometry;
+- Bengali-first typography;
+- meaningful, reduced-motion-safe transitions.
+
+The core visual metaphor remains knowledge growth: a minimal sprout emerging from a document or open page.
+
+The interface must remain calm, premium, academically credible, uncluttered, suitable for both students and professional learners, and never childish or nursery-like.
 
 ## 20.2 Typography
 
@@ -2079,6 +2120,26 @@ This reduces navigation and persistence defects while preserving the complete ex
 - Sample mode must be available
 - Public demo must require no login
 - Avoid generic chatbot UI as the primary experience
+
+
+## 20.5 UI Gate
+
+**Status: LOCKED**
+
+Task 03 may not expand the number of product screens until the UI Gate passes.
+
+The UI Gate passes only when:
+
+- the existing vertical slice follows the approved design system;
+- an original Ankur mark exists;
+- Bengali typography is manually inspected;
+- desktop and mobile screenshots are captured;
+- keyboard and focus behavior pass;
+- reduced-motion behavior is implemented;
+- the provider-free sample flow still passes;
+- lint, typecheck, tests, production build, and Playwright pass;
+- no deferred product feature is added.
+
 
 ---
 
@@ -3284,27 +3345,17 @@ The project is complete only when all required conditions are true.
 | D-031 | The Pre-Codex Architecture Pack is the implementation contract | LOCKED | 2026-07-22 | Prevents Codex from independently redefining architecture and contracts. |
 | D-032 | Local or self-hosted Gemma is rejected for the hackathon runtime | REJECTED | 2026-07-22 | Public judging must not depend on a laptop, tunnel, or team-managed GPU server. |
 | D-033 | A bounded provider feasibility spike precedes application implementation | LOCKED | 2026-07-22 | Model access, Bengali multimodality, structured output, latency, and errors must be measured first. |
+| D-034 | `gemma-4-26b-a4b-it` is the primary Gemma 4 runtime model for the hackathon MVP | LOCKED | 2026-07-22 | The provider spike verified Bengali text generation, Bengali image input, native structured output, thinking controls, typed error handling, and acceptable latency. |
+| D-035 | Gemma 4 31B will not be used as an automatic runtime fallback in the MVP | LOCKED | 2026-07-22 | The primary model passed Gate 1; automatic model switching would reduce reproducibility and consume unnecessary quota. |
+| D-036 | Minimal thinking is the default for transcription and straightforward generation; high thinking is reserved for measured complex reasoning tasks | APPROVED | 2026-07-22 | High thinking was approximately 2.5 times slower without visible improvement on the spike’s simple reasoning task. |
+| D-037 | Raw image transcription is always treated as an editable draft and must be confirmed before assessment generation | LOCKED | 2026-07-22 | The spike achieved 2.50% CER but still produced semantically meaningful technical-term errors. |
+| D-038 | Exceptional visual and interaction quality is a submission-critical product requirement | LOCKED | 2026-07-22 | The public demo must feel production-ready and memorable, not merely functional. |
+| D-039 | The visual direction is “Luminous Knowledge Garden” | LOCKED | 2026-07-22 | Connects source material, learning growth, and Gemma-powered intelligence to the Ankur identity. |
+| D-040 | Tailwind semantic tokens and customized shadcn/ui open-code primitives form the UI foundation | APPROVED | 2026-07-22 | Provides accessibility and speed while retaining full design control. |
+| D-041 | Motion for React may be used only for meaningful transitions and must respect reduced-motion preferences | LOCKED | 2026-07-22 | Preserves polish, performance, and accessibility. |
+| D-042 | Full dark mode is deferred until all P0 requirements are complete | APPROVED | 2026-07-22 | Prevents visual scope from delaying the complete learning loop. |
+| D-043 | A dedicated UI Gate must pass before Task 03 expands the number of product screens | LOCKED | 2026-07-22 | Avoids later large-scale visual refactoring and inconsistent screens. |
 
-
-D-034
-Decision: `gemma-4-26b-a4b-it` is the primary Gemma 4 runtime model for the hackathon MVP.
-Status: LOCKED
-Reason: The provider spike verified Bengali text generation, Bengali image input, native structured output, thinking controls, typed error handling, and acceptable latency.
-
-D-035
-Decision: Gemma 4 31B will not be used as an automatic runtime fallback in the MVP.
-Status: LOCKED
-Reason: The primary model passed Gate 1; automatic model switching would reduce reproducibility and consume unnecessary quota.
-
-D-036
-Decision: Minimal thinking is the default for transcription and straightforward generation; high thinking is reserved for measured complex reasoning tasks such as question review, written grading, misconception analysis, and adaptive revision.
-Status: APPROVED
-Reason: High thinking was approximately 2.5 times slower without visible improvement on the spike’s simple reasoning task.
-
-D-037
-Decision: Raw image transcription is always treated as an editable draft and must be confirmed by the user before assessment generation.
-Status: LOCKED
-Reason: The spike achieved 2.50% CER but still produced semantically meaningful technical-term errors.
 
 ---
 
@@ -3448,6 +3499,17 @@ When this discussion finalizes a change, provide an SSOT Update.
 ---
 
 # 40. Change Log
+
+## Version 1.2.1 — 22 July 2026
+
+- Locked premium visual quality as a product requirement.
+- Added the Luminous Knowledge Garden visual direction.
+- Added `docs/UI_UX_DESIGN_SYSTEM.md` as the authoritative visual and interaction contract.
+- Added the UI Gate before document-ingestion expansion.
+- Approved customized shadcn/ui primitives and Motion for React.
+- Deferred full dark mode until P0 completion.
+- Normalized provider-spike decisions D-034 through D-037 into the decision register.
+- Added visual-system decisions D-038 through D-043.
 
 ## Version 1.2.0 — 22 July 2026
 
