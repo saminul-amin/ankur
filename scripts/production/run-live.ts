@@ -31,6 +31,7 @@ async function requestJson(phases: Phase[], baseUrl: string, name: string, path:
   const started = performance.now();
   const headers = new Headers(init?.headers);
   headers.set("Content-Type", "application/json");
+  headers.set("x-ankur-session-id", "production-release-verifier");
   const response = await fetch(`${baseUrl}${path}`, {
     ...init,
     headers,
