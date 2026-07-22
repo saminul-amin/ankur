@@ -247,8 +247,9 @@ export interface ModelArtifactMetadata {
 - An MCQ has exactly four non-empty normalized-unique options and exactly one valid correct option ID.
 - A written rubric has at least one criterion; criterion marks sum exactly to question marks.
 - Awarded marks never exceed maximum marks and never become negative.
-- A retry references only concepts classified as weak or urgent.
+- A weak-area retry references only deterministically classified non-mastered targets. If none exists, one lowest-performing developing concept may receive reinforcement; if all assessed concepts are mastered, the learner may explicitly choose one optional challenge target. These modes never relabel a mastered concept as weak.
 - Retry wording cannot be normalized-identical to a previous prompt.
+- Original and retry scores and per-concept changes are computed deterministically; a single retry is described as performance evidence, not proof of durable learning.
 - Editing confirmed text invalidates preparation maps, assessments, evaluations, and revisions derived from the old source version.
 - Empty written answers are evaluated deterministically without a provider call.
 

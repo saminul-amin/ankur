@@ -43,7 +43,7 @@ test("captures the Task 04 mixed-assessment UI inventory", async ({ page }, test
   await page.getByRole("button", { name: "Keep editing" }).click();
 
   await page.evaluate(() => {
-    const key = "ankur.ingestion-session.v3";
+    const key = "ankur.ingestion-session.v4";
     const raw = localStorage.getItem(key);
     if (raw === null) throw new Error("Expected a persisted assessment.");
     const state = JSON.parse(raw) as { mode: string };
@@ -128,4 +128,76 @@ test("captures the Task 04 mixed-assessment UI inventory", async ({ page }, test
   await page.setViewportSize({ width: 390, height: 844 });
   await page.locator("#workspace").scrollIntoViewIfNeeded();
   await page.screenshot({ path: `${output}/mixed-result-mobile.png`, fullPage: true });
+
+  await page.evaluate(() => localStorage.clear());
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.reload();
+  await hideDevelopmentChrome(page);
+  await buildSample(page);
+  await page.getByRole("button", { name: "Generate mixed assessment" }).click();
+  await page.getByRole("radio", { name: /^B\./u }).check();
+  await page.getByRole("button", { name: "Next question" }).click();
+  await page.getByRole("button", { name: "Review and submit" }).click();
+  await page.getByRole("button", { name: "Confirm submission" }).click();
+  await expect(page.getByText("3 / 6")).toBeVisible();
+  await page.getByRole("button", { name: "Build revision plan" }).click();
+  await expect(page.getByTestId("revision-plan")).toBeVisible();
+  await page.locator("#workspace").scrollIntoViewIfNeeded();
+  await page.screenshot({ path: `${output}/revision-desktop.png`, fullPage: true });
+  await page.getByRole("button", { name: /View source/u }).first().click();
+  await page.locator(".revision-note").first().screenshot({ path: `${output}/revision-evidence-expanded.png` });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator("#workspace").scrollIntoViewIfNeeded();
+  await page.screenshot({ path: `${output}/revision-mobile.png`, fullPage: true });
+
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.getByRole("button", { name: "Start Weak-Area Retry" }).click();
+  await page.locator("#workspace").scrollIntoViewIfNeeded();
+  await page.screenshot({ path: `${output}/retry-mcq-desktop.png`, fullPage: true });
+  await page.getByRole("radio", { name: /^A\./u }).check();
+  await page.getByRole("button", { name: "Next question" }).click();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator("#workspace").scrollIntoViewIfNeeded();
+  await page.screenshot({ path: `${output}/retry-written-mobile.png`, fullPage: true });
+  await page.getByRole("button", { name: "Review and submit" }).click();
+  await page.screenshot({ path: `${output}/retry-confirmation.png`, fullPage: true });
+  await page.getByRole("button", { name: "Confirm submission" }).click();
+  await expect(page.getByTestId("adaptive-result")).toBeVisible();
+  await page.locator(".retry-review").screenshot({ path: `${output}/retry-result.png` });
+  await page.screenshot({ path: `${output}/adaptive-comparison-mobile.png`, fullPage: true });
+
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.locator("#workspace").scrollIntoViewIfNeeded();
+  await page.screenshot({ path: `${output}/adaptive-comparison-desktop.png`, fullPage: true });
+
+  await page.evaluate(() => {
+    const key = "ankur.ingestion-session.v4";
+    const raw = localStorage.getItem(key);
+    if (raw === null) throw new Error("Expected adaptive sample state.");
+    const state = JSON.parse(raw) as {
+      stage: string;
+      writtenEvaluation: {
+        awardedMarks: number; status: string; criterionResults: Array<{ awardedMarks: number; maximumMarks: number; state: string }>;
+        coveredConceptIds: string[]; missingConceptIds: string[]; recommendedRevisionConceptIds: string[];
+      };
+      activitySet: { questions: [unknown, { requiredConceptIds: string[] }] };
+    } & Record<string, unknown>;
+    state.stage = "results";
+    state.writtenEvaluation.awardedMarks = 5;
+    state.writtenEvaluation.status = "correct";
+    state.writtenEvaluation.criterionResults = state.writtenEvaluation.criterionResults.map((criterion) => ({ ...criterion, awardedMarks: criterion.maximumMarks, state: "met" }));
+    state.writtenEvaluation.coveredConceptIds = state.activitySet.questions[1].requiredConceptIds;
+    state.writtenEvaluation.missingConceptIds = [];
+    state.writtenEvaluation.recommendedRevisionConceptIds = [];
+    for (const keyToRemove of ["revisionPlan", "revisionOperationId", "retrySelectedOptionId", "retryWrittenEvaluation", "retryConceptPerformance", "retryMcqGrade", "improvementComparison"]) {
+      Reflect.deleteProperty(state, keyToRemove);
+    }
+    localStorage.setItem(key, JSON.stringify(state));
+  });
+  await page.reload();
+  await hideDevelopmentChrome(page);
+  await expect(page.getByRole("heading", { name: "All assessed concepts are mastered" })).toBeVisible();
+  await page.locator(".weak-concepts").screenshot({ path: `${output}/all-mastered-reinforcement.png` });
 });

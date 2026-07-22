@@ -19,7 +19,9 @@
     "verify:ingestion": "node --env-file-if-exists=.env.local --import tsx scripts/ingestion/run-live.ts",
     "verify:mixed-assessment": "node --env-file-if-exists=.env.local --import tsx scripts/mixed-assessment/run-live.ts",
     "benchmark:provider": "node --env-file-if-exists=.env.local --import tsx scripts/provider-reliability/run.ts",
-    "verify:production-live": "node --import tsx scripts/production/run-live.ts"
+    "verify:adaptive-loop": "node --env-file-if-exists=.env.local --import tsx scripts/adaptive-loop/run-live.ts",
+    "verify:production-live": "node --import tsx scripts/production/run-live.ts",
+    "verify:production-adaptive": "node --import tsx scripts/production/run-adaptive-live.ts"
   },
   "dependencies": {
     "@google/genai": "latest",

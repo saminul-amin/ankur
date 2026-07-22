@@ -240,22 +240,22 @@ Additional server checks:
 
 ## 9. `POST /api/revisions`
 
-Purpose: generate focused revision notes and a short retry activity for weak concepts.
+Purpose: deterministically select a weak-area, reinforcement, or optional challenge target, then generate a focused revision plan and a two-question retry.
 
 Request:
 
 ```ts
 interface RevisionGenerationRequest {
+  operationId: string;
   sourceVersionId: string;
-  weakConcepts: Array<{
-    concept: LearningConcept;
-    performance: ConceptPerformance;
-    missedCriterionIds: string[];
-    misconceptions: string[];
-  }>;
-  priorQuestionPrompts: string[];
-  evidenceSegments: ConfirmedSegmentInput[];
+  preparationMap: PreparationMap;
+  originalActivity: ActivitySet;
+  originalResultId: string;
+  originalMcqGrade: McqGrade;
+  originalWrittenEvaluation: WrittenAnswerEvaluation;
+  conceptPerformance: ConceptPerformance[];
   language: "bn" | "en" | "mixed";
+  segments: ConfirmedSegmentInput[];
 }
 ```
 
@@ -269,7 +269,7 @@ interface RevisionGenerationResult {
 }
 ```
 
-Validation includes evidence checks and normalized duplicate comparison against prior prompts.
+The application use case recomputes and reconciles concept performance from the immutable activity and grades before selecting targets. Client-reported performance cannot create a weakness. Only selected concepts and their authorized evidence window reach the provider adapter. Validation requires exact target/item coverage, valid source quotes and concept IDs, fixed marks, and materially distinct retry prompts; one bounded repair is allowed before atomic rejection.
 
 ## 10. Rate-limit headers
 

@@ -13,7 +13,7 @@ export type ApiErrorCode = (typeof apiErrorCodes)[number];
 
 export const artifactSchema = z.object({
   provider: z.literal("gemini_api"), modelId: z.literal("gemma-4-26b-a4b-it"),
-  task: z.enum(["page_transcription", "material_analysis", "assessment_generation", "written_evaluation"]),
+  task: z.enum(["page_transcription", "material_analysis", "assessment_generation", "written_evaluation", "revision_generation"]),
   promptVersion: z.string().min(1), schemaVersion: z.string().min(1), thinkingLevel: z.enum(["minimal", "high"]),
   requestId: z.string().min(1), createdAt: z.string().min(1), latencyMs: z.number().nonnegative(), repaired: z.boolean(),
 }).strict();
@@ -83,6 +83,54 @@ export const writtenEvaluationApiSchema = z.object({
   evidence: z.array(evidenceSchema).min(1).max(6), recommendedRevisionConceptIds: z.array(conceptIdSchema).max(8), artifact: artifactSchema,
 }).strict();
 
+export const mcqGradeApiSchema = z.object({
+  status: z.enum(["correct", "incorrect", "unanswered"]), correct: z.boolean(),
+  earnedMarks: z.union([z.literal(0), z.literal(1)]), availableMarks: z.literal(1),
+  selectedOptionId: z.enum(["A", "B", "C", "D"]).optional(), correctOptionId: z.enum(["A", "B", "C", "D"]),
+}).strict();
+
+const markContributionApiSchema = z.object({
+  availableMarks: z.number().nonnegative(), earnedMarks: z.number().nonnegative(),
+}).strict();
+
+export const conceptPerformanceApiSchema = z.object({
+  conceptId: conceptIdSchema, name: z.string().min(1).max(120), priority: z.enum(["high", "medium", "low"]),
+  availableMarks: z.number().positive(), earnedMarks: z.number().nonnegative(), percentage: z.number().min(0).max(100),
+  questionsAttempted: z.number().int().min(0).max(2), objective: markContributionApiSchema, written: markContributionApiSchema,
+  hasCriticalIncorrectClaim: z.boolean(), strength: z.enum(["mastered", "developing", "needs_review", "urgent_priority"]),
+}).strict();
+
+export const revisionItemApiSchema = z.object({
+  id: z.string().regex(/^revision-item-\d{3}$/), conceptId: conceptIdSchema,
+  learnerIssueSummary: z.string().min(1).max(400), correctedConcept: z.string().min(1).max(500),
+  explanation: z.string().min(1).max(500), importantFact: z.string().min(1).max(600),
+  memoryAid: z.string().min(1).max(300), modelAnswerOutline: z.string().min(1).max(560),
+  evidence: z.array(evidenceSchema).min(1).max(3), linkedClaims: z.array(z.string().min(1).max(500)).max(8),
+}).strict();
+
+export const revisionPlanApiSchema = z.object({
+  schemaVersion: z.literal("revision-plan.v1"), id: z.string().min(1).max(180), sourceVersionId: z.string().min(1),
+  originalActivitySetId: z.string().min(1), originalResultId: z.string().min(1),
+  retryMode: z.enum(["weak_area", "reinforcement", "challenge"]),
+  targetConceptIds: z.array(conceptIdSchema).min(1).max(3), items: z.array(revisionItemApiSchema).min(1).max(3),
+  retryActivity: activitySetApiSchema, warnings: z.array(z.string().max(240)).max(5), artifact: artifactSchema,
+}).strict();
+
+export const improvementComparisonApiSchema = z.object({
+  schemaVersion: z.literal("improvement-comparison.v1"), originalScore: z.number().min(0).max(6),
+  retryScore: z.number().min(0).max(6), maximumScore: z.literal(6), absoluteChange: z.number().min(-6).max(6),
+  percentagePointChange: z.number().min(-100).max(100),
+  concepts: z.array(z.object({
+    conceptId: conceptIdSchema, name: z.string().min(1).max(120), originalPercentage: z.number().min(0).max(100),
+    retryPercentage: z.number().min(0).max(100), change: z.enum(["improved", "unchanged", "regressed"]),
+    mastered: z.boolean(), stillNeedsReview: z.boolean(),
+  }).strict()).min(1).max(3),
+  improvedConceptIds: z.array(conceptIdSchema).max(3), unchangedConceptIds: z.array(conceptIdSchema).max(3),
+  regressedConceptIds: z.array(conceptIdSchema).max(3), masteredConceptIds: z.array(conceptIdSchema).max(3),
+  stillNeedsReviewConceptIds: z.array(conceptIdSchema).max(3), remainingUrgentConceptIds: z.array(conceptIdSchema).max(3),
+  recommendation: z.string().min(1).max(500),
+}).strict();
+
 export const segmentInputSchema = z.object({
   id: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/), pageNumber: z.number().int().min(1).max(3), text: z.string().min(1).max(25_000),
 }).strict();
@@ -103,6 +151,27 @@ export const assessmentRequestSchema = z.object({
   }).strict(),
   segments: z.array(segmentInputSchema).min(1).max(100),
 }).strict();
+
+export const revisionRequestSchema = z.object({
+  operationId: z.string().regex(/^[a-zA-Z0-9_-]{8,100}$/), sourceVersionId: z.string().min(1),
+  preparationMap: preparationMapApiSchema, originalActivity: activitySetApiSchema,
+  originalResultId: z.string().min(1).max(180), originalMcqGrade: mcqGradeApiSchema,
+  originalWrittenEvaluation: writtenEvaluationApiSchema,
+  conceptPerformance: z.array(conceptPerformanceApiSchema).min(1).max(8),
+  language: z.enum(["bn", "en", "mixed"]), segments: z.array(segmentInputSchema).min(1).max(100),
+}).strict().superRefine((value, context) => {
+  const versions = [
+    value.preparationMap.sourceVersionId,
+    value.originalActivity.sourceVersionId,
+    value.originalWrittenEvaluation.sourceVersionId,
+  ];
+  if (versions.some((version) => version !== value.sourceVersionId)) {
+    context.addIssue({ code: "custom", path: ["sourceVersionId"], message: "Source versions must match." });
+  }
+  if (new Set(value.segments.map((segment) => segment.id)).size !== value.segments.length) {
+    context.addIssue({ code: "custom", path: ["segments"], message: "Segment IDs must be unique." });
+  }
+});
 
 export const writtenEvaluationRequestSchema = z.object({
   operationId: z.string().regex(/^[a-zA-Z0-9_-]{8,100}$/), sourceVersionId: z.string().min(1),

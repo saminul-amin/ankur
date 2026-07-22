@@ -7,7 +7,7 @@ import type { ActivitySet } from "../../../domain/assessments/mcq";
 import type { SourceLanguage } from "../../../domain/source/confirmed-source";
 import { Badge, Button, Field, Textarea } from "../ui/primitives";
 
-export function PracticeCard({ activitySet, language, currentQuestionIndex, selectedOptionId, writtenAnswer, submitting, confirming, onSelect, onWrittenChange, onPrevious, onNext, onRequestSubmit, onCancelSubmit, onConfirmSubmit }: Readonly<{
+export function PracticeCard({ activitySet, language, currentQuestionIndex, selectedOptionId, writtenAnswer, submitting, confirming, variant = "assessment", targetNames = [], onSelect, onWrittenChange, onPrevious, onNext, onRequestSubmit, onCancelSubmit, onConfirmSubmit }: Readonly<{
   activitySet: ActivitySet;
   language: SourceLanguage;
   currentQuestionIndex: 0 | 1;
@@ -15,6 +15,8 @@ export function PracticeCard({ activitySet, language, currentQuestionIndex, sele
   writtenAnswer: string;
   submitting: boolean;
   confirming: boolean;
+  variant?: "assessment" | "retry";
+  targetNames?: readonly string[];
   onSelect: (optionId: string) => void;
   onWrittenChange: (answer: string) => void;
   onPrevious: () => void;
@@ -60,9 +62,10 @@ export function PracticeCard({ activitySet, language, currentQuestionIndex, sele
   return (
     <div className="practice-stage">
       <div className="stage-heading">
-        <span className="stage-heading__index">04</span>
-        <div><p className="eyebrow">Practice in bloom</p><h2>{activitySet.title}</h2><p>Feedback and evidence stay folded until both questions are submitted.</p></div>
+        <span className="stage-heading__index">{variant === "retry" ? "06" : "04"}</span>
+        <div><p className="eyebrow">{variant === "retry" ? "Focused retry" : "Practice in bloom"}</p><h2>{activitySet.title}</h2><p>{variant === "retry" ? "Use the revision notes, then answer both newly worded questions. Your original result stays unchanged." : "Feedback and evidence stay folded until both questions are submitted."}</p></div>
       </div>
+      {variant === "retry" && targetNames.length > 0 ? <div className="retry-targets" aria-label="Retry target concepts"><span>Targeting</span>{targetNames.map((name) => <Badge key={name} tone="sprout">{name}</Badge>)}</div> : null}
       <div className="question-progress" aria-label={`Question ${String(currentQuestionIndex + 1)} of 2`}><span>Question {currentQuestionIndex + 1} of 2</span><div aria-hidden="true"><i className="is-complete" /><i className={currentQuestionIndex === 1 ? "is-complete" : undefined} /></div></div>
       <article className="practice-card">
         <div className="practice-card__meta"><Badge tone="indigo">{isMcq ? <CircleHelp aria-hidden="true" size={14} /> : <FilePenLine aria-hidden="true" size={14} />}{isMcq ? "Single choice" : "Short written"}</Badge><Badge>{question.difficulty}</Badge><span>{question.marks} {question.marks === 1 ? "mark" : "marks"}</span></div>
@@ -78,7 +81,7 @@ export function PracticeCard({ activitySet, language, currentQuestionIndex, sele
         )}
         <div className="practice-card__footer"><span><Leaf aria-hidden="true" size={16} />Grounded in your confirmed source</span><div>{currentQuestionIndex === 1 ? <Button variant="quiet" onClick={onPrevious}><ArrowLeft aria-hidden="true" size={16} />Previous</Button> : null}{currentQuestionIndex === 0 ? <Button onClick={onNext}>Next question <ArrowRight aria-hidden="true" size={16} /></Button> : <Button disabled={submitting} onClick={onRequestSubmit}>Review and submit</Button>}</div></div>
       </article>
-      {confirming ? <div className="submission-backdrop"><section aria-describedby="submit-description" aria-labelledby="submit-title" aria-modal="true" className="submission-dialog" onKeyDown={handleDialogKeyDown} ref={dialogRef} role="dialog"><p className="eyebrow">Final submission</p><h3 id="submit-title">Submit both answers?</h3><p id="submit-description">Feedback appears only after the full assessment. {selectedOptionId === "" || writtenAnswer.trim() === "" ? "One or more answers are blank and will receive zero marks." : "Both answers are ready for grading."}</p><dl><div><dt>MCQ</dt><dd>{selectedOptionId === "" ? "Unanswered" : "Answered"}</dd></div><div><dt>Written</dt><dd>{writtenAnswer.trim() === "" ? "Unanswered" : "Answered"}</dd></div></dl><div><Button variant="quiet" onClick={onCancelSubmit}>Keep editing</Button><Button disabled={submitting} onClick={onConfirmSubmit}>{submitting ? "Submitting…" : "Confirm submission"}</Button></div></section></div> : null}
+      {confirming ? <div className="submission-backdrop"><section aria-describedby="submit-description" aria-labelledby="submit-title" aria-modal="true" className="submission-dialog" onKeyDown={handleDialogKeyDown} ref={dialogRef} role="dialog"><p className="eyebrow">{variant === "retry" ? "Retry submission" : "Final submission"}</p><h3 id="submit-title">Submit both answers?</h3><p id="submit-description">Feedback appears only after the full {variant === "retry" ? "retry" : "assessment"}. {selectedOptionId === "" || writtenAnswer.trim() === "" ? "One or more answers are blank and will receive zero marks." : "Both answers are ready for grading."}</p><dl><div><dt>MCQ</dt><dd>{selectedOptionId === "" ? "Unanswered" : "Answered"}</dd></div><div><dt>Written</dt><dd>{writtenAnswer.trim() === "" ? "Unanswered" : "Answered"}</dd></div></dl><div><Button variant="quiet" onClick={onCancelSubmit}>Keep editing</Button><Button disabled={submitting} onClick={onConfirmSubmit}>{submitting ? "Submitting…" : "Confirm submission"}</Button></div></section></div> : null}
     </div>
   );
 }

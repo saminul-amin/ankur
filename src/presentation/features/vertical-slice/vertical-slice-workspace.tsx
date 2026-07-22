@@ -7,6 +7,8 @@ import { useEffect, useRef, useState } from "react";
 import {
   createSampleActivitySet,
   createSamplePreparationMap,
+  createSampleRevisionPlan,
+  createSampleRetryWrittenEvaluation,
   createSampleWrittenEvaluation,
   SAMPLE_PARTIAL_WRITTEN_ANSWER,
   SAMPLE_PAGES,
@@ -15,6 +17,8 @@ import { calculateConceptPerformance, reconcileAssessmentTotal, type ConceptPerf
 import { gradeMcq, type ActivitySet, type AssessmentDifficulty, type McqGrade } from "../../../domain/assessments/mcq";
 import { createEmptyWrittenEvaluation, type WrittenAnswerEvaluation } from "../../../domain/assessments/written-evaluation";
 import { type PreparationMap } from "../../../domain/preparation/preparation-map";
+import { compareAssessmentAttempts, type ImprovementComparison } from "../../../domain/revision/improvement-comparison";
+import type { RevisionPlan } from "../../../domain/revision/revision-plan";
 import {
   createConfirmedSource,
   SourceDomainError,
@@ -24,7 +28,7 @@ import {
 } from "../../../domain/source/confirmed-source";
 import type { ReviewPage } from "../../../domain/source/page-extraction";
 import { DocumentIngestionError } from "../../../infrastructure/documents/browser-document-processor";
-import { requestMixedAssessment, requestPageTranscription, requestPreparationMap, requestWrittenEvaluation, ApiClientError } from "../../api/client";
+import { requestMixedAssessment, requestPageTranscription, requestPersonalizedRevision, requestPreparationMap, requestWrittenEvaluation, ApiClientError } from "../../api/client";
 import { AnkurMark } from "../../components/brand/ankur-mark";
 import { ConceptCanopy } from "../../components/learning/concept-canopy";
 import { AssessmentBuilder } from "../../components/learning/assessment-builder";
@@ -33,13 +37,17 @@ import { PageReviewCard } from "../../components/learning/page-review-card";
 import { PracticeCard } from "../../components/learning/practice-card";
 import { ProcessNarrative } from "../../components/learning/process-narrative";
 import { ResultSummary } from "../../components/learning/result-summary";
+import { RevisionPlanView } from "../../components/learning/revision-plan-view";
+import { AdaptiveResultSummary } from "../../components/learning/adaptive-result-summary";
 import { RuntimePill, type RuntimeState } from "../../components/learning/runtime-pill";
 import { SourceCanvas, type SourceKind } from "../../components/learning/source-canvas";
 import { AlertBanner, Badge, Button, Field, TextInput } from "../../components/ui/primitives";
 import { processPageImagesForReview, processPdfForReview } from "../../composition/browser-services";
 import {
   INGESTION_STORAGE_KEY,
+  TASK04_STORAGE_KEY,
   TASK03_STORAGE_KEY,
+  migrateTask04Session,
   migrateTask03Session,
   parsePersistedIngestionSession,
   toPersistedIngestionSession,
@@ -152,6 +160,18 @@ export function VerticalSliceWorkspace() {
   const [conceptPerformance, setConceptPerformance] = useState<ConceptPerformance[]>();
   const [writtenOperationId, setWrittenOperationId] = useState<string>();
   const [uncertainWrittenFailure, setUncertainWrittenFailure] = useState(false);
+  const [revisionPlan, setRevisionPlan] = useState<RevisionPlan>();
+  const [revisionOperationId, setRevisionOperationId] = useState<string>();
+  const [uncertainRevisionFailure, setUncertainRevisionFailure] = useState(false);
+  const [retrySelectedOptionId, setRetrySelectedOptionId] = useState("");
+  const [retryWrittenAnswer, setRetryWrittenAnswer] = useState("");
+  const [retryCurrentQuestionIndex, setRetryCurrentQuestionIndex] = useState<0 | 1>(0);
+  const [retryGrade, setRetryGrade] = useState<McqGrade>();
+  const [retryWrittenEvaluation, setRetryWrittenEvaluation] = useState<WrittenAnswerEvaluation>();
+  const [retryConceptPerformance, setRetryConceptPerformance] = useState<ConceptPerformance[]>();
+  const [retryWrittenOperationId, setRetryWrittenOperationId] = useState<string>();
+  const [uncertainRetryFailure, setUncertainRetryFailure] = useState(false);
+  const [improvementComparison, setImprovementComparison] = useState<ImprovementComparison>();
   const [confirmingSubmission, setConfirmingSubmission] = useState(false);
   const [submittingAssessment, setSubmittingAssessment] = useState(false);
   const [loading, setLoading] = useState<string>();
@@ -171,8 +191,11 @@ export function VerticalSliceWorkspace() {
     setSessionId(getSessionId());
     setDraftId(`draft-${crypto.randomUUID()}`);
     const raw = window.localStorage.getItem(INGESTION_STORAGE_KEY);
-    const legacy = window.localStorage.getItem(TASK03_STORAGE_KEY);
-    const persisted = raw === null ? legacy === null ? undefined : migrateTask03Session(legacy) : parsePersistedIngestionSession(raw);
+    const task04 = window.localStorage.getItem(TASK04_STORAGE_KEY);
+    const task03 = window.localStorage.getItem(TASK03_STORAGE_KEY);
+    const persisted = raw !== null ? parsePersistedIngestionSession(raw)
+      : task04 !== null ? migrateTask04Session(task04)
+        : task03 !== null ? migrateTask03Session(task03) : undefined;
     if (persisted !== undefined) {
       setStage(persisted.stage); setMode(persisted.mode); setSourceKind(persisted.sourceKind);
       setPages([...persisted.pages]); setPriority(persisted.priorityInstruction);
@@ -185,6 +208,13 @@ export function VerticalSliceWorkspace() {
       setCurrentQuestionIndex(persisted.currentQuestionIndex); setGrade(persisted.mcqGrade);
       setWrittenEvaluation(persisted.writtenEvaluation); setConceptPerformance(persisted.conceptPerformance === undefined ? undefined : [...persisted.conceptPerformance]);
       setWrittenOperationId(persisted.writtenOperationId); setUncertainWrittenFailure(persisted.uncertainWrittenFailure);
+      setRevisionPlan(persisted.revisionPlan); setRevisionOperationId(persisted.revisionOperationId); setUncertainRevisionFailure(persisted.uncertainRevisionFailure);
+      setRetrySelectedOptionId(persisted.retrySelectedOptionId ?? ""); setRetryWrittenAnswer(persisted.retryWrittenAnswer);
+      setRetryCurrentQuestionIndex(persisted.retryCurrentQuestionIndex); setRetryGrade(persisted.retryMcqGrade);
+      setRetryWrittenEvaluation(persisted.retryWrittenEvaluation);
+      setRetryConceptPerformance(persisted.retryConceptPerformance === undefined ? undefined : [...persisted.retryConceptPerformance]);
+      setRetryWrittenOperationId(persisted.retryWrittenOperationId); setUncertainRetryFailure(persisted.uncertainRetryFailure);
+      setImprovementComparison(persisted.improvementComparison);
       setDraftText(persisted.pages[0]?.sourceKind === "pasted_text" ? persisted.pages[0].text : "");
       setRecoveryNotice(persisted.recoveredWithoutPreviews && persisted.pages.some((page) => page.sourceKind === "pdf" || page.sourceKind === "page_image"));
     }
@@ -215,17 +245,35 @@ export function VerticalSliceWorkspace() {
       ...(conceptPerformance === undefined ? {} : { conceptPerformance }),
       ...(writtenOperationId === undefined ? {} : { writtenOperationId }),
       uncertainWrittenFailure,
+      ...(revisionPlan === undefined ? {} : { revisionPlan }),
+      ...(revisionOperationId === undefined ? {} : { revisionOperationId }),
+      uncertainRevisionFailure,
+      ...(retrySelectedOptionId === "" ? {} : { retrySelectedOptionId }),
+      retryWrittenAnswer, retryCurrentQuestionIndex,
+      ...(retryGrade === undefined ? {} : { retryMcqGrade: retryGrade }),
+      ...(retryWrittenEvaluation === undefined ? {} : { retryWrittenEvaluation }),
+      ...(retryConceptPerformance === undefined ? {} : { retryConceptPerformance }),
+      ...(retryWrittenOperationId === undefined ? {} : { retryWrittenOperationId }),
+      uncertainRetryFailure,
+      ...(improvementComparison === undefined ? {} : { improvementComparison }),
     }));
-  }, [activitySet, assessmentTitle, conceptPerformance, confirmedSource, currentQuestionIndex, difficulty, grade, hydrated, metadata, mode, pages, preparationMap, priority, selectedConceptIds, selectedOptionId, sourceKind, stage, uncertainWrittenFailure, writtenAnswer, writtenEvaluation, writtenOperationId]);
+  }, [activitySet, assessmentTitle, conceptPerformance, confirmedSource, currentQuestionIndex, difficulty, grade, hydrated, improvementComparison, metadata, mode, pages, preparationMap, priority, retryConceptPerformance, retryCurrentQuestionIndex, retryGrade, retrySelectedOptionId, retryWrittenAnswer, retryWrittenEvaluation, retryWrittenOperationId, revisionOperationId, revisionPlan, selectedConceptIds, selectedOptionId, sourceKind, stage, uncertainRetryFailure, uncertainRevisionFailure, uncertainWrittenFailure, writtenAnswer, writtenEvaluation, writtenOperationId]);
 
   const hasProcessingPage = pages.some((page) => page.status === "processing");
   const canConfirm = !hasProcessingPage && pages.some((page) => page.included && page.text.trim().length > 0);
+
+  function clearAdaptiveState() {
+    setRevisionPlan(undefined); setRevisionOperationId(undefined); setUncertainRevisionFailure(false);
+    setRetrySelectedOptionId(""); setRetryWrittenAnswer(""); setRetryCurrentQuestionIndex(0);
+    setRetryGrade(undefined); setRetryWrittenEvaluation(undefined); setRetryConceptPerformance(undefined);
+    setRetryWrittenOperationId(undefined); setUncertainRetryFailure(false); setImprovementComparison(undefined);
+  }
 
   function invalidateDownstream() {
     if (confirmedSource !== undefined || preparationMap !== undefined || activitySet !== undefined) {
       setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined);
       setAssessmentTitle(""); setSelectedConceptIds([]); setSelectedOptionId(""); setWrittenAnswer(""); setGrade(undefined);
-      setWrittenEvaluation(undefined); setConceptPerformance(undefined); setWrittenOperationId(undefined); setUncertainWrittenFailure(false); setStage("review");
+      setWrittenEvaluation(undefined); setConceptPerformance(undefined); setWrittenOperationId(undefined); setUncertainWrittenFailure(false); clearAdaptiveState(); setStage("review");
     }
   }
 
@@ -284,6 +332,7 @@ export function VerticalSliceWorkspace() {
     setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setSelectedConceptIds([]);
     setSelectedOptionId(""); setWrittenAnswer(SAMPLE_PARTIAL_WRITTEN_ANSWER); setCurrentQuestionIndex(0); setGrade(undefined);
     setWrittenEvaluation(undefined); setConceptPerformance(undefined); setWrittenOperationId(undefined); setUncertainWrittenFailure(false);
+    clearAdaptiveState();
     setError(undefined); setRecoveryNotice(false); setStage("review");
   }
 
@@ -294,7 +343,7 @@ export function VerticalSliceWorkspace() {
       text: draftText, uncertainSegments: [], warnings: [], included: true, status: "ready", previewAvailable: false,
     };
     setMode("live"); setPages([nextPage]); setMetadata({ name: "Pasted learning material", kind: "pasted_text", pageCount: 1 });
-    setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setSelectedConceptIds([]); setWrittenAnswer(""); setError(undefined); setStage("review");
+    setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setSelectedConceptIds([]); setWrittenAnswer(""); clearAdaptiveState(); setError(undefined); setStage("review");
   }
 
   async function handlePdf(file: File | undefined) {
@@ -304,7 +353,7 @@ export function VerticalSliceWorkspace() {
       const processed = await processPdfForReview(file);
       setMode("live"); setSourceKind("pdf"); setPages([...processed.pages]);
       setMetadata({ name: processed.sourceName, kind: "pdf", pageCount: processed.pages.length });
-      setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setSelectedConceptIds([]); setWrittenAnswer(""); setRecoveryNotice(false); setStage("review");
+      setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setSelectedConceptIds([]); setWrittenAnswer(""); clearAdaptiveState(); setRecoveryNotice(false); setStage("review");
       await transcribePending(processed.pages);
     } catch (caught) {
       setError(errorMessage(caught));
@@ -318,7 +367,7 @@ export function VerticalSliceWorkspace() {
       const processed = await processPageImagesForReview(files);
       setMode("live"); setSourceKind("images"); setPages([...processed.pages]);
       setMetadata({ name: processed.sourceName, kind: "page_images", pageCount: processed.pages.length });
-      setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setSelectedConceptIds([]); setWrittenAnswer(""); setRecoveryNotice(false); setStage("review");
+      setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setSelectedConceptIds([]); setWrittenAnswer(""); clearAdaptiveState(); setRecoveryNotice(false); setStage("review");
       await transcribePending(processed.pages);
     } catch (caught) {
       setError(errorMessage(caught));
@@ -339,7 +388,7 @@ export function VerticalSliceWorkspace() {
       });
       setConfirmedSource(source); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setSelectedConceptIds([]);
       setSelectedOptionId(""); setWrittenAnswer(mode === "sample" ? SAMPLE_PARTIAL_WRITTEN_ANSWER : ""); setGrade(undefined);
-      setWrittenEvaluation(undefined); setConceptPerformance(undefined); setStage("confirmed");
+      setWrittenEvaluation(undefined); setConceptPerformance(undefined); clearAdaptiveState(); setStage("confirmed");
     } catch (caught) { setError(errorMessage(caught)); }
   }
 
@@ -369,14 +418,14 @@ export function VerticalSliceWorkspace() {
         segments: confirmedSource.segments.map(({ id, pageNumber, text }) => ({ id, pageNumber, text })),
       }, sessionId);
       setActivitySet(generated); setSelectedOptionId(""); setWrittenAnswer(mode === "sample" ? SAMPLE_PARTIAL_WRITTEN_ANSWER : ""); setCurrentQuestionIndex(0);
-      setGrade(undefined); setWrittenEvaluation(undefined); setConceptPerformance(undefined); setWrittenOperationId(undefined); setUncertainWrittenFailure(false); setStage("assessment");
+      setGrade(undefined); setWrittenEvaluation(undefined); setConceptPerformance(undefined); setWrittenOperationId(undefined); setUncertainWrittenFailure(false); clearAdaptiveState(); setStage("assessment");
     } catch (caught) { setError(errorMessage(caught)); }
     finally { setLoading(undefined); }
   }
 
   function updateAssessmentConfiguration(change: () => void) {
     change(); setActivitySet(undefined); setSelectedOptionId(""); setWrittenAnswer(mode === "sample" ? SAMPLE_PARTIAL_WRITTEN_ANSWER : "");
-    setGrade(undefined); setWrittenEvaluation(undefined); setConceptPerformance(undefined); setWrittenOperationId(undefined); setUncertainWrittenFailure(false);
+    setGrade(undefined); setWrittenEvaluation(undefined); setConceptPerformance(undefined); setWrittenOperationId(undefined); setUncertainWrittenFailure(false); clearAdaptiveState();
   }
 
   function toggleConcept(conceptId: string) {
@@ -423,12 +472,110 @@ export function VerticalSliceWorkspace() {
     } finally { setLoading(undefined); setSubmittingAssessment(false); }
   }
 
+  async function generateRevision() {
+    if (
+      confirmedSource === undefined || preparationMap === undefined || activitySet === undefined ||
+      grade === undefined || writtenEvaluation === undefined || conceptPerformance === undefined || loading !== undefined
+    ) return;
+    const operationId = revisionOperationId ?? `revision-${crypto.randomUUID()}`;
+    setRevisionOperationId(operationId); setLoadingKind("generation");
+    setLoading(mode === "sample" ? "Opening the pre-generated grounded revision…" : "Building source-grounded notes and a focused retry…");
+    setError(undefined); setUncertainRevisionFailure(false);
+    try {
+      const plan = mode === "sample" ? createSampleRevisionPlan({
+        source: confirmedSource,
+        preparationMap,
+        originalActivity: activitySet,
+        originalResultId: `result-${activitySet.id}`,
+        performance: conceptPerformance,
+        writtenEvaluation,
+      }) : await requestPersonalizedRevision({
+        operationId,
+        sourceVersionId: confirmedSource.sourceVersionId,
+        preparationMap,
+        originalActivity: activitySet,
+        originalResultId: `result-${activitySet.id}`,
+        originalMcqGrade: grade,
+        originalWrittenEvaluation: writtenEvaluation,
+        conceptPerformance,
+        language: confirmedSource.language,
+        segments: confirmedSource.segments.map(({ id, pageNumber, text }) => ({ id, pageNumber, text })),
+      }, sessionId);
+      setRevisionPlan(plan); setRetrySelectedOptionId("");
+      setRetryWrittenAnswer(mode === "sample" ? plan.retryActivity.questions[1].referenceAnswer : ""); setRetryCurrentQuestionIndex(0);
+      setRetryGrade(undefined); setRetryWrittenEvaluation(undefined); setRetryConceptPerformance(undefined);
+      setRetryWrittenOperationId(undefined); setUncertainRetryFailure(false); setImprovementComparison(undefined);
+      setStage("revision");
+    } catch (caught) {
+      setUncertainRevisionFailure(mode === "live");
+      setError(`${errorMessage(caught)} Your completed assessment result remains saved. You can explicitly retry revision generation.`);
+    } finally { setLoading(undefined); }
+  }
+
+  async function submitRetry() {
+    if (
+      revisionPlan === undefined || confirmedSource === undefined || preparationMap === undefined ||
+      grade === undefined || writtenEvaluation === undefined || conceptPerformance === undefined || submittingAssessment
+    ) return;
+    setConfirmingSubmission(false); setSubmittingAssessment(true); setError(undefined); setLoadingKind("generation");
+    const operationId = retryWrittenOperationId ?? `retry-written-${crypto.randomUUID()}`;
+    setRetryWrittenOperationId(operationId);
+    const nextGrade = gradeMcq(revisionPlan.retryActivity.questions[0], retrySelectedOptionId);
+    setRetryGrade(nextGrade);
+    try {
+      let evaluation: WrittenAnswerEvaluation;
+      if (retryWrittenAnswer.trim() === "") {
+        evaluation = createEmptyWrittenEvaluation({ question: revisionPlan.retryActivity.questions[1], requestId: operationId });
+      } else if (mode === "sample") {
+        setLoading("Applying the fixed retry rubric…");
+        evaluation = createSampleRetryWrittenEvaluation(revisionPlan.retryActivity);
+      } else {
+        setLoading("Gemma 4 is grading the retry against the unchanged rubric rules…");
+        const question = revisionPlan.retryActivity.questions[1];
+        const allowedIds = new Set([
+          ...question.evidence.map((reference) => reference.segmentId),
+          ...question.rubric.flatMap((criterion) => criterion.evidence.map((reference) => reference.segmentId)),
+        ]);
+        evaluation = await requestWrittenEvaluation({
+          operationId,
+          sourceVersionId: confirmedSource.sourceVersionId,
+          question,
+          studentAnswer: retryWrittenAnswer,
+          evidenceSegments: confirmedSource.segments.filter((segment) => allowedIds.has(segment.id)).map(({ id, pageNumber, text }) => ({ id, pageNumber, text })),
+        }, sessionId);
+      }
+      const performance = calculateConceptPerformance({
+        concepts: preparationMap.concepts,
+        mcqQuestion: revisionPlan.retryActivity.questions[0],
+        mcqGrade: nextGrade,
+        writtenQuestion: revisionPlan.retryActivity.questions[1],
+        writtenEvaluation: evaluation,
+      });
+      if (!reconcileAssessmentTotal({ mcqGrade: nextGrade, writtenEvaluation: evaluation, performance })) {
+        throw new Error("Retry totals did not reconcile.");
+      }
+      const comparison = compareAssessmentAttempts({
+        originalMcqGrade: grade,
+        originalWrittenEvaluation: writtenEvaluation,
+        originalPerformance: conceptPerformance,
+        retryMcqGrade: nextGrade,
+        retryWrittenEvaluation: evaluation,
+        retryPerformance: performance,
+      });
+      setRetryWrittenEvaluation(evaluation); setRetryConceptPerformance(performance);
+      setImprovementComparison(comparison); setUncertainRetryFailure(false); setStage("adaptive_results");
+    } catch (caught) {
+      setUncertainRetryFailure(retryWrittenAnswer.trim() !== "");
+      setError(`${errorMessage(caught)} The revision plan, retry questions, and both entered answers remain saved. Retry grading only when you choose.`);
+    } finally { setLoading(undefined); setSubmittingAssessment(false); }
+  }
+
   function clearSession() {
-    window.localStorage.removeItem(INGESTION_STORAGE_KEY); window.localStorage.removeItem(TASK03_STORAGE_KEY); window.localStorage.removeItem(LEGACY_STORAGE_KEY);
+    window.localStorage.removeItem(INGESTION_STORAGE_KEY); window.localStorage.removeItem(TASK04_STORAGE_KEY); window.localStorage.removeItem(TASK03_STORAGE_KEY); window.localStorage.removeItem(LEGACY_STORAGE_KEY);
     setStage("input"); setMode("live"); setSourceKind("text"); setDraftText(""); setPages([]); setMetadata(undefined); setPriority("");
     setConfirmedSource(undefined); setPreparationMap(undefined); setActivitySet(undefined); setAssessmentTitle(""); setDifficulty("medium"); setSelectedConceptIds([]);
     setSelectedOptionId(""); setWrittenAnswer(""); setCurrentQuestionIndex(0); setGrade(undefined); setWrittenEvaluation(undefined); setConceptPerformance(undefined);
-    setWrittenOperationId(undefined); setUncertainWrittenFailure(false); setConfirmingSubmission(false); setSubmittingAssessment(false); setError(undefined); setRecoveryNotice(false);
+    setWrittenOperationId(undefined); setUncertainWrittenFailure(false); clearAdaptiveState(); setConfirmingSubmission(false); setSubmittingAssessment(false); setError(undefined); setRecoveryNotice(false);
   }
 
   function enterWorkspace() {
@@ -500,7 +647,10 @@ export function VerticalSliceWorkspace() {
                 ) : null}
                 {stage === "preparation" && preparationMap !== undefined && confirmedSource !== undefined ? <div><ConceptCanopy map={preparationMap} source={confirmedSource} /><AssessmentBuilder map={preparationMap} title={assessmentTitle} difficulty={difficulty} selectedConceptIds={selectedConceptIds} disabled={loading !== undefined} onTitleChange={(title) => updateAssessmentConfiguration(() => setAssessmentTitle(title))} onDifficultyChange={(value) => updateAssessmentConfiguration(() => setDifficulty(value))} onConceptToggle={toggleConcept} onGenerate={() => void generateAssessment()} /><div className="stage-actions"><Button variant="quiet" onClick={() => setStage("review")}>Edit source</Button></div></div> : null}
                 {stage === "assessment" && activitySet !== undefined && confirmedSource !== undefined ? <><PracticeCard activitySet={activitySet} language={confirmedSource.language} currentQuestionIndex={currentQuestionIndex} selectedOptionId={selectedOptionId} writtenAnswer={writtenAnswer} submitting={submittingAssessment} confirming={confirmingSubmission} onSelect={setSelectedOptionId} onWrittenChange={setWrittenAnswer} onPrevious={() => setCurrentQuestionIndex(0)} onNext={() => setCurrentQuestionIndex(1)} onRequestSubmit={() => setConfirmingSubmission(true)} onCancelSubmit={() => setConfirmingSubmission(false)} onConfirmSubmit={() => void submitAssessment()} />{uncertainWrittenFailure ? <AlertBanner tone="warning" title="A retry may repeat the grading request">No automatic retry was made. Confirm the connection, then use Review and submit again only when you choose to retry.</AlertBanner> : null}</> : null}
-                {stage === "results" && activitySet !== undefined && grade !== undefined && writtenEvaluation !== undefined && conceptPerformance !== undefined && confirmedSource !== undefined ? <ResultSummary mcqGrade={grade} writtenEvaluation={writtenEvaluation} activitySet={activitySet} source={confirmedSource} performance={conceptPerformance} onNewSource={clearSession} /> : null}
+                {stage === "results" && activitySet !== undefined && grade !== undefined && writtenEvaluation !== undefined && conceptPerformance !== undefined && confirmedSource !== undefined ? <><ResultSummary mcqGrade={grade} writtenEvaluation={writtenEvaluation} activitySet={activitySet} source={confirmedSource} performance={conceptPerformance} revisionPending={loading !== undefined} onRevise={() => void generateRevision()} onNewSource={clearSession} />{uncertainRevisionFailure ? <AlertBanner tone="warning" title="Revision generation may be repeated">No automatic retry was made. Your original result is intact; explicitly choose Build revision plan when you are ready.</AlertBanner> : null}</> : null}
+                {stage === "revision" && revisionPlan !== undefined && preparationMap !== undefined && confirmedSource !== undefined ? <RevisionPlanView plan={revisionPlan} preparationMap={preparationMap} source={confirmedSource} onBack={() => setStage("results")} onStartRetry={() => setStage("retry")} /> : null}
+                {stage === "retry" && revisionPlan !== undefined && preparationMap !== undefined && confirmedSource !== undefined ? <><PracticeCard activitySet={revisionPlan.retryActivity} language={confirmedSource.language} currentQuestionIndex={retryCurrentQuestionIndex} selectedOptionId={retrySelectedOptionId} writtenAnswer={retryWrittenAnswer} submitting={submittingAssessment} confirming={confirmingSubmission} variant="retry" targetNames={revisionPlan.targetConceptIds.map((id) => preparationMap.concepts.find((concept) => concept.id === id)?.name ?? id)} onSelect={setRetrySelectedOptionId} onWrittenChange={setRetryWrittenAnswer} onPrevious={() => setRetryCurrentQuestionIndex(0)} onNext={() => setRetryCurrentQuestionIndex(1)} onRequestSubmit={() => setConfirmingSubmission(true)} onCancelSubmit={() => setConfirmingSubmission(false)} onConfirmSubmit={() => void submitRetry()} />{uncertainRetryFailure ? <AlertBanner tone="warning" title="Retry grading may be repeated">No automatic retry was made. The original result, revision plan, and both retry answers are still saved.</AlertBanner> : null}<div className="stage-actions"><Button variant="quiet" onClick={() => setStage("revision")}>Review notes</Button></div></> : null}
+                {stage === "adaptive_results" && revisionPlan !== undefined && confirmedSource !== undefined && grade !== undefined && writtenEvaluation !== undefined && retryGrade !== undefined && retryWrittenEvaluation !== undefined && retryConceptPerformance !== undefined && improvementComparison !== undefined ? <AdaptiveResultSummary plan={revisionPlan} source={confirmedSource} originalMcqGrade={grade} originalWrittenEvaluation={writtenEvaluation} retryMcqGrade={retryGrade} retryWrittenEvaluation={retryWrittenEvaluation} retryPerformance={retryConceptPerformance} comparison={improvementComparison} onReviewRevision={() => setStage("revision")} onNewSource={clearSession} /> : null}
               </m.div>
               {loading === undefined ? null : <ProcessNarrative message={loading} kind={loadingKind} />}
               {error === undefined ? null : <AlertBanner tone="danger" title="We could not complete that step" role="alert">{error} Confirmed source, review work, and entered answers remain saved.</AlertBanner>}
@@ -509,7 +659,7 @@ export function VerticalSliceWorkspace() {
           </div>
         </section>
 
-        <footer className="site-footer"><AnkurMark compact /><p>Learning that grows from evidence.</p><span>Grounded mixed-assessment slice</span></footer>
+        <footer className="site-footer"><AnkurMark compact /><p>Learning that grows from evidence.</p><span>Grounded adaptive learning loop</span></footer>
       </main>
     </LazyMotion>
   );

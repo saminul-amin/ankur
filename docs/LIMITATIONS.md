@@ -1,6 +1,6 @@
 # Ankur Limitations and Release Boundaries
 
-> Current public release: source ingestion through mixed-assessment diagnosis.
+> Current public release: source ingestion through personalized revision, focused retry, and deterministic improvement comparison.
 
 ## Product boundaries
 
@@ -9,7 +9,7 @@
 - Printed Bengali, English, and mixed-language content; handwriting is not a supported claim.
 - Exactly one 1-mark MCQ and one 5-mark short-written question.
 - No authentication, cloud history, production database, administration, timer, negative marking, or additional question types.
-- Revision-note generation, weak-area retry, and improvement comparison are not implemented in this release.
+- The adaptive loop is intentionally bounded to one revision plan followed by one retry MCQ and one retry short-written question. It does not provide spaced repetition or evidence of durable retention.
 
 ## Model and grading limitations
 

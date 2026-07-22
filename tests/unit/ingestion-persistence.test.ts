@@ -4,15 +4,19 @@ import { createConfirmedSource } from "../../src/domain/source/confirmed-source.
 import {
   createSampleActivitySet,
   createSamplePreparationMap,
+  createSampleRevisionPlan,
+  createSampleRetryWrittenEvaluation,
   createSampleSource,
   createSampleWrittenEvaluation,
 } from "../../src/application/sample/sample-vertical-slice.js";
 import { calculateConceptPerformance } from "../../src/domain/assessments/concept-performance.js";
 import { gradeMcq } from "../../src/domain/assessments/mcq.js";
+import { compareAssessmentAttempts } from "../../src/domain/revision/improvement-comparison.js";
 import type { ReviewPage } from "../../src/domain/source/page-extraction.js";
 import {
   parsePersistedIngestionSession,
   migrateTask03Session,
+  migrateTask04Session,
   toPersistedIngestionSession,
 } from "../../src/presentation/persistence/ingestion-session.js";
 
@@ -112,5 +116,79 @@ describe("ingestion persistence envelope", () => {
     expect(restored?.stage).toBe("preparation");
     expect(restored?.preparationMap).toEqual(map);
     expect(restored?.activitySet).toBeUndefined();
+  });
+
+  it("restores a complete adaptive result and recomputes retry grading and comparison", () => {
+    const sampleSource = createSampleSource();
+    const map = createSamplePreparationMap(sampleSource);
+    const activity = createSampleActivitySet(sampleSource, map);
+    const mcqGrade = gradeMcq(activity.questions[0], "B");
+    const writtenEvaluation = createSampleWrittenEvaluation(activity);
+    const conceptPerformance = calculateConceptPerformance({ concepts: map.concepts, mcqQuestion: activity.questions[0], mcqGrade, writtenQuestion: activity.questions[1], writtenEvaluation });
+    const revisionPlan = createSampleRevisionPlan({ source: sampleSource, preparationMap: map, originalActivity: activity, originalResultId: `result-${activity.id}`, performance: conceptPerformance, writtenEvaluation });
+    const retryMcqGrade = gradeMcq(revisionPlan.retryActivity.questions[0], "A");
+    const retryWrittenEvaluation = createSampleRetryWrittenEvaluation(revisionPlan.retryActivity);
+    const retryConceptPerformance = calculateConceptPerformance({ concepts: map.concepts, mcqQuestion: revisionPlan.retryActivity.questions[0], mcqGrade: retryMcqGrade, writtenQuestion: revisionPlan.retryActivity.questions[1], writtenEvaluation: retryWrittenEvaluation });
+    const improvementComparison = compareAssessmentAttempts({ originalMcqGrade: mcqGrade, originalWrittenEvaluation: writtenEvaluation, originalPerformance: conceptPerformance, retryMcqGrade, retryWrittenEvaluation, retryPerformance: retryConceptPerformance });
+    const raw = toPersistedIngestionSession({
+      stage: "adaptive_results", mode: "sample", sourceKind: "text", pages: [], priorityInstruction: "",
+      confirmedSource: sampleSource, preparationMap: map, activitySet: activity,
+      assessmentConfiguration: { title: activity.title, selectedConceptIds: map.concepts.map((concept) => concept.id), difficulty: "medium" },
+      selectedOptionId: "B", writtenAnswer: "Original partial answer", mcqGrade, writtenEvaluation, conceptPerformance,
+      revisionPlan, revisionOperationId: "revision-operation-001", retrySelectedOptionId: "A",
+      retryWrittenAnswer: "Complete retry answer", retryCurrentQuestionIndex: 1, retryMcqGrade, retryWrittenEvaluation,
+      retryConceptPerformance, retryWrittenOperationId: "retry-operation-001", improvementComparison,
+    });
+    const restored = parsePersistedIngestionSession(raw);
+    expect(restored?.stage).toBe("adaptive_results");
+    expect(restored?.revisionPlan?.targetConceptIds).toEqual(revisionPlan.targetConceptIds);
+    expect(restored?.retryMcqGrade?.status).toBe("correct");
+    expect(restored?.improvementComparison).toEqual(improvementComparison);
+    expect(restored?.writtenAnswer).toBe("Original partial answer");
+    expect(restored?.retryWrittenAnswer).toBe("Complete retry answer");
+  });
+
+  it("drops corrupted adaptive artifacts while preserving the immutable original result", () => {
+    const sampleSource = createSampleSource();
+    const map = createSamplePreparationMap(sampleSource);
+    const activity = createSampleActivitySet(sampleSource, map);
+    const mcqGrade = gradeMcq(activity.questions[0], "B");
+    const writtenEvaluation = createSampleWrittenEvaluation(activity);
+    const conceptPerformance = calculateConceptPerformance({ concepts: map.concepts, mcqQuestion: activity.questions[0], mcqGrade, writtenQuestion: activity.questions[1], writtenEvaluation });
+    const revisionPlan = createSampleRevisionPlan({ source: sampleSource, preparationMap: map, originalActivity: activity, originalResultId: `result-${activity.id}`, performance: conceptPerformance, writtenEvaluation });
+    const raw = toPersistedIngestionSession({
+      stage: "revision", mode: "sample", sourceKind: "text", pages: [], priorityInstruction: "", confirmedSource: sampleSource,
+      preparationMap: map, activitySet: activity, selectedOptionId: "B", writtenAnswer: "partial", mcqGrade, writtenEvaluation, conceptPerformance, revisionPlan,
+    });
+    const data = JSON.parse(raw) as { revisionPlan: { items: Array<{ importantFact: string }> } };
+    const first = data.revisionPlan.items[0];
+    if (first !== undefined) first.importantFact = "unsupported external fact";
+    const restored = parsePersistedIngestionSession(JSON.stringify(data));
+    expect(restored?.stage).toBe("results");
+    expect(restored?.revisionPlan).toBeUndefined();
+    expect(restored?.writtenEvaluation).toEqual(writtenEvaluation);
+    expect(restored?.conceptPerformance).toBeDefined();
+  });
+
+  it("migrates a valid Task 04 result without inventing adaptive artifacts", () => {
+    const sampleSource = createSampleSource();
+    const map = createSamplePreparationMap(sampleSource);
+    const activity = createSampleActivitySet(sampleSource, map);
+    const mcqGrade = gradeMcq(activity.questions[0], "B");
+    const writtenEvaluation = createSampleWrittenEvaluation(activity);
+    const conceptPerformance = calculateConceptPerformance({ concepts: map.concepts, mcqQuestion: activity.questions[0], mcqGrade, writtenQuestion: activity.questions[1], writtenEvaluation });
+    const data = JSON.parse(toPersistedIngestionSession({
+      stage: "results", mode: "sample", sourceKind: "text", pages: [], priorityInstruction: "", confirmedSource: sampleSource,
+      preparationMap: map, activitySet: activity, selectedOptionId: "B", writtenAnswer: "partial", mcqGrade, writtenEvaluation, conceptPerformance,
+    })) as Record<string, unknown>;
+    data["schemaVersion"] = 3;
+    data["uncertainRevisionFailure"] = undefined;
+    data["retryWrittenAnswer"] = undefined;
+    data["retryCurrentQuestionIndex"] = undefined;
+    data["uncertainRetryFailure"] = undefined;
+    const restored = migrateTask04Session(JSON.stringify(data));
+    expect(restored?.schemaVersion).toBe(4);
+    expect(restored?.stage).toBe("results");
+    expect(restored?.revisionPlan).toBeUndefined();
   });
 });

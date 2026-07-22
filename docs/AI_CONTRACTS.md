@@ -196,18 +196,16 @@ The P0 written-evaluation transport returns only a categorical `met`, `partial`,
 
 ### 7.5 Revision and retry
 
-Input is limited to weak concepts, missed criteria, misconceptions, prior prompts, and relevant source segments.
+Application code deterministically selects weak-area, reinforcement, or optional all-mastered challenge targets from reconciled assessment results. Provider input is limited to those selected concepts, missed criteria or incorrect claims, prior prompts, and the exact authorized source segments.
 
 Output:
 
 - what was confused;
-- correct source-grounded explanation;
-- memory aid clearly labelled as an aid;
-- model-answer outline;
-- one or more retry items;
-- evidence.
+- a memory aid clearly labelled as an aid.
 
-Retry prompts must test the same concept without normalized-identical wording.
+Application code owns the learner-issue summary derived from reconciled result signals, source-grounded correction, key fact, model-answer outline, evidence links, target IDs, retry marks, metadata, and final plan assembly. Retry questions reuse the verified assessment-generation port and remain subject to its native-schema, grounding, concept, mark, and repair validation.
+
+Retry prompts must test only selected concepts and be materially distinct from both original prompts. No hidden reasoning is requested, returned, or persisted.
 
 ## 8. Generation configuration
 

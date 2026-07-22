@@ -12,8 +12,11 @@ import {
   createSampleActivitySet,
   createSamplePreparationMap,
   createSampleSource,
+  createSampleWrittenEvaluation,
   SAMPLE_PARTIAL_WRITTEN_ANSWER,
 } from "../../src/application/sample/sample-vertical-slice.js";
+import { calculateConceptPerformance } from "../../src/domain/assessments/concept-performance.js";
+import { gradeMcq } from "../../src/domain/assessments/mcq.js";
 import { toPersistedIngestionSession } from "../../src/presentation/persistence/ingestion-session.js";
 
 describe("vertical slice workspace", () => {
@@ -50,12 +53,21 @@ describe("vertical slice workspace", () => {
     await user.click(screen.getByRole("button", { name: "Confirm submission" }));
     expect(await screen.findByText("3 / 6")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "How the written mark was built" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Weak concepts, ordered by urgency" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Review targets, ordered by urgency" })).toBeInTheDocument();
     const evidenceButtons = screen.getAllByRole("button", { name: /View source/u });
     const firstEvidence = evidenceButtons[0];
     expect(firstEvidence).toBeDefined();
     if (firstEvidence !== undefined) await user.click(firstEvidence);
     expect(screen.getAllByTestId("evidence-context")[0]).toHaveTextContent("অক্সিজেন নির্গত হয়");
+    await user.click(screen.getByRole("button", { name: "Build revision plan" }));
+    expect(await screen.findByTestId("revision-plan")).toHaveTextContent("মূল উত্তরে আলো ও ক্লোরোফিলের ভূমিকা অনুপস্থিত ছিল");
+    await user.click(screen.getByRole("button", { name: "Start Weak-Area Retry" }));
+    await user.click(screen.getByRole("radio", { name: /A\. ক্লোরোফিল/u }));
+    await user.click(screen.getByRole("button", { name: /Next question/u }));
+    await user.click(screen.getByRole("button", { name: "Review and submit" }));
+    await user.click(screen.getByRole("button", { name: "Confirm submission" }));
+    expect(await screen.findByTestId("adaptive-result")).toHaveTextContent("6/6");
+    expect(screen.getByRole("heading", { name: "Retry performance improved." })).toBeInTheDocument();
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 
@@ -70,13 +82,13 @@ describe("vertical slice workspace", () => {
     await user.click(screen.getByRole("button", { name: "Confirm reviewed source" }));
     await user.click(screen.getByRole("button", { name: "Build preparation map" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("Confirmed source, review work, and entered answers remain saved");
-    expect(window.localStorage.getItem("ankur.ingestion-session.v3")).toContain("M01-P001-S001");
+    expect(window.localStorage.getItem("ankur.ingestion-session.v4")).toContain("M01-P001-S001");
     await user.click(screen.getByRole("button", { name: /Edit reviewed pages/u }));
     expect(screen.getByLabelText("Editable extraction")).toHaveValue("Plants use sunlight to turn water and carbon dioxide into food.");
   });
 
   it("rejects malformed persisted state safely", () => {
-    window.localStorage.setItem("ankur.ingestion-session.v3", JSON.stringify({ schemaVersion: 1, stage: "results" }));
+    window.localStorage.setItem("ankur.ingestion-session.v4", JSON.stringify({ schemaVersion: 1, stage: "results" }));
     render(createElement(VerticalSliceWorkspace));
     expect(screen.getByRole("heading", { name: "What would you like to learn?" })).toBeInTheDocument();
     expect(screen.queryByText("3 / 6")).not.toBeInTheDocument();
@@ -107,7 +119,7 @@ describe("vertical slice workspace", () => {
     const source = createSampleSource();
     const map = createSamplePreparationMap(source);
     const activity = createSampleActivitySet(source, map);
-    window.localStorage.setItem("ankur.ingestion-session.v3", toPersistedIngestionSession({
+    window.localStorage.setItem("ankur.ingestion-session.v4", toPersistedIngestionSession({
       stage: "assessment",
       mode: "live",
       sourceKind: "text",
@@ -131,7 +143,40 @@ describe("vertical slice workspace", () => {
     await user.click(screen.getByRole("button", { name: "Confirm submission" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("Your answers and assessment remain saved");
     expect(screen.getByLabelText("Your short answer")).toHaveValue(SAMPLE_PARTIAL_WRITTEN_ANSWER);
-    expect(window.localStorage.getItem("ankur.ingestion-session.v3")).toContain(SAMPLE_PARTIAL_WRITTEN_ANSWER);
+    expect(window.localStorage.getItem("ankur.ingestion-session.v4")).toContain(SAMPLE_PARTIAL_WRITTEN_ANSWER);
     expect(screen.getByRole("button", { name: "Review and submit" })).toBeEnabled();
+  });
+
+  it("preserves the completed original result when revision generation times out", async () => {
+    const source = createSampleSource();
+    const map = createSamplePreparationMap(source);
+    const activity = createSampleActivitySet(source, map);
+    const mcqGrade = gradeMcq(activity.questions[0], "B");
+    const writtenEvaluation = createSampleWrittenEvaluation(activity);
+    const conceptPerformance = calculateConceptPerformance({
+      concepts: map.concepts,
+      mcqQuestion: activity.questions[0],
+      mcqGrade,
+      writtenQuestion: activity.questions[1],
+      writtenEvaluation,
+    });
+    window.localStorage.setItem("ankur.ingestion-session.v4", toPersistedIngestionSession({
+      stage: "results", mode: "live", sourceKind: "text", pages: [], priorityInstruction: "",
+      confirmedSource: source, preparationMap: map, activitySet: activity,
+      assessmentConfiguration: { title: activity.title, selectedConceptIds: map.concepts.map((concept) => concept.id), difficulty: "medium" },
+      selectedOptionId: "B", writtenAnswer: SAMPLE_PARTIAL_WRITTEN_ANSWER, mcqGrade, writtenEvaluation, conceptPerformance,
+    }));
+    vi.mocked(fetch)
+      .mockResolvedValueOnce({ json: () => Promise.resolve({ ok: true, data: { liveAiEnabled: true, sampleModeEnabled: true } }) } as Response)
+      .mockResolvedValueOnce({ json: () => Promise.resolve({ ok: false, requestId: "revision-failed", error: { code: "PROVIDER_TIMEOUT", message: "Generation took too long.", retryable: true } }) } as Response);
+
+    const user = userEvent.setup();
+    render(createElement(VerticalSliceWorkspace));
+    expect(await screen.findByText("3 / 6")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Build revision plan" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Your completed assessment result remains saved");
+    expect(screen.getByText("3 / 6")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Build revision plan" })).toBeEnabled();
+    expect(window.localStorage.getItem("ankur.ingestion-session.v4")).toContain(SAMPLE_PARTIAL_WRITTEN_ANSWER);
   });
 });

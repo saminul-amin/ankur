@@ -30,6 +30,20 @@ async function completeAssessment(page: Page) {
   await expect(page.getByText("3 / 6")).toBeVisible();
 }
 
+async function completeAdaptiveRetry(page: Page) {
+  await page.getByRole("button", { name: "Build revision plan" }).click();
+  await expect(page.getByTestId("revision-plan")).toBeVisible();
+  await page.getByRole("button", { name: "Start Weak-Area Retry" }).click();
+  await expect(page.getByText("Focused retry")).toBeVisible();
+  await page.getByRole("radio", { name: /^A\./u }).check();
+  await page.getByRole("button", { name: "Next question" }).click();
+  await expect(page.getByLabel("Your short answer")).not.toHaveValue("");
+  await page.getByRole("button", { name: "Review and submit" }).click();
+  await expect(page.getByRole("dialog")).toContainText("Retry submission");
+  await page.getByRole("button", { name: "Confirm submission" }).click();
+  await expect(page.getByTestId("adaptive-result")).toBeVisible();
+}
+
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
@@ -43,18 +57,35 @@ test("completes and safely recovers the provider-free mixed assessment", async (
   await expect(page.getByText("MCQ · 1/1")).toBeVisible();
   await expect(page.getByText("Written · 2/5")).toBeVisible();
   await expect(page.getByRole("heading", { name: "How the written mark was built" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Weak concepts, ordered by urgency" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Review targets, ordered by urgency" })).toBeVisible();
   const evidenceButtons = page.getByRole("button", { name: /View source/u });
   await expect(evidenceButtons.first()).toBeVisible();
   await evidenceButtons.first().click();
   await expect(page.getByTestId("evidence-context").first()).toContainText("অক্সিজেন");
 
+  await page.getByRole("button", { name: "Build revision plan" }).click();
+  await expect(page.getByTestId("revision-plan")).toBeVisible();
+  await page.getByRole("button", { name: /View source/u }).first().click();
+  await expect(page.getByTestId("evidence-context").first()).toBeVisible();
   await page.reload();
-  await expect(page.getByText("3 / 6")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Concept performance" })).toBeVisible();
+  await expect(page.getByTestId("revision-plan")).toBeVisible();
+  await page.getByRole("button", { name: "Start Weak-Area Retry" }).click();
+  await page.getByRole("radio", { name: /^A\./u }).check();
+  await page.getByRole("button", { name: "Next question" }).click();
+  const retryAnswer = await page.getByLabel("Your short answer").inputValue();
+  await page.reload();
+  await expect(page.getByLabel("Your short answer")).toHaveValue(retryAnswer);
+  await page.getByRole("button", { name: "Review and submit" }).click();
+  await page.getByRole("button", { name: "Confirm submission" }).click();
+  await expect(page.getByRole("heading", { name: "Retry performance improved." })).toBeVisible();
+  await expect(page.getByText(/Original/u).first()).toBeVisible();
+  await expect(page.getByText(/Retry/u).first()).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByTestId("adaptive-result")).toBeVisible();
   await page.getByRole("button", { name: "Clear session" }).click();
   await expect(page.getByRole("heading", { name: "What would you like to learn?" })).toBeVisible();
-  await expect.poll(() => page.evaluate(() => localStorage.getItem("ankur.ingestion-session.v3"))).toBeNull();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem("ankur.ingestion-session.v4"))).toBeNull();
 });
 
 test("critical mixed-assessment controls are keyboard operable", async ({ page }) => {
@@ -95,6 +126,14 @@ test("critical mixed-assessment controls are keyboard operable", async ({ page }
   await page.getByRole("button", { name: "Confirm submission" }).focus();
   await page.keyboard.press("Enter");
   await expect(page.getByText("3 / 6")).toBeVisible();
+  const revise = page.getByRole("button", { name: "Build revision plan" });
+  await revise.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("revision-plan")).toBeVisible();
+  const startRetry = page.getByRole("button", { name: "Start Weak-Area Retry" });
+  await startRetry.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByText("Focused retry")).toBeVisible();
 });
 
 test("has no automated WCAG A/AA violations across builder, player, and results", async ({ page }) => {
@@ -109,6 +148,46 @@ test("has no automated WCAG A/AA violations across builder, player, and results"
   await page.getByRole("button", { name: "Confirm submission" }).click();
   await expect(page.getByText("2 / 6")).toBeVisible();
   expect((await new AxeBuilder({ page }).withTags(axeTags).analyze()).violations).toEqual([]);
+  await page.getByRole("button", { name: "Build revision plan" }).click();
+  await expect(page.getByTestId("revision-plan")).toBeVisible();
+  expect((await new AxeBuilder({ page }).withTags(axeTags).analyze()).violations).toEqual([]);
+  await page.getByRole("button", { name: "Start Weak-Area Retry" }).click();
+  expect((await new AxeBuilder({ page }).withTags(axeTags).analyze()).violations).toEqual([]);
+  await page.getByRole("button", { name: "Next question" }).click();
+  await page.getByRole("button", { name: "Review and submit" }).click();
+  await page.getByRole("button", { name: "Confirm submission" }).click();
+  await expect(page.getByTestId("adaptive-result")).toBeVisible();
+  expect((await new AxeBuilder({ page }).withTags(axeTags).analyze()).violations).toEqual([]);
+});
+
+test("does not fabricate weakness when every assessed concept is mastered", async ({ page }) => {
+  await completeAssessment(page);
+  await page.evaluate(() => {
+    const key = "ankur.ingestion-session.v4";
+    const raw = localStorage.getItem(key);
+    if (raw === null) throw new Error("Expected persisted result.");
+    const state = JSON.parse(raw) as {
+      writtenEvaluation: {
+        awardedMarks: number; status: string; criterionResults: Array<{ awardedMarks: number; maximumMarks: number; state: string }>;
+        coveredConceptIds: string[]; missingConceptIds: string[]; recommendedRevisionConceptIds: string[];
+      };
+      activitySet: { questions: [unknown, { requiredConceptIds: string[] }] };
+    };
+    state.writtenEvaluation.awardedMarks = 5;
+    state.writtenEvaluation.status = "correct";
+    state.writtenEvaluation.criterionResults = state.writtenEvaluation.criterionResults.map((criterion) => ({ ...criterion, awardedMarks: criterion.maximumMarks, state: "met" }));
+    state.writtenEvaluation.coveredConceptIds = state.activitySet.questions[1].requiredConceptIds;
+    state.writtenEvaluation.missingConceptIds = [];
+    state.writtenEvaluation.recommendedRevisionConceptIds = [];
+    localStorage.setItem(key, JSON.stringify(state));
+  });
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "All assessed concepts are mastered" })).toBeVisible();
+  await expect(page.getByText(/No weakness is being fabricated/u)).toBeVisible();
+  await page.getByRole("button", { name: "Take challenge retry" }).click();
+  await expect(page.getByText("Challenge Retry", { exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByTestId("revision-plan")).toContainText("দুর্বল নয়");
 });
 
 test("honors reduced motion and avoids horizontal overflow", async ({ page }) => {
@@ -116,6 +195,7 @@ test("honors reduced motion and avoids horizontal overflow", async ({ page }) =>
   const duration = await page.getByRole("button", { name: "Start learning" }).evaluate((element) => Number.parseFloat(getComputedStyle(element).transitionDuration));
   expect(duration).toBeLessThan(0.001);
   await completeAssessment(page);
+  await completeAdaptiveRetry(page);
   const widths = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
   expect(widths.scroll).toBeLessThanOrEqual(widths.client + 1);
 });

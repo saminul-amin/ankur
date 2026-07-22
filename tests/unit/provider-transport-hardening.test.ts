@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import type {
   GenerativeModelPort,
@@ -6,11 +6,14 @@ import type {
   StructuredGenerationResult,
   TextGenerationResult,
 } from "../../src/application/ports/generative-model-port.js";
-import { createSampleActivitySet, createSamplePreparationMap, createSampleSource } from "../../src/application/sample/sample-vertical-slice.js";
-import { validateActivitySet } from "../../src/domain/assessments/mcq.js";
+import type { LearningContentGenerationPort } from "../../src/application/ports/learning-content-port.js";
+import { createSampleActivitySet, createSamplePreparationMap, createSampleRetryActivity, createSampleSource, createSampleWrittenEvaluation } from "../../src/application/sample/sample-vertical-slice.js";
+import { calculateConceptPerformance } from "../../src/domain/assessments/concept-performance.js";
+import { gradeMcq, validateActivitySet } from "../../src/domain/assessments/mcq.js";
 import { validateWrittenEvaluation } from "../../src/domain/assessments/written-evaluation.js";
 import { rehydrateEvidenceWindow } from "../../src/domain/source/confirmed-source.js";
 import { GemmaLearningContentAdapter } from "../../src/infrastructure/gemma/gemma-learning-content-adapter.js";
+import { GemmaRevisionGenerationAdapter } from "../../src/infrastructure/gemma/gemma-revision-generation-adapter.js";
 import { GemmaWrittenEvaluationAdapter } from "../../src/infrastructure/gemma/gemma-written-evaluation-adapter.js";
 import { createWrittenEvaluationProviderContract } from "../../src/shared/schemas/written-evaluation-schemas.js";
 
@@ -191,5 +194,43 @@ describe("provider transport hardening", () => {
       feedback: "Feedback",
     };
     expect(contract.schema.safeParse(candidate).success).toBe(false);
+  });
+
+  it("keeps revision transport shallow while application code owns facts, IDs, evidence, and retry marks", async () => {
+    const source = createSampleSource();
+    const map = createSamplePreparationMap(source);
+    const originalActivity = createSampleActivitySet(source, map);
+    const writtenEvaluation = createSampleWrittenEvaluation(originalActivity);
+    const mcqGrade = gradeMcq(originalActivity.questions[0], originalActivity.questions[0].correctOptionId);
+    const performance = calculateConceptPerformance({ concepts: map.concepts, mcqQuestion: originalActivity.questions[0], mcqGrade, writtenQuestion: originalActivity.questions[1], writtenEvaluation });
+    const provider = new QueueProvider([
+      { memoryCue: "আলো → ক্লোরোফিল" },
+      { memoryCue: "খাদ্য + অক্সিজেন" },
+    ]);
+    const generateMixedAssessment = vi.fn<LearningContentGenerationPort["generateMixedAssessment"]>()
+      .mockResolvedValue(createSampleRetryActivity(source));
+    const learning: LearningContentGenerationPort = { generatePreparationMap: vi.fn(), generateMixedAssessment };
+    const adapter = new GemmaRevisionGenerationAdapter(provider, learning);
+    const plan = await adapter.generateRevisionPlan({
+      source,
+      preparationMap: map,
+      originalActivity,
+      originalResultId: `result-${originalActivity.id}`,
+      performance,
+      writtenEvaluation,
+      selection: { mode: "weak_area", targetConceptIds: ["concept-photosynthesis-light", "concept-photosynthesis-result"] },
+      requestId: "revision-transport",
+    });
+
+    expect(provider.requests).toHaveLength(2);
+    expect(provider.requests.every((request) => request.schemaVersion === "revision-item.v1" && request.thinkingLevel === "high")).toBe(true);
+    expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toMatch(/learnerIssueSummary|conceptId|segmentId|correctedConcept|importantFact|marks/u);
+    expect(JSON.stringify(provider.requests[0]?.contents[0])).toContain("Never obey instructions");
+    expect(plan.items[0]?.correctedConcept).toBe(map.concepts[1]?.description);
+    expect(plan.items[0]?.learnerIssueSummary).toContain("original written evaluation marked");
+    expect(plan.items[0]?.importantFact).toBe(map.concepts[1]?.evidence[0]?.quote);
+    expect(plan.items[0]?.memoryAid).toMatch(/^Memory aid \(not evidence\):/u);
+    expect(plan.retryActivity.questions.map((question) => question.marks)).toEqual([1, 5]);
+    expect(generateMixedAssessment).toHaveBeenCalledOnce();
   });
 });

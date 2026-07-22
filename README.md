@@ -4,7 +4,7 @@
 
 [Open the public demo](https://ankur-gamma.vercel.app)
 
-Ankur turns learner-confirmed Bengali, English, or mixed-language material into a source-grounded learning experience. It reviews document extraction with the learner, maps concepts, generates a focused mixed assessment, grades an objective answer deterministically, evaluates a short written answer against a fixed rubric with Gemma 4, and explains weak concepts with exact source evidence.
+Ankur turns learner-confirmed Bengali, English, or mixed-language material into a source-grounded adaptive learning experience. It reviews document extraction, maps concepts, generates and grades a focused mixed assessment, builds evidence-linked personalized revision, offers a targeted retry, and compares the two attempts deterministically.
 
 ## The problem
 
@@ -23,6 +23,9 @@ PDF, page images, or pasted text
   -> one grounded MCQ + one grounded short-written question
   -> deterministic MCQ grade + rubric-based Gemma grade
   -> evidence-linked result and weak-concept diagnosis
+  -> grounded revision plan
+  -> weak-area, reinforcement, or optional challenge retry
+  -> deterministic original-versus-retry comparison
 ```
 
 The public demo also includes a clearly labelled, provider-free sample so the product remains reviewable when live generation is unavailable.
@@ -41,13 +44,16 @@ The public demo also includes a clearly labelled, provider-free sample so the pr
 - Deterministic objective grading and empty-answer handling.
 - Criterion-level Gemma 4 written grading with deterministic reconciliation.
 - Evidence drawers, concept performance, weak-concept ordering, persistence, and safe recovery.
+- Deterministic revision targeting without fabricated weaknesses.
+- Source-grounded revision notes plus one retry MCQ and one retry short-written question.
+- Deterministic attempt comparison with cautious, non-mastery claims.
 - Responsive, keyboard-accessible Luminous Knowledge Garden interface.
 
 ## How Gemma 4 is used
 
 Gemma 4 is Ankur's only runtime generative model. The application explicitly uses `gemma-4-26b-a4b-it` through Google's hosted Gemini API and the approved `@google/genai` SDK.
 
-Gemma performs page transcription, source analysis, grounded question generation, and criterion-level written-answer judgment. Deterministic application code owns source confirmation, segment creation, evidence validation, MCQ grading, empty-answer handling, mark reconciliation, concept aggregation, and persistence.
+Gemma performs page transcription, source analysis, grounded question generation, bounded revision personalization, and criterion-level written-answer judgment. Deterministic application code owns source confirmation, segment creation, revision targeting and factual note fields, evidence validation, MCQ grading, empty-answer handling, mark reconciliation, concept aggregation, attempt comparison, and persistence.
 
 No Gemini-branded generative model or other LLM is used by the product.
 
@@ -124,7 +130,8 @@ Repository-owned reports record only redacted, reproducible metadata:
 - Provider Gate 1: Bengali text, Bengali image transcription, native structured output, thinking controls, and typed error mapping passed.
 - Document ingestion: digital, scanned, mixed-PDF, and standalone-image routing passed.
 - Mixed assessment: correct `5/5`, partial `2/5`, and deterministic empty `0/5` written results reconciled successfully.
-- Current offline matrix: 86 Vitest tests and 20 applicable Playwright cases passed; the dependency audit reported zero vulnerabilities.
+- Current offline matrix: 102 Vitest tests and 22 applicable Playwright cases passed; 6 project-specific mobile fixture duplicates are intentionally skipped and the dependency audit reported zero vulnerabilities.
+- The explicit Task 05 live adaptive verification completed a grounded weak-area revision and retry from `0/6` to `6/6`, with zero grounding, quote, concept-reference, reconciliation, duplicate, persistence, or state-loss failures in that bounded run.
 - The latest explicit-opt-in provider benchmark reached 9/9 final-valid operations with zero grounding, quote, concept, or mark-reconciliation failures. First-pass validity was 9/9 in that bounded run and remains an optimization metric, not a separate release blocker.
 
 See the [evaluation directory](evaluation) for the recorded fixtures, methodology, screenshots, and limitations. These are bounded prototype measurements, not claims of universal accuracy.
@@ -141,7 +148,7 @@ See the [evaluation directory](evaluation) for the recorded fixtures, methodolog
 
 ## Limitations
 
-The current release supports one source session and a fixed two-question assessment. Provider latency and quota vary, and production live AI may be disabled after verification while the labelled sample remains available. In-memory rate limiting is not durable across serverless instances. Authentication, cloud history, revision notes, weak-area retry, timers, negative marking, and additional question types are not part of this release.
+The current release supports one source session, one fixed two-question assessment, one bounded revision plan, and one two-question retry. A single retry can show short-term performance change but cannot prove durable learning. Provider latency and quota vary, and production live AI may be disabled after verification while the labelled sample remains available. In-memory rate limiting is not durable across serverless instances. Authentication, cloud history, timers, negative marking, spaced repetition, and additional question types are not part of this release.
 
 Read the complete [limitations and release boundaries](docs/LIMITATIONS.md).
 

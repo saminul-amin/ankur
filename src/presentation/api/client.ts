@@ -2,10 +2,14 @@ import { z } from "zod";
 
 import type { ActivitySet, ShortWrittenQuestion } from "../../domain/assessments/mcq";
 import type { WrittenAnswerEvaluation } from "../../domain/assessments/written-evaluation";
+import type { ConceptPerformance } from "../../domain/assessments/concept-performance";
+import type { McqGrade } from "../../domain/assessments/mcq";
 import type { PreparationMap } from "../../domain/preparation/preparation-map";
+import type { RevisionPlan } from "../../domain/revision/revision-plan";
 import {
   activitySetApiSchema, analysisRequestSchema, assessmentRequestSchema, preparationMapApiSchema,
   transcriptionRequestSchema, transcriptionResultApiSchema, writtenEvaluationApiSchema, writtenEvaluationRequestSchema,
+  revisionPlanApiSchema, revisionRequestSchema,
 } from "../../shared/schemas/api-contracts";
 
 const failureSchema = z.object({
@@ -17,6 +21,10 @@ const assessmentSuccessSchema = z.object({
   data: z.object({ activitySet: activitySetApiSchema, rejectedCandidateCount: z.number().int().nonnegative(), warnings: z.array(z.string()), artifact: activitySetApiSchema.shape.artifact }).strict(),
 }).strict();
 const writtenSuccessSchema = z.object({ ok: z.literal(true), requestId: z.string(), data: writtenEvaluationApiSchema }).strict();
+const revisionSuccessSchema = z.object({
+  ok: z.literal(true), requestId: z.string(),
+  data: z.object({ revisionPlan: revisionPlanApiSchema, warnings: z.array(z.string()), artifact: revisionPlanApiSchema.shape.artifact }).strict(),
+}).strict();
 
 export class ApiClientError extends Error {
   constructor(message: string, readonly retryable: boolean) { super(message); this.name = "ApiClientError"; }
@@ -68,4 +76,22 @@ export async function requestPageTranscription(input: z.input<typeof transcripti
   const parsed = z.object({ ok: z.literal(true), requestId: z.string(), data: transcriptionResultApiSchema }).strict().safeParse(payload);
   if (!parsed.success) throw new ApiClientError("The transcription response did not satisfy its contract.", false);
   return parsed.data.data;
+}
+
+export async function requestPersonalizedRevision(input: {
+  readonly operationId: string;
+  readonly sourceVersionId: string;
+  readonly preparationMap: PreparationMap;
+  readonly originalActivity: ActivitySet;
+  readonly originalResultId: string;
+  readonly originalMcqGrade: McqGrade;
+  readonly originalWrittenEvaluation: WrittenAnswerEvaluation;
+  readonly conceptPerformance: readonly ConceptPerformance[];
+  readonly language: "bn" | "en" | "mixed";
+  readonly segments: ReadonlyArray<{ readonly id: string; readonly pageNumber: number; readonly text: string }>;
+}, sessionId: string): Promise<RevisionPlan> {
+  const payload = await postJson("/api/revisions", sessionId, revisionRequestSchema.parse(input));
+  const parsed = revisionSuccessSchema.safeParse(payload);
+  if (!parsed.success) throw new ApiClientError("The revision response did not satisfy its contract.", false);
+  return parsed.data.data.revisionPlan;
 }

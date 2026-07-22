@@ -15,9 +15,9 @@ describe("visual foundation semantics", () => {
     expect(screen.getByRole("img", { name: "Ankur" })).toBeInTheDocument();
   });
 
-  it("announces the active learning stage and keeps deferred revision visibly blocked", () => {
+  it("announces the active learning stage and exposes revision as the next P0 step", () => {
     render(createElement(GrowthRail, { stage: "assessment" }));
     expect(screen.getByText("Practice")).toHaveAttribute("aria-current", "step");
-    expect(screen.getByText("Revise").closest("li")).toHaveClass("growth-rail__step--blocked");
+    expect(screen.getByText("Revise").closest("li")).toHaveClass("growth-rail__step--upcoming");
   });
 });
