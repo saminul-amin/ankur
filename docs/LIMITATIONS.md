@@ -37,3 +37,5 @@
 ## Evaluation scope
 
 Published numbers describe the repository fixtures and recorded runs only. They are not universal accuracy, latency, or teacher-equivalence claims. Human review remains necessary for question quality, Bengali transcription quality, and consequential grading decisions.
+
+The Task 06 corpus run produced 30 structured questions, 14 written-answer records, and six material-level adaptive records. Accepted artifacts had zero grounding, quotation, concept-reference, or mark-reconciliation failures, but only 40 of 51 recorded provider application operations or retained attempts were final-valid (78.43%), below the 95% internal target. Three of six adaptive material paths completed. Independent R1/R2 semantic review, adjudication, source-text verification, question acceptance, and written-score agreement are pending; deterministic validator success must not be read as those human results.

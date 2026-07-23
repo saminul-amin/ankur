@@ -21,7 +21,13 @@
     "benchmark:provider": "node --env-file-if-exists=.env.local --import tsx scripts/provider-reliability/run.ts",
     "verify:adaptive-loop": "node --env-file-if-exists=.env.local --import tsx scripts/adaptive-loop/run-live.ts",
     "verify:production-live": "node --import tsx scripts/production/run-live.ts",
-    "verify:production-adaptive": "node --import tsx scripts/production/run-adaptive-live.ts"
+    "verify:production-adaptive": "node --import tsx scripts/production/run-adaptive-live.ts",
+    "evaluation:fixtures": "node --import tsx scripts/evaluation/generate-corpus.ts",
+    "evaluation:dry-run": "node --import tsx scripts/evaluation/run.ts --mode=dry-run",
+    "evaluation:run": "node --env-file-if-exists=.env.local --import tsx scripts/evaluation/run.ts",
+    "evaluation:export": "node --import tsx scripts/evaluation/run.ts --mode=public-export",
+    "evaluation:verify": "node --import tsx scripts/evaluation/verify-public.ts",
+    "notebook:run": "python scripts/evaluation/run-notebook.py"
   },
   "dependencies": {
     "@google/genai": "latest",
@@ -36,6 +42,8 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
+    "@emnapi/core": "1.11.1",
+    "@emnapi/runtime": "1.11.1",
     "@eslint/js": "latest",
     "@playwright/test": "1.61.1",
     "@tailwindcss/postcss": "^4.3.3",

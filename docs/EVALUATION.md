@@ -3,6 +3,10 @@
 > **Version:** 1.0.0  
 > **Status:** APPROVED
 
+## Task 06 measured package
+
+The frozen-product Task 06 run is published under `evaluation/`. It contains six licensed materials, 30 generated question records, 14 written-answer records, six material-level adaptive records, 51 sanitized provider-operation/attempt records, a six-material one-prompt baseline, pending two-reviewer templates, and a provider-free notebook. The measured final-valid rate was 40/51 (78.43%), below the 95% internal target. Human-dependent quality and grading-agreement metrics remain pending and are not substituted with deterministic validator results.
+
 ## 1. Evaluation question
 
 Does Ankur reliably turn learner-confirmed Bengali, English, and mixed source material into evidence-grounded assessments, fair short-answer feedback, and useful weak-area revision?

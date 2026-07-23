@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "golden-demo-expected.v1",
+  "materialId": "GOLDEN-DEMO-01",
+  "humanVerificationStatus": "pending",
+  "expectedConcepts": [
+    "source selection reduces initial contamination risk",
+    "treatment and safe storage are separate barriers",
+    "covered storage and low-contact dispensing reduce recontamination"
+  ],
+  "requiredSourceClaims": [
+    {
+      "pageNumber": 1,
+      "claim": "Boiling can reduce germs."
+    },
+    {
+      "pageNumber": 1,
+      "claim": "Treated water can be recontaminated in a dirty container."
+    },
+    {
+      "pageNumber": 1,
+      "claim": "Treatment and safe storage are both required in the household safety chain."
+    }
+  ],
+  "assessmentComposition": [
+    {
+      "type": "single_mcq",
+      "marks": 1
+    },
+    {
+      "type": "short_written",
+      "marks": 5
+    }
+  ],
+  "groundingRule": "Every generated concept, question, rubric criterion, and revision item must cite a confirmed immutable segment from this material."
+}

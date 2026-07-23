@@ -1,0 +1,3 @@
+A workshop chemical label should show the product name, hazard warning, and required protective equipment. The label must remain readable and attached to the container.
+
+কোনো রাসায়নিক পদার্থ অন্য পাত্রে নিলে নতুন পাত্রেও সঠিক লেবেল দিতে হবে। লেবেল না থাকলে পদার্থটি ব্যবহার করা যাবে না। ছিটকে পড়লে কাজ বন্ধ করে নির্ধারিত spill procedure অনুসরণ করতে হবে এবং supervisor-কে জানাতে হবে।

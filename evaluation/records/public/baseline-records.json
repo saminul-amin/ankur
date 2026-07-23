@@ -1,0 +1,74 @@
+[
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:SCI-BN-PASTE-01",
+    "operationId": "baseline:SCI-BN-PASTE-01",
+    "materialId": "SCI-BN-PASTE-01",
+    "requestedQuestionCount": 5,
+    "parsedQuestionCount": 5,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 5,
+    "outputHash": "sha256:196a07f5f793a5eb8f07d15e3901ed87641c119004b84ca91fa2f9268bf40cdd",
+    "reviewerStatus": "pending"
+  },
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:SCI-EN-PDF-01",
+    "operationId": "baseline:SCI-EN-PDF-01",
+    "materialId": "SCI-EN-PDF-01",
+    "requestedQuestionCount": 5,
+    "parsedQuestionCount": 5,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 5,
+    "outputHash": "sha256:d2711f615a9fe74d7600028953be3a347137bc1f482689bf87d012dfa08bc1e6",
+    "reviewerStatus": "pending"
+  },
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:CIV-BN-IMG-01",
+    "operationId": "baseline:CIV-BN-IMG-01",
+    "materialId": "CIV-BN-IMG-01",
+    "requestedQuestionCount": 5,
+    "parsedQuestionCount": 5,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 5,
+    "outputHash": "sha256:791834690cec1efe78ef98f88e7306dcaafbe91f2503bfb0ff58eee3a01196f3",
+    "reviewerStatus": "pending"
+  },
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:CIV-MIX-PDF-01",
+    "operationId": "baseline:CIV-MIX-PDF-01",
+    "materialId": "CIV-MIX-PDF-01",
+    "requestedQuestionCount": 5,
+    "parsedQuestionCount": 5,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 5,
+    "outputHash": "sha256:1f84fe69aefc94018b26801a30db47a7f52312edbf10c3358ec9184328d6007f",
+    "reviewerStatus": "pending"
+  },
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:VOC-EN-PASTE-01",
+    "operationId": "baseline:VOC-EN-PASTE-01",
+    "materialId": "VOC-EN-PASTE-01",
+    "requestedQuestionCount": 5,
+    "parsedQuestionCount": 5,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 5,
+    "outputHash": "sha256:79f21d3a64e98f4029ad4e3af84cdce612d989b8101c3d50527ee2345650d06f",
+    "reviewerStatus": "pending"
+  },
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:VOC-MIX-IMG-01",
+    "operationId": "baseline:VOC-MIX-IMG-01",
+    "materialId": "VOC-MIX-IMG-01",
+    "requestedQuestionCount": 5,
+    "parsedQuestionCount": 5,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 5,
+    "outputHash": "sha256:6b318de5c6d362cba5d0754fd61dc994d3ed6b0db871b1c3e2ef0887a0fa22c8",
+    "reviewerStatus": "pending"
+  }
+]

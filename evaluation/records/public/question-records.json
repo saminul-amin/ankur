@@ -1,0 +1,752 @@
+[
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r1:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r1",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:2dedd94cf8818839ec73a598c0c9da289eabdbb9857819540d643172fc12795d",
+    "questionText": "জলচক্রে মেঘ তৈরির প্রক্রিয়াটি কীভাবে ঘটে?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r1:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r1",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:6c7f009df4ab739c75b0cdc08496ab98c1adcf03cab83ce888499e504db4e0e4",
+    "questionText": "জলচক্রে পানির অবস্থা পরিবর্তনের ফলে পদার্থের মোট পরিমাণ বা ধারাবাহিক চলাচল কীভাবে বজায় থাকে?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r2:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r2",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:3e9b5acb8c9b4db485a1c3e195d565ca6762fd2f10fce47c6b5ac214a4f44c08",
+    "questionText": "জলচক্রে পানির অবস্থা পরিবর্তন হলেও কেন্দ্রেগতভাবে পদার্থের ধারাবাহিক চলাচল বজায় থাকে?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r2:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r2",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:29ff55124ca4a767c20c1246fa5ecb4d3969f89d7e25f3f0e056c96766118f75",
+    "questionText": "জলচক্রে মেঘ তৈরির প্রক্রিয়াটি সংক্ষেপে বর্ণনা করো।",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r3:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r3",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:d56bb5efe1c1deb4b5cc5459d190fc1142f7f7125193ee8bf4eae06f68d74ef9",
+    "questionText": "জলচক্রে পানির অবস্থা পরিবর্তন হলেও কেন্দ্রেয়িতভাবে মোট পদার্থের পরিমাণ বা চলাচল বজায় থাকে বলে ধারণা করা হয়?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r3:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r3",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:29ff55124ca4a767c20c1246fa5ecb4d3969f89d7e25f3f0e056c96766118f75",
+    "questionText": "জলচক্রে মেঘ তৈরির প্রক্রিয়াটি সংক্ষেপে বর্ণনা করো।",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-BN-PASTE-01:r2:q2",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-BN-PASTE-01:q1",
+    "operationId": "revision:SCI-BN-PASTE-01",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 7,
+    "questionHash": "sha256:40c6b21166d573d430eebc022fd7d485eeef88a0144d79752b84dff1e0c48a0f",
+    "questionText": "উঁচু স্তরে বাতাসبرد/শীতল-এর কারণে জলীয় বাষ্পের কী পরিবর্তন ঘটে এবং এর ফলে কী সৃষ্টি হয়?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-BN-PASTE-01:q2",
+    "operationId": "revision:SCI-BN-PASTE-01",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 8,
+    "questionHash": "sha256:b13cd75ec3d9ff55f18afb5d766a74821a956650f0dca7bae055123986a36b75",
+    "questionText": "জলচক্রে বৃষ্টির পানি মাটিতে শোষিত হওয়া বা নদী দিয়ে সমুদ্রে ফিরে যাওয়ার ফলে পদার্থের মোট পরিমাণ বা ধারাবাহিক চলাচল কীভাবে বজায় থাকে?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:f4485f970b769a354465dde83b39eb515f951576c9a4c0ee8aca26262ee60211",
+    "questionText": "Which of the following processes describes the mechanism of heat transfer through the movement of a fluid? The source data states that energy is transferred via circulating currents in fluids. The question asks for themaking-of-a-circulating-current-in-a-fluid-based-on-the-source-data.",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-modes-of-heat-transfer"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:3ac5c301dc05641d91c25bf54563dc4d893fbace08fd03bf044c3ee7d389478a",
+    "questionText": "Based on the provided text, how does radiation transfer energy to the Earth from the sun?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-modes-of-heat-transfer"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:f6a0315dc02bb5319a72c052f09bc230154be7b9a95e2829486746e679d8820b",
+    "questionText": "Which of the following best describes the mechanism of energy transfer through a fluid's movement? mechanism of energy transfer through a fluid's movement?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-modes-of-heat-transfer"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:60a0254830c65eaa6275330561a79c22019ac68c6109712f04a55a8f4596cd45",
+    "questionText": "Based on the provided text, how does radiation transfer energy, and how does this mode of energy transfer differs from the other two modes?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-modes-of-heat-transfer"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:f402150825eabce3879ec9982d410c257d16f38dadabe100bbbf8a78d6c65941",
+    "questionText": "Which of the following best describes the mechanism of heat transfer through a fluid's movement? mechanism of heat transfer through a fluid's movement?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-modes-of-heat-transfer"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-EN-PDF-01:r2:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:633f9bc61699b74dc19aec2657e58a9f3c0a9f87d1f14d28aef4e12db6bf1de5",
+    "questionText": "Based on the provided text, how does radiation transfer energy, and how does this mode of heat transfer differs from the other two modes in terms of respect to the requirement of matter?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-modes-of-heat-transfer"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-EN-PDF-01:q1",
+    "operationId": "revision:SCI-EN-PDF-01",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 7,
+    "questionHash": "sha256:a89812fdb7cc1c7b3ba87d79fae7f6f34e351b165a86ceb4c186282f0ce4dab2",
+    "questionText": "Which of the following scenarios own the mechanism of heat transfer via electromagnetic waves that functions without the need for a medium?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-modes-of-heat-transfer"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-EN-PDF-01:q2",
+    "operationId": "revision:SCI-EN-PDF-01",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 8,
+    "questionHash": "sha256:1908bbc46979fff17374a5d08c99448180161b564319b2f7ec6dd289565f4b00",
+    "questionText": "Compare and contrast the requirements for energy transfer via radiation and radiation via convection.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-modes-of-heat-transfer"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-MIX-PDF-01:r1:q1",
+    "operationId": "assessment:CIV-MIX-PDF-01:r1",
+    "materialId": "CIV-MIX-PDF-01",
+    "language": "mixed",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:1f574f93cffee9c6c045946d3eeb3798366d0fef4b63695a9ad1beb4191eade8",
+    "questionText": "পানি দ্রুত বাড়লে কোনটিকে প্রাকটিপস করা উচিত?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-001"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-MIX-PDF-01:r1:q2",
+    "operationId": "assessment:CIV-MIX-PDF-01:r1",
+    "materialId": "CIV-MIX-PDF-01",
+    "language": "mixed",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:b3c6ba0108161adecabf629454d6a28f78b78ee73a09cf4044a7fe70fdded0c4",
+    "questionText": "বন্যা বা বন্যার পানির স্তর দ্রুত বৃদ্ধি পেলে পরিবারের কোন সদস্যদের সরিয়ে নেওয়ার ক্ষেত্রে অগ্রাধিকার দেওয়া উচিত?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-001"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-MIX-PDF-01:r2:q1",
+    "operationId": "assessment:CIV-MIX-PDF-01:r2",
+    "materialId": "CIV-MIX-PDF-01",
+    "language": "mixed",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:4d9dd35721bab9deb00a4503508574a2114ffacb5daa6ae2ef064411676d7a9a",
+    "questionText": "বন্যা বা বন্যার flooding-এর সময়কালে পরিবারের জন্য সঠিক প্রস্তুতি কী? (What is the correct preparation for a family during a flood?)",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-001"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-MIX-PDF-01:r2:q2",
+    "operationId": "assessment:CIV-MIX-PDF-01:r2",
+    "materialId": "CIV-MIX-PDF-01",
+    "language": "mixed",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:52a8cdb9957e60598ccd5beb0cb3f2275804c4bb50a2fd4f84b305aceca40465",
+    "questionText": "বন্যার সময় পরিবারের সদস্যদের সরিয়ে নেওয়ার ক্ষেত্রে অগ্রাধিকার ভিত্তিতে কার জন্য প্রস্তুতি রাখা প্রয়োজন? (In terms of priority, for which family members should preparation be made for evacuation during a flood?)",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-001"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r2:q1",
+    "operationId": "assessment:VOC-EN-PASTE-01:r2",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:ac12f673971e8bc28f432d3340ef23008ecefb71af2529ab9d829e0d7e6e7318",
+    "questionText": "Which of the following best describes the correct sequence of steps for a worker to follow before maintenance can begin on a powered machine?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-safe-order-of-operations"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r2:q2",
+    "operationId": "assessment:VOC-EN-PASTE-01:r2",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:010546b6139e2d342d29f736a01ed9dfd21a8ee808bde02217c7b99d76f14b70",
+    "questionText": "What must a worker do regarding stored energy, such as spring tension or line pressure, before they can start maintenance work?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-safe-order-of-operations"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:VOC-EN-PASTE-01:q1",
+    "operationId": "revision:VOC-EN-PASTE-01",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:f444c9539171613deddb9f5d6e8e21762da8e4d1fbb2aca2b911c8575abe1cd8",
+    "questionText": "Which stage of the isolation procedure is used to identify the source of a potential contamination?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-safe-order-of-operations"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:VOC-EN-PASTE-01:q2",
+    "operationId": "revision:VOC-EN-PASTE-01",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:7903db399eee097416919c632767bbee8762a00a18fa934631be034401943361",
+    "questionText": "Compare and contrast the final step in the way a worker verifies isolation of a machine's energy sources, and the state of the control switch after that verification process.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-safe-order-of-operations"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-MIX-IMG-01:r1:q1",
+    "operationId": "assessment:VOC-MIX-IMG-01:r1",
+    "materialId": "VOC-MIX-IMG-01",
+    "language": "mixed",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:5be6a18eaaa84637e862341e63e0c779f25fe3d4f98c62fef8fd284ff26cbdbd",
+    "questionText": "কোনো রাসায়নিক পদার্থ অন্য পাত্রে স্থানান্তরকারীলে নতুন পাত্রে কী কী করা প্রয়োজন?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-01"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-MIX-IMG-01:r1:q2",
+    "operationId": "assessment:VOC-MIX-IMG-01:r1",
+    "materialId": "VOC-MIX-IMG-01",
+    "language": "mixed",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:2008f87339da6c6ec83f207afab57c0c7872da4d1abaff9942464b3b7abe41ef",
+    "questionText": "রাসায়নিক পদার্থ ছিটকে পড়লে কী কী পদক্ষেপ নেওয়া প্রয়োজন?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-01"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-MIX-IMG-01:r2:q1",
+    "operationId": "assessment:VOC-MIX-IMG-01:r2",
+    "materialId": "VOC-MIX-IMG-01",
+    "language": "mixed",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:f4d1aeb4f7f73cf02cea09fb3fadd803a2d91da358117824ec5ef22636fe985f",
+    "questionText": "কোনো রাসায়নিক পদার্থ অন্য পাত্রে স্থানান্তর করা হলে, নতুন পাত্রের জন্য নিচের কোনটি সঠিক?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-01"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-MIX-IMG-01:r2:q2",
+    "operationId": "assessment:VOC-MIX-IMG-01:r2",
+    "materialId": "VOC-MIX-IMG-01",
+    "language": "mixed",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:f6217156c41a4fa10c267abf3e5b9f9be26e4dcde2f11b6c815805d5babcc3e7",
+    "questionText": "রাসায়নিক পদার্থ অন্য পাত্রে স্থানান্তর করার পর যদি নতুন পাত্রে লেবেল না থাকে, তবে সেই পদার্থটি ব্যবহারের ক্ষেত্রে কী করণীয়?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-01"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:VOC-MIX-IMG-01:q1",
+    "operationId": "revision:VOC-MIX-IMG-01",
+    "materialId": "VOC-MIX-IMG-01",
+    "language": "mixed",
+    "domain": "vocational_safety",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:0f9cfdd259a27dbcd62f39e3e59154bfefb06c674966b2d2043f1c4eed5912ee",
+    "questionText": "কোনো রাসায়নিক পদার্থকে একটি নতুন পাত্রে স্থানান্তরকারীলে, সেই পাত্রের ব্যবহারের জন্য ব্যবহারের পূর্বে-প্রয়োজনীয়-না-কী?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-01"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:VOC-MIX-IMG-01:q2",
+    "operationId": "revision:VOC-MIX-IMG-01",
+    "materialId": "VOC-MIX-IMG-01",
+    "language": "mixed",
+    "domain": "vocational_safety",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:288d1bfb794ba8820832dc7a04ddb4f99fc8ee5fad06d5d105c6b5a9eb47bf10",
+    "questionText": "রাসায়নিক পদার্থ স্থানান্তর করার সময় নতুন পাত্রের জন্য লেবেলিং সংক্রান্ত কী কী শর্তাবলী থাকল?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-01"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  }
+]

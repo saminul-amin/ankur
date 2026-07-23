@@ -203,7 +203,7 @@ Output:
 - what was confused;
 - a memory aid clearly labelled as an aid.
 
-Application code owns the learner-issue summary derived from reconciled result signals, source-grounded correction, key fact, model-answer outline, evidence links, target IDs, retry marks, metadata, and final plan assembly. Retry questions reuse the verified assessment-generation port and remain subject to its native-schema, grounding, concept, mark, and repair validation.
+Application code owns the learner-issue summary derived from reconciled result signals, source-grounded correction, key fact, model-answer outline, evidence links, target IDs, retry marks, metadata, and final plan assembly. Retry questions use the verified revision-specific MCQ, written-question, and rubric transports listed in the task registry and remain subject to native-schema, grounding, concept, mark, duplicate, and bounded-repair validation.
 
 Retry prompts must test only selected concepts and be materially distinct from both original prompts. No hidden reasoning is requested, returned, or persisted.
 

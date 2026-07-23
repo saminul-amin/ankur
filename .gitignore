@@ -9,6 +9,13 @@ test-results/
 playwright-report/
 tsconfig.tsbuildinfo
 *.log
+.npm-cache-task06/
+
+# Evaluation checkpoints, raw provider artifacts, and completed private review data.
+/evaluation/corpus/private/
+/evaluation/records/private/
+/evaluation/annotations/completed-private/
+/evaluation/notebook/.ipynb_checkpoints/
 
 .vercel
 

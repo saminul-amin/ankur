@@ -136,6 +136,8 @@ Repository-owned reports record only redacted, reproducible metadata:
 
 See the [evaluation directory](evaluation) for the recorded fixtures, methodology, screenshots, and limitations. These are bounded prototype measurements, not claims of universal accuracy.
 
+The frozen-product Task 06 package adds a six-material, three-domain CC BY 4.0 corpus, 30 structured questions, 14 written-answer records, six adaptive material records, a fair one-prompt Gemma 4 baseline, and a provider-free reproducible notebook. Independent two-reviewer annotations are prepared but pending. The bounded run reached 40/51 final-valid recorded provider operations or retained attempts (78.43%), below the internal 95% target; this miss and every controlled failure are retained in the public report.
+
 ## Privacy and security
 
 - Source content is transmitted to Google's hosted Gemini API only for the requested live operation.

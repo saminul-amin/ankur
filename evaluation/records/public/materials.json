@@ -1,0 +1,212 @@
+[
+  {
+    "schemaVersion": "evaluation-material.v1",
+    "materialId": "SCI-BN-PASTE-01",
+    "title": "জলচক্রে শক্তি ও পদার্থের চলাচল",
+    "domain": "academic_science",
+    "language": "bn",
+    "inputType": "pasted_text",
+    "pageCount": 1,
+    "fixturePath": null,
+    "licence": "CC-BY-4.0",
+    "provenance": "team-authored",
+    "sourceUrl": null,
+    "redistributionAllowed": true,
+    "publicSafe": true,
+    "contentHash": "sha256:1c2104fa4890415928f2a4e3d6ee10e5e5be2164fb5a61bccd269f600358d847",
+    "learnerPriorityHash": "sha256:642003fb2a9bbb1cf1ecb1c5d6360c34dc5856b64b06d56c17b9c83edb7ddde0",
+    "manualVerificationStatus": "pending",
+    "reviewerNotes": "Team-authored reference prepared; independent human source-text verification is pending.",
+    "createdAt": "2026-07-23T00:00:00.000Z",
+    "updatedAt": "2026-07-23T00:00:00.000Z",
+    "pages": [
+      {
+        "pageNumber": 1,
+        "route": "pasted_text",
+        "expectedText": "সূর্যের তাপে নদী, পুকুর ও সমুদ্রের পানি বাষ্পে পরিণত হয়ে উপরে ওঠে। এই পরিবর্তনকে বাষ্পীভবন বলে। গাছের পাতাও বাষ্পমোচনের মাধ্যমে বাতাসে জলীয় বাষ্প যোগ করে।\n\nউঁচু স্তরে বাতাস ঠান্ডা হলে জলীয় বাষ্প ক্ষুদ্র জলকণায় ঘনীভূত হয় এবং মেঘ তৈরি করে। জলকণাগুলো ভারী হলে বৃষ্টি হিসেবে নেমে আসে। বৃষ্টির পানি মাটিতে শোষিত হয় অথবা নদী দিয়ে আবার সমুদ্রে ফিরে যায়। তাই জলচক্রে পানি বারবার স্থান ও অবস্থা পরিবর্তন করলেও মোট পদার্থের ধারাবাহিক চলাচল বজায় থাকে।",
+        "confirmedText": "সূর্যের তাপে নদী, পুকুর ও সমুদ্রের পানি বাষ্পে পরিণত হয়ে উপরে ওঠে। এই পরিবর্তনকে বাষ্পীভবন বলে। গাছের পাতাও বাষ্পমোচনের মাধ্যমে বাতাসে জলীয় বাষ্প যোগ করে।\n\nউঁচু স্তরে বাতাস ঠান্ডা হলে জলীয় বাষ্প ক্ষুদ্র জলকণায় ঘনীভূত হয় এবং মেঘ তৈরি করে। জলকণাগুলো ভারী হলে বৃষ্টি হিসেবে নেমে আসে। বৃষ্টির পানি মাটিতে শোষিত হয় অথবা নদী দিয়ে আবার সমুদ্রে ফিরে যায়। তাই জলচক্রে পানি বারবার স্থান ও অবস্থা পরিবর্তন করলেও মোট পদার্থের ধারাবাহিক চলাচল বজায় থাকে।",
+        "expectedTextHash": "sha256:1c2104fa4890415928f2a4e3d6ee10e5e5be2164fb5a61bccd269f600358d847",
+        "confirmedTextHash": "sha256:1c2104fa4890415928f2a4e3d6ee10e5e5be2164fb5a61bccd269f600358d847"
+      }
+    ]
+  },
+  {
+    "schemaVersion": "evaluation-material.v1",
+    "materialId": "SCI-EN-PDF-01",
+    "title": "Heat Transfer in Everyday Systems",
+    "domain": "academic_science",
+    "language": "en",
+    "inputType": "digital_pdf",
+    "pageCount": 2,
+    "fixturePath": "evaluation/corpus/public/fixtures/SCI-EN-PDF-01.pdf",
+    "licence": "CC-BY-4.0",
+    "provenance": "team-authored",
+    "sourceUrl": null,
+    "redistributionAllowed": true,
+    "publicSafe": true,
+    "contentHash": "sha256:2df084c9f6300f3d075cc79237afadbe7ae9c067ce24c41724804854b51fcc46",
+    "learnerPriorityHash": "sha256:2ff3f99459d125d7f25953c82fdf5b334d1708e1474363d85c9df8273b1a255e",
+    "manualVerificationStatus": "pending",
+    "reviewerNotes": "Team-authored reference prepared; independent human source-text verification is pending.",
+    "createdAt": "2026-07-23T00:00:00.000Z",
+    "updatedAt": "2026-07-23T00:00:00.000Z",
+    "pages": [
+      {
+        "pageNumber": 1,
+        "route": "embedded_text",
+        "expectedText": "Heat moves from a warmer region to a cooler region. Conduction transfers thermal energy through direct contact between particles. A metal spoon becomes warm when its tip remains in hot soup because energy passes through the metal.",
+        "confirmedText": "Heat moves from a warmer region to a cooler region. Conduction transfers thermal energy through direct contact between particles. A metal spoon becomes warm when its tip remains in hot soup because energy passes through the metal.",
+        "expectedTextHash": "sha256:6e2c11b36e601938cea0ee493397aeae19a7072c0bcc79b8de85ac6ed19dff11",
+        "confirmedTextHash": "sha256:6e2c11b36e601938cea0ee493397aeae19a7072c0bcc79b8de85ac6ed19dff11"
+      },
+      {
+        "pageNumber": 2,
+        "route": "embedded_text",
+        "expectedText": "Convection transfers energy through the movement of a fluid. Warm water rises while cooler water sinks, creating a circulating current. Radiation transfers energy by electromagnetic waves and does not require matter; sunlight can therefore warm Earth through space.",
+        "confirmedText": "Convection transfers energy through the movement of a fluid. Warm water rises while cooler water sinks, creating a circulating current. Radiation transfers energy by electromagnetic waves and does not require matter; sunlight can therefore warm Earth through space.",
+        "expectedTextHash": "sha256:63bbbd54ed3fba8f8d7d469ed7fc31110f165c835c031ddb9c4313eb2149f98b",
+        "confirmedTextHash": "sha256:63bbbd54ed3fba8f8d7d469ed7fc31110f165c835c031ddb9c4313eb2149f98b"
+      }
+    ]
+  },
+  {
+    "schemaVersion": "evaluation-material.v1",
+    "materialId": "CIV-BN-IMG-01",
+    "title": "ঘূর্ণিঝড়ের আগে স্থানীয় প্রস্তুতি",
+    "domain": "bangladesh_civics",
+    "language": "bn",
+    "inputType": "page_image",
+    "pageCount": 1,
+    "fixturePath": "evaluation/corpus/public/fixtures/CIV-BN-IMG-01.png",
+    "licence": "CC-BY-4.0",
+    "provenance": "team-authored",
+    "sourceUrl": null,
+    "redistributionAllowed": true,
+    "publicSafe": true,
+    "contentHash": "sha256:6d18854b2c671f84f2fd86b6140666affa2924bf80ed665efefcc7f13dd48ffa",
+    "learnerPriorityHash": "sha256:6321089066d918c97ff50c4194e5eafe3096f15e436da8e6e984ad1dd71b6373",
+    "manualVerificationStatus": "pending",
+    "reviewerNotes": "Team-authored reference prepared; independent human source-text verification is pending.",
+    "createdAt": "2026-07-23T00:00:00.000Z",
+    "updatedAt": "2026-07-23T00:00:00.000Z",
+    "pages": [
+      {
+        "pageNumber": 1,
+        "route": "page_transcription",
+        "expectedText": "ঘূর্ণিঝড়ের সতর্কসংকেত পাওয়ার পর পরিবারের সবাইকে তথ্যটি জানাতে হবে। নিরাপদ আশ্রয়কেন্দ্রের অবস্থান ও যাওয়ার পথ আগে থেকে ঠিক করা জরুরি। শুকনা খাবার, বিশুদ্ধ পানি, প্রয়োজনীয় ওষুধ, টর্চ ও রেডিও জলরোধী ব্যাগে রাখতে হবে।\n\nস্থানীয় কর্তৃপক্ষ সরিয়ে নেওয়ার নির্দেশ দিলে দেরি না করে আশ্রয়কেন্দ্রে যেতে হবে। শিশু, বয়স্ক ব্যক্তি ও প্রতিবন্ধী সদস্যকে সহায়তায় অগ্রাধিকার দিতে হবে। গুজবের বদলে সরকারি বার্তা ও স্বীকৃত স্বেচ্ছাসেবকের নির্দেশ অনুসরণ করতে হবে।",
+        "confirmedText": "ঘূর্ণিঝড়ের সতর্কসংকেত পাওয়ার পর পরিবারের সবাইকে তথ্যটি জানাতে হবে। নিরাপদ আশ্রয়কেন্দ্রের অবস্থান ও যাওয়ার পথ আগে থেকে ঠিক করা জরুরি। শুকনা খাবার, বিশুদ্ধ পানি, প্রয়োজনীয় ওষুধ, টর্চ ও রেডিও জলরোধী ব্যাগে রাখতে হবে।\n\nস্থানীয় কর্তৃপক্ষ সরিয়ে নেওয়ার নির্দেশ দিলে দেরি না করে আশ্রয়কেন্দ্রে যেতে হবে। শিশু, বয়স্ক ব্যক্তি ও প্রতিবন্ধী সদস্যকে সহায়তায় অগ্রাধিকার দিতে হবে। গুজবের বদলে সরকারি বার্তা ও স্বীকৃত স্বেচ্ছাসেবকের নির্দেশ অনুসরণ করতে হবে।",
+        "expectedTextHash": "sha256:6d18854b2c671f84f2fd86b6140666affa2924bf80ed665efefcc7f13dd48ffa",
+        "confirmedTextHash": "sha256:6d18854b2c671f84f2fd86b6140666affa2924bf80ed665efefcc7f13dd48ffa"
+      }
+    ]
+  },
+  {
+    "schemaVersion": "evaluation-material.v1",
+    "materialId": "CIV-MIX-PDF-01",
+    "title": "Community Flood Readiness / বন্যা প্রস্তুতি",
+    "domain": "bangladesh_civics",
+    "language": "mixed",
+    "inputType": "mixed_pdf",
+    "pageCount": 3,
+    "fixturePath": "evaluation/corpus/public/fixtures/CIV-MIX-PDF-01.pdf",
+    "licence": "CC-BY-4.0",
+    "provenance": "team-authored",
+    "sourceUrl": null,
+    "redistributionAllowed": true,
+    "publicSafe": true,
+    "contentHash": "sha256:42a91bafc0ac0fc5b3c4b837711b3f3ef647202150ebcfdc0338f8fd7ef96c5d",
+    "learnerPriorityHash": "sha256:5f1e26cf560cd8430b48162227d3ce3ba04bd262d43d3cb5cd6196faff3adbcc",
+    "manualVerificationStatus": "pending",
+    "reviewerNotes": "Team-authored reference prepared; independent human source-text verification is pending.",
+    "createdAt": "2026-07-23T00:00:00.000Z",
+    "updatedAt": "2026-07-23T00:00:00.000Z",
+    "pages": [
+      {
+        "pageNumber": 1,
+        "route": "embedded_text",
+        "expectedText": "A household flood plan should identify a safe destination, two contact methods, and a route that avoids fast-moving water. Important documents and medicines should be stored in a waterproof container.",
+        "confirmedText": "A household flood plan should identify a safe destination, two contact methods, and a route that avoids fast-moving water. Important documents and medicines should be stored in a waterproof container.",
+        "expectedTextHash": "sha256:c361bd502477b3420e41a1bdc3c5b13c5280b084f5e0be48a90506d77d1bbca6",
+        "confirmedTextHash": "sha256:c361bd502477b3420e41a1bdc3c5b13c5280b084f5e0be48a90506d77d1bbca6"
+      },
+      {
+        "pageNumber": 2,
+        "route": "page_transcription",
+        "expectedText": "পানি দ্রুত বাড়লে নিচু রাস্তা ব্যবহার করা যাবে না। বিদ্যুতের সংযোগ বিচ্ছিন্ন করার কাজ কেবল নিরাপদ অবস্থায় করতে হবে। শিশু ও বয়স্ক সদস্যকে আগে সরিয়ে নিতে হবে এবং স্থানীয় সতর্কবার্তা অনুসরণ করতে হবে।",
+        "confirmedText": "পানি দ্রুত বাড়লে নিচু রাস্তা ব্যবহার করা যাবে না। বিদ্যুতের সংযোগ বিচ্ছিন্ন করার কাজ কেবল নিরাপদ অবস্থায় করতে হবে। শিশু ও বয়স্ক সদস্যকে আগে সরিয়ে নিতে হবে এবং স্থানীয় সতর্কবার্তা অনুসরণ করতে হবে।",
+        "expectedTextHash": "sha256:0ac1a80bf3ec7b05e2669edb599316b3939ea1acf3ebc4c72a1ce9583f1fcddb",
+        "confirmedTextHash": "sha256:0ac1a80bf3ec7b05e2669edb599316b3939ea1acf3ebc4c72a1ce9583f1fcddb"
+      },
+      {
+        "pageNumber": 3,
+        "route": "embedded_text",
+        "expectedText": "After reaching safety, the family should report its location to the agreed contact and wait for an official all-clear before returning. Floodwater may hide open drains, sharp objects, or damaged electrical lines.",
+        "confirmedText": "After reaching safety, the family should report its location to the agreed contact and wait for an official all-clear before returning. Floodwater may hide open drains, sharp objects, or damaged electrical lines.",
+        "expectedTextHash": "sha256:843a313cd3526d041cdad9e3657a1cd22515800f9b53aac26123e733c46ee12d",
+        "confirmedTextHash": "sha256:843a313cd3526d041cdad9e3657a1cd22515800f9b53aac26123e733c46ee12d"
+      }
+    ]
+  },
+  {
+    "schemaVersion": "evaluation-material.v1",
+    "materialId": "VOC-EN-PASTE-01",
+    "title": "A Lockout Checklist for Small Workshops",
+    "domain": "vocational_safety",
+    "language": "en",
+    "inputType": "pasted_text",
+    "pageCount": 1,
+    "fixturePath": null,
+    "licence": "CC-BY-4.0",
+    "provenance": "team-authored",
+    "sourceUrl": null,
+    "redistributionAllowed": true,
+    "publicSafe": true,
+    "contentHash": "sha256:2f27c7311fbccc62f2c1e4892dabf5b9fe69a35dd9f3aa7b7c72f4f5e495f7e9",
+    "learnerPriorityHash": "sha256:286867b61a4153ab833d69bd82bb865b9cc134764ee4b28f812c7e397c927ce6",
+    "manualVerificationStatus": "pending",
+    "reviewerNotes": "Team-authored reference prepared; independent human source-text verification is pending.",
+    "createdAt": "2026-07-23T00:00:00.000Z",
+    "updatedAt": "2026-07-23T00:00:00.000Z",
+    "pages": [
+      {
+        "pageNumber": 1,
+        "route": "pasted_text",
+        "expectedText": "Before maintaining a powered machine, the worker should identify every energy source and tell affected coworkers that the equipment will be stopped. The normal control is used to shut the machine down before its energy-isolating device is operated.\n\nA personal lock and a clear tag are then applied to the isolating device. Stored energy, such as pressure in a line or tension in a spring, must be released or restrained. The worker verifies isolation by attempting a normal start, then returns the control to the off position. Only after these steps may maintenance begin.",
+        "confirmedText": "Before maintaining a powered machine, the worker should identify every energy source and tell affected coworkers that the equipment will be stopped. The normal control is used to shut the machine down before its energy-isolating device is operated.\n\nA personal lock and a clear tag are then applied to the isolating device. Stored energy, such as pressure in a line or tension in a spring, must be released or restrained. The worker verifies isolation by attempting a normal start, then returns the control to the off position. Only after these steps may maintenance begin.",
+        "expectedTextHash": "sha256:2f27c7311fbccc62f2c1e4892dabf5b9fe69a35dd9f3aa7b7c72f4f5e495f7e9",
+        "confirmedTextHash": "sha256:2f27c7311fbccc62f2c1e4892dabf5b9fe69a35dd9f3aa7b7c72f4f5e495f7e9"
+      }
+    ]
+  },
+  {
+    "schemaVersion": "evaluation-material.v1",
+    "materialId": "VOC-MIX-IMG-01",
+    "title": "Workshop Chemical Labels / রাসায়নিক লেবেল",
+    "domain": "vocational_safety",
+    "language": "mixed",
+    "inputType": "page_image",
+    "pageCount": 1,
+    "fixturePath": "evaluation/corpus/public/fixtures/VOC-MIX-IMG-01.png",
+    "licence": "CC-BY-4.0",
+    "provenance": "team-authored",
+    "sourceUrl": null,
+    "redistributionAllowed": true,
+    "publicSafe": true,
+    "contentHash": "sha256:598029c9aaca143f37d59ed62bbc73e1b48727a7c0d80a7dd0fe9047180e6c47",
+    "learnerPriorityHash": "sha256:5587366c039f9012fe0b848034618c485c0bf2040dc9a49bd946a2b654cffa7c",
+    "manualVerificationStatus": "pending",
+    "reviewerNotes": "Team-authored reference prepared; independent human source-text verification is pending.",
+    "createdAt": "2026-07-23T00:00:00.000Z",
+    "updatedAt": "2026-07-23T00:00:00.000Z",
+    "pages": [
+      {
+        "pageNumber": 1,
+        "route": "page_transcription",
+        "expectedText": "A workshop chemical label should show the product name, hazard warning, and required protective equipment. The label must remain readable and attached to the container.\n\nকোনো রাসায়নিক পদার্থ অন্য পাত্রে নিলে নতুন পাত্রেও সঠিক লেবেল দিতে হবে। লেবেল না থাকলে পদার্থটি ব্যবহার করা যাবে না। ছিটকে পড়লে কাজ বন্ধ করে নির্ধারিত spill procedure অনুসরণ করতে হবে এবং supervisor-কে জানাতে হবে।",
+        "confirmedText": "A workshop chemical label should show the product name, hazard warning, and required protective equipment. The label must remain readable and attached to the container.\n\nকোনো রাসায়নিক পদার্থ অন্য পাত্রে নিলে নতুন পাত্রেও সঠিক লেবেল দিতে হবে। লেবেল না থাকলে পদার্থটি ব্যবহার করা যাবে না। ছিটকে পড়লে কাজ বন্ধ করে নির্ধারিত spill procedure অনুসরণ করতে হবে এবং supervisor-কে জানাতে হবে।",
+        "expectedTextHash": "sha256:598029c9aaca143f37d59ed62bbc73e1b48727a7c0d80a7dd0fe9047180e6c47",
+        "confirmedTextHash": "sha256:598029c9aaca143f37d59ed62bbc73e1b48727a7c0d80a7dd0fe9047180e6c47"
+      }
+    ]
+  }
+]
