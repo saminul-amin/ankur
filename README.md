@@ -55,6 +55,8 @@ Gemma 4 is Ankur's only runtime generative model. The application explicitly use
 
 Gemma performs page transcription, source analysis, grounded question generation, bounded revision personalization, and criterion-level written-answer judgment. Deterministic application code owns source confirmation, segment creation, revision targeting and factual note fields, evidence validation, MCQ grading, empty-answer handling, mark reconciliation, concept aggregation, attempt comparison, and persistence.
 
+Following the frozen Task 06 findings, current generation uses an evidence-first v2 sequence: application code selects composite source evidence, locks a source-entailed canonical answer, then asks Gemma only for bounded question wording, distractors, or final-question-aware rubric wording. Language, single-correct-answer, duplicate, evidence-scope, and question–rubric alignment validators must pass before the existing public assessment contract is returned.
+
 No Gemini-branded generative model or other LLM is used by the product.
 
 ## Architecture
@@ -137,6 +139,8 @@ Repository-owned reports record only redacted, reproducible metadata:
 See the [evaluation directory](evaluation) for the recorded fixtures, methodology, screenshots, and limitations. These are bounded prototype measurements, not claims of universal accuracy.
 
 The frozen-product Task 06 package now has complete blinded two-reviewer assessment and joint adjudication. On the internal six-material corpus, 1/30 Ankur structured questions passed both question-text and answer/reference acceptance, versus 29/30 one-prompt baseline questions. All 14 written cases were excluded from grading-accuracy metrics because their generated rubrics did not validly align with the questions. Reliability is now correctly separated into 47/51 provider-attempt availability and 40/44 final logical-artifact validity; the former mixed 40/51 rate is retired. Task 06 evidence closure passed, the product-quality gate failed, and Task 07 is blocked pending Task 06C remediation.
+
+Task 06C implementation and its separate nine-material frozen-plus-holdout corpus are present under `evaluation/task06c/`. Its single frozen live run reached 33/45 final-valid logical operations and produced only seven written cases, so the 95% reliability and minimum-ten-case gates failed before human review. Deterministic validation and the provider-free notebook do not substitute for fresh independent human review. Task 07 remains blocked.
 
 ## Privacy and security
 

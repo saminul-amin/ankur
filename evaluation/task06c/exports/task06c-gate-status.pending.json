@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "task06c-gate-result.v1",
+  "generatedAt": "2026-07-24T00:00:00.000Z",
+  "gates": [
+    {
+      "gate": "answer_key_correctness",
+      "threshold": ">= 90%",
+      "observed": "0/0 (pending)",
+      "status": "pending"
+    },
+    {
+      "gate": "answer_key_grounding",
+      "threshold": ">= 90%",
+      "observed": "0/0 (pending)",
+      "status": "pending"
+    },
+    {
+      "gate": "overall_human_question_acceptance",
+      "threshold": ">= 80%",
+      "observed": "0/0 (pending)",
+      "status": "pending"
+    },
+    {
+      "gate": "ankur_not_below_baseline",
+      "threshold": "Ankur acceptance >= baseline acceptance",
+      "observed": "pending vs pending",
+      "status": "pending"
+    },
+    {
+      "gate": "question_rubric_alignment",
+      "threshold": ">= 90%",
+      "observed": "0/0 (pending)",
+      "status": "pending"
+    },
+    {
+      "gate": "eligible_written_cases",
+      "threshold": ">= 10",
+      "observed": "0",
+      "status": "pending"
+    },
+    {
+      "gate": "written_within_one_mark",
+      "threshold": ">= 80%",
+      "observed": "0/0 (pending)",
+      "status": "pending"
+    },
+    {
+      "gate": "final_logical_artifact_validity",
+      "threshold": ">= 95%",
+      "observed": "0/0 (pending)",
+      "status": "pending"
+    },
+    {
+      "gate": "accepted_cross_material_evidence_defects",
+      "threshold": "= 0",
+      "observed": "0",
+      "status": "pending"
+    },
+    {
+      "gate": "invalid_rubrics_in_grading_metrics",
+      "threshold": "= 0",
+      "observed": "0",
+      "status": "passed"
+    },
+    {
+      "gate": "notebook_restart_and_run_all",
+      "threshold": "passed",
+      "observed": "pending",
+      "status": "pending"
+    },
+    {
+      "gate": "public_privacy_scan",
+      "threshold": "passed",
+      "observed": "pending",
+      "status": "pending"
+    }
+  ],
+  "overallStatus": "pending",
+  "task07Authorized": false
+}

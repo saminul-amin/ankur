@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "task06c-metrics.v1",
+  "generatedAt": "2026-07-24T00:00:00.000Z",
+  "historicalTask06MetricsPath": "evaluation/exports/task06-closure-metrics.json",
+  "materials": {
+    "frozen": 6,
+    "holdout": 3,
+    "total": 9
+  },
+  "logicalOperations": 0,
+  "providerAttempts": 0,
+  "answerKeyCorrectness": {
+    "numerator": 0,
+    "denominator": 0,
+    "percentage": null,
+    "status": "pending_human_review"
+  },
+  "answerKeyGrounding": {
+    "numerator": 0,
+    "denominator": 0,
+    "percentage": null,
+    "status": "pending_human_review"
+  },
+  "overallHumanAcceptance": {
+    "numerator": 0,
+    "denominator": 0,
+    "percentage": null,
+    "status": "pending_human_review"
+  },
+  "ankurHumanAcceptance": {
+    "numerator": 0,
+    "denominator": 0,
+    "percentage": null,
+    "status": "pending_human_review"
+  },
+  "baselineHumanAcceptance": {
+    "numerator": 0,
+    "denominator": 0,
+    "percentage": null,
+    "status": "pending_human_review"
+  },
+  "questionRubricAlignment": {
+    "numerator": 0,
+    "denominator": 0,
+    "percentage": null,
+    "status": "pending_human_review"
+  },
+  "eligibleWrittenCases": 0,
+  "writtenWithinOneMark": {
+    "numerator": 0,
+    "denominator": 0,
+    "percentage": null,
+    "status": "pending_human_review"
+  },
+  "finalLogicalArtifactValidity": {
+    "numerator": 0,
+    "denominator": 0,
+    "percentage": null,
+    "status": "pending_human_review"
+  },
+  "acceptedCrossMaterialEvidenceDefects": 0,
+  "invalidRubricCasesIncludedInGradingMetrics": 0,
+  "notebookRestartRunAll": "pending",
+  "publicPrivacyScan": "pending",
+  "humanReviewStatus": "pending"
+}

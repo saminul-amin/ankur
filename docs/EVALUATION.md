@@ -246,3 +246,34 @@ The evaluation process passed, but the product-quality gate failed:
 The former 40/51 final-valid percentage is retired because it mixed seven attempt rows with 44 logical operations. Reliability is now reported separately for request attempts, provider availability, logical first-pass validity, repair success, and final logical artifact validity.
 
 Task 07 is blocked. The authorized next work is Task 06C question and rubric remediation followed by a fresh evaluation.
+
+## 15. Task 06C re-evaluation protocol
+
+Task 06C is isolated under `evaluation/task06c/`; it never replaces the frozen Task 06 exports.
+
+- Corpus: the same six frozen public-safe materials plus three new team-authored CC BY 4.0 holdouts.
+- Coverage: three domains; Bengali, English, and mixed language; the frozen digital-PDF, image, mixed-PDF, and pasted-text routes remain represented.
+- Generation plan: 42 Ankur questions and 42 one-prompt baseline questions under equivalent requested counts and the same `gemma-4-26b-a4b-it` provider conditions.
+- Review: fresh neutral IDs, independently shuffled R1/R2 order, Pass A before Pass B, no reused Task 06 labels, a private coordinator mapping, authorship-conflict declarations, attestations, and disagreement-only adjudication.
+- Written evaluation: an invalid question–rubric pair is excluded before grading; empty answers are deterministic `0/5`, `not_answered`, provider-free, and have feedback usefulness `not_applicable`.
+- Reproducibility: the Task 06C notebook reads committed public-safe normalized exports only and reports Task 06 historical metrics separately.
+
+Reliability denominators are explicit:
+
+```text
+provider attempt = one network request, including a schema or semantic repair request
+logical operation = one requested canonical answer, question, rubric, written evaluation, or adaptive artifact
+```
+
+Provider availability and first-pass schema validity use provider-attempt observations where specified. First-pass semantic validity, repair rate, final logical validity, alignment validity, and controlled failure use logical-operation denominators. A repair never creates a second logical artifact.
+
+Until fresh generation, independent human review, and adjudication finish, the Task 06C human metrics and gate result remain `pending`; pending is not passing and Task 07 remains blocked.
+
+### Task 06C frozen run result
+
+The single live run completed with 33/45 final-valid logical operations
+(73.33%), 18 persisted Ankur questions, 42 parsed baseline questions, and seven
+written cases. It therefore failed the 95% logical-validity and minimum-ten
+written-case gates before human review. The public-safe report is
+`evaluation/task06c/TASK_06C_EVALUATION_REPORT.md`; Task 06 historical metrics
+remain unchanged.

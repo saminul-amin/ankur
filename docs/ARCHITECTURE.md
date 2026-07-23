@@ -180,6 +180,27 @@ ankur/
 16. Learner completes retry and sees comparison
 ```
 
+### 6.1 Task 06C evidence-first assessment boundary
+
+Assessment and retry generation now cross an internal v2 quality boundary:
+
+```text
+application grounding plan
+  → composite evidence selection
+  → deterministic canonical answer + required claims
+  → pure entailment and language validators
+  → server-only Gemma wording transport
+  → MCQ or written-question semantic validator
+  → final-question-aware rubric transport
+  → question–rubric alignment validator
+  → one bounded component repair
+  → activity-set.v2 compatibility mapping
+```
+
+`CanonicalAnswerBuilder`, the semantic validators, duplicate detector, and reliability aggregator are pure application/domain code. The Gemma adapters remain behind existing ports. Route Handlers and React components still receive the established public `activity-set.v2` contract and contain no prompts, provider calls, grading rules, or grounding acceptance logic.
+
+Historical Task 06 artifacts are not migrated or rewritten. Task 06C uses versioned contracts and evaluation locations under `evaluation/task06c/`.
+
 ## 7. Document-processing boundary
 
 Vercel Functions have a 4.5 MB request and response body ceiling. Therefore:

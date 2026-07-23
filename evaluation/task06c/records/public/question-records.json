@@ -1,0 +1,452 @@
+[
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r1:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r1",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:40c7687053e146f677303a4cf4918ad1acc536919fb0c1822b4ee6d74d9a7ad9",
+    "questionText": "মেঘ তৈরি হওয়ার প্রক্রিয়াটি জলচক্রে কীসের ওপর ভিত্তি করে ঘটে?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r1:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r1",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:c4bb6e9c90a7b551fb12c16dabf96be0e85c0682dfed7651d155d818caf43760",
+    "questionText": "উঁচু স্তরে বাতাসبرد/ ঠান্ডা হওয়ার ফলে কী ঘটে এবং কীভাবে বৃষ্টিপাত হয়?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r2:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r2",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:6867f30e8c38d9c324bb464306958101244f56948650aebcd4932034a9ecb34c",
+    "questionText": "মেঘ তৈরির প্রক্রিয়াটি জলচক্রে কীসের ওপর ভিত্তি করে ঘটে?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-BN-PASTE-01:r1:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r2:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r2",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:a928a3beb993bf02b7f28c5e2eea61bb072ddf8fff625e61795b8512a870eca8",
+    "questionText": "উঁচু স্তরে বাতাস ঠান্ডা হওয়ার ফলে কী ঘটে এবং কীভাবে বৃষ্টিপাত হয়?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-BN-PASTE-01:r1:q2",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r3:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r3",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:6867f30e8c38d9c324bb464306958101244f56948650aebcd4932034a9ecb34c",
+    "questionText": "মেঘ তৈরির প্রক্রিয়াটি জলচক্রে কীসের ওপর ভিত্তি করে ঘটে?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-BN-PASTE-01:r1:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r3:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r3",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:a928a3beb993bf02b7f28c5e2eea61bb072ddf8fff625e61795b8512a870eca8",
+    "questionText": "উঁচু স্তরে বাতাস ঠান্ডা হওয়ার ফলে কী ঘটে এবং কীভাবে বৃষ্টিপাত হয়?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-panir-obostha-poriborton"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-BN-PASTE-01:r1:q2",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:665de6c58438563485ce43882332c0a1003fbfa17390285d7a6ad3ba9761d728",
+    "questionText": "How does convection transfer energy?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-heat-transfer-methods"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:62f227ac7bab1ca515bf9960b6a7696b35063ed4bee9c48fd065b45c164c1f35",
+    "questionText": "Describe the process of convection in a fluid, specifically explaining how the movement of water changes based on temperature variations.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-heat-transfer-methods"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:71ca9b3760517911337f0f5e943fa87f2ce7c809d30cf4efa2dda4b281158959",
+    "questionText": "How is energy transferred via the process of convection?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-heat-transfer-methods"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:d19f14aa2d035fa89ae3d817506ad2a40349720d89d8b2a0a1cc560a994f098b",
+    "questionText": "Describe the mechanism of convection in a fluid, specifically explaining how the movement of water temperature differences can movement-based energy transfer. How does the circulation of water currents is actually way to transfer energy?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-heat-transfer-methods"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:71ca9b3760517911337f0f5e943fa87f2ce7c809d30cf4efa2dda4b281158959",
+    "questionText": "How is energy transferred via the process of convection?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-heat-transfer-methods"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-EN-PDF-01:r2:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:09a008bb79afa88bed2d0e7c6cc256622fc7c78ee2f165825bcc5e033e82c93a",
+    "questionText": "Describe the mechanism of convection in a fluid, specifically explaining how the movement of water is affected by temperature changes.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-heat-transfer-methods"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r1:q1",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r1",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:79fd0a9b1caa5b1151efd4cad89bbebf098d785501c69f128c08a6550072e378",
+    "questionText": "How does a rechargeable battery work? ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং শক্তি সরবরাহ করা হয় কীভাবে? ",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-energy-conversion-and-heat-production"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r1:q2",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r1",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:959c2f74879db5238067e1b992133e3e21552ee3a666fb10e313585a161f10c1",
+    "questionText": "Explain the process of energy conversion in a rechargeable battery and why it is important to use a charger that matches the battery's type and rated voltage. ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং শক্তি সরবরাহ এবং কেন চার্জারটি ব্যাটারির টাইপ এবং রেটেড ভোল্টেজ এর সাথে মিল থাকা প্রয়োজন?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-energy-conversion-and-heat-production"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r2:q1",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r2",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:e721448df4dc7a82704c0e2f3f49386416a4d7b1ec1553a7d059b539a92851f9",
+    "questionText": "How does a rechargeable battery work? ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং সরবরাহ করা হয় কীভাবে? ",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-energy-conversion-and-heat-production"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-MIX-PASTE-02:r1:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r2:q2",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r2",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:e486c33f29cb772d5ba0fe1c7ab4c3eb406d804f7dedd8603d6c1e4884d63c3b",
+    "questionText": "How does a rechargeable battery store and release energy, and why is it important to use a charger that matches the battery's type and rated voltage? ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং সরবরাহ করা হয় কীভাবে, এবং চার্জারটি ব্যাটারি টাইপ এবং রেটেড ভোল্টেজ অনুযায়ী কেন প্রয়োজন?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-energy-conversion-and-heat-production"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-MIX-PASTE-02:q1",
+    "operationId": "revision:SCI-MIX-PASTE-02",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:4ce70a497ec2e9583be3625d34eae025822f942895deb17ca388d79acebe08c3",
+    "questionText": "How is energy stored and released in a rechargeable battery? ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং শক্তি সরবরাহ করা হয় কীভাবে?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-energy-conversion-and-heat-production"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-MIX-PASTE-02:q2",
+    "operationId": "revision:SCI-MIX-PASTE-02",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:84610ffd7e8943e098ff82463b5153b9467a6c29344f7806143155dfe1aa2020",
+    "questionText": "Explain why it is necessary to match the charger to the battery's type and rated voltage, and describe how energy is converted during the charging and use of a rechargeable battery. ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং শক্তি সরবরাহ করা হয় কীভাবে এবং কেন চার্জারটি ব্যাটারির টাইপ এবং রেটেড ভোল্টেজ এর সাথে মিল থাকা প্রয়োজন?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-energy-conversion-and-heat-production"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  }
+]

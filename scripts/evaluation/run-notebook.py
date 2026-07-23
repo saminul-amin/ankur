@@ -6,11 +6,21 @@ import contextlib
 import html
 import io
 import json
+import sys
 from pathlib import Path
 
 
-NOTEBOOK = Path("evaluation/notebook/ankur_task06_evaluation.ipynb")
-HTML = Path("evaluation/notebook/ankur_task06_evaluation.html")
+TASK06C = "--task06c" in sys.argv
+NOTEBOOK = Path(
+    "evaluation/task06c/notebook/ankur_task06c_evaluation.ipynb"
+    if TASK06C
+    else "evaluation/notebook/ankur_task06_evaluation.ipynb"
+)
+HTML = Path(
+    "evaluation/task06c/notebook/ankur_task06c_evaluation.html"
+    if TASK06C
+    else "evaluation/notebook/ankur_task06_evaluation.html"
+)
 
 
 def render_markdown(value: str) -> str:
@@ -36,7 +46,7 @@ def main() -> None:
     notebook = json.loads(NOTEBOOK.read_text(encoding="utf-8"))
     namespace: dict[str, object] = {"__name__": "__ankur_notebook__"}
     html_parts = [
-        "<!doctype html><html><head><meta charset='utf-8'><title>Ankur Task 06 Evaluation</title>",
+        f"<!doctype html><html><head><meta charset='utf-8'><title>Ankur {'Task 06C' if TASK06C else 'Task 06'} Evaluation</title>",
         "<style>body{max-width:1080px;margin:40px auto;padding:0 24px;font:16px/1.55 system-ui;color:#173c31}"
         "h1,h2,h3{color:#0d5d43}pre{white-space:pre-wrap;background:#f5f2e8;padding:18px;border-radius:12px}"
         "code{font-family:ui-monospace,monospace}.cell{margin:32px 0}.output{border-left:4px solid #d8a640}</style></head><body>",

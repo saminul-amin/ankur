@@ -1,0 +1,3 @@
+Before maintaining a powered machine, the worker should identify every energy source and tell affected coworkers that the equipment will be stopped. The normal control is used to shut the machine down before its energy-isolating device is operated.
+
+A personal lock and a clear tag are then applied to the isolating device. Stored energy, such as pressure in a line or tension in a spring, must be released or restrained. The worker verifies isolation by attempting a normal start, then returns the control to the off position. Only after these steps may maintenance begin.

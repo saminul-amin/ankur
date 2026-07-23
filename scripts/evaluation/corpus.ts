@@ -23,8 +23,8 @@ export interface EvaluationCorpusMaterial {
   readonly licence: "CC-BY-4.0";
   readonly provenance: "team-authored";
   readonly publicSafe: true;
-  readonly createdAt: "2026-07-23T00:00:00.000Z";
-  readonly updatedAt: "2026-07-23T00:00:00.000Z";
+  readonly createdAt: string;
+  readonly updatedAt: string;
 }
 
 const dates = {
@@ -190,6 +190,73 @@ export const goldenDemoMaterial: EvaluationCorpusMaterial = {
     },
   ],
 };
+
+const task06cDates = {
+  createdAt: "2026-07-24T00:00:00.000Z",
+  updatedAt: "2026-07-24T00:00:00.000Z",
+} as const;
+
+export const task06cHoldoutCorpus: readonly EvaluationCorpusMaterial[] = [
+  {
+    id: "SCI-MIX-PASTE-02",
+    title: "Battery Energy and Safe Charging / ব্যাটারি চার্জিং",
+    domain: "academic_science",
+    language: "mixed",
+    inputType: "pasted_text",
+    fixturePath: null,
+    learnerPriority: "Connect energy conversion with the stated charging-safety limits.",
+    licence: "CC-BY-4.0",
+    provenance: "team-authored",
+    publicSafe: true,
+    ...task06cDates,
+    pages: [{
+      pageNumber: 1,
+      route: "pasted_text",
+      text: "A rechargeable battery stores energy through chemical changes during charging and supplies electrical energy during use. Charging also produces heat, so the charger must match the battery type and rated voltage.\n\nব্যাটারি ফুলে গেলে, অস্বাভাবিক গরম হলে বা গন্ধ বের হলে চার্জিং বন্ধ করতে হবে। বাতাস চলাচল করে এমন শুকনা স্থানে চার্জ দিতে হবে এবং ক্ষতিগ্রস্ত তার ব্যবহার করা যাবে না। আগুন লাগলে পানি ব্যবহার না করে নির্ধারিত battery-fire procedure অনুসরণ করতে হবে।",
+    }],
+  },
+  {
+    id: "CIV-BN-PASTE-02",
+    title: "বিদ্যালয়ে ভূমিকম্পের সময় নিরাপদ প্রতিক্রিয়া",
+    domain: "bangladesh_civics",
+    language: "bn",
+    inputType: "pasted_text",
+    fixturePath: null,
+    learnerPriority: "কম্পনের সময় ও কম্পন থামার পরে করণীয় আলাদা করে বুঝতে চাই।",
+    licence: "CC-BY-4.0",
+    provenance: "team-authored",
+    publicSafe: true,
+    ...task06cDates,
+    pages: [{
+      pageNumber: 1,
+      route: "pasted_text",
+      text: "ভূমিকম্পের কম্পন শুরু হলে শ্রেণিকক্ষের শিক্ষার্থীরা নিচু হয়ে মজবুত টেবিলের নিচে আশ্রয় নেবে এবং টেবিলের পা ধরে থাকবে। জানালা, আলমারি ও ঝুলন্ত বস্তুর কাছ থেকে দূরে থাকতে হবে। কম্পনের সময় সিঁড়ি বা লিফট ব্যবহার করে বাইরে দৌড়ানো যাবে না।\n\nকম্পন থামলে শিক্ষক নির্ধারিত পথ ধরে সবাইকে খোলা সমাবেশস্থলে নিয়ে যাবেন। উপস্থিতি যাচাই করতে হবে এবং আহত ব্যক্তির তথ্য দায়িত্বপ্রাপ্ত কর্মীকে জানাতে হবে। ভবন নিরাপদ ঘোষণা না হওয়া পর্যন্ত ভেতরে ফেরা যাবে না।",
+    }],
+  },
+  {
+    id: "VOC-EN-PASTE-02",
+    title: "Portable Ladder Setup and Inspection",
+    domain: "vocational_safety",
+    language: "en",
+    inputType: "pasted_text",
+    fixturePath: null,
+    learnerPriority: "Learn the inspection and setup sequence before climbing.",
+    licence: "CC-BY-4.0",
+    provenance: "team-authored",
+    publicSafe: true,
+    ...task06cDates,
+    pages: [{
+      pageNumber: 1,
+      route: "pasted_text",
+      text: "Before use, a worker checks a portable ladder for cracked rails, missing rungs, loose hardware, oil, and mud. A damaged ladder is labelled and removed from service rather than repaired temporarily at the work area.\n\nThe ladder is placed on a firm, level surface and secured against movement. For access to an upper level, the rails extend above the landing so the worker has a handhold. The worker faces the ladder, keeps three points of contact, and carries tools in a belt or hoists them separately.",
+    }],
+  },
+] as const;
+
+export const task06cEvaluationCorpus: readonly EvaluationCorpusMaterial[] = [
+  ...evaluationCorpus,
+  ...task06cHoldoutCorpus,
+];
 
 export function materialText(material: EvaluationCorpusMaterial): string {
   return material.pages.map((page) => page.text).join("\n\n");

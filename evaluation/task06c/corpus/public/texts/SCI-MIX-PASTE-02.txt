@@ -1,0 +1,3 @@
+A rechargeable battery stores energy through chemical changes during charging and supplies electrical energy during use. Charging also produces heat, so the charger must match the battery type and rated voltage.
+
+ব্যাটারি ফুলে গেলে, অস্বাভাবিক গরম হলে বা গন্ধ বের হলে চার্জিং বন্ধ করতে হবে। বাতাস চলাচল করে এমন শুকনা স্থানে চার্জ দিতে হবে এবং ক্ষতিগ্রস্ত তার ব্যবহার করা যাবে না। আগুন লাগলে পানি ব্যবহার না করে নির্ধারিত battery-fire procedure অনুসরণ করতে হবে।

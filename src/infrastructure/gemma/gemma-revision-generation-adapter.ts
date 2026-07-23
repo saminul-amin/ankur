@@ -1,55 +1,40 @@
 import type { GenerativeModelPort } from "../../application/ports/generative-model-port";
 import type { RevisionGenerationPort } from "../../application/ports/revision-generation-port";
-import type { ActivitySet, McqOption } from "../../domain/assessments/mcq";
+import {
+  assembleEvidenceFirstAssessment,
+  createEvidenceFirstAssessmentPlan,
+} from "../../application/services/evidence-first-assessment-builder";
+import type { ActivitySet } from "../../domain/assessments/mcq";
+import { validateRevisionQuestion } from "../../domain/assessments/evidence-first-validation";
 import type { ModelArtifactMetadata } from "../../domain/ai/model-artifact";
-import { normalizeSourceText } from "../../domain/source/confirmed-source";
 import type { RevisionItem } from "../../domain/revision/revision-plan";
 import { ProviderError } from "../../shared/errors/provider-error";
 import {
-  createMcqCandidateProviderJsonSchema,
-  createWrittenQuestionCandidateProviderJsonSchema,
-  createWrittenRubricCandidateProviderJsonSchema,
-  mcqCandidateProviderSchema,
-  writtenQuestionCandidateProviderSchema,
-  writtenRubricCandidateProviderSchema,
-} from "../../shared/schemas/learning-content-schemas";
+  evidenceFirstMcqProviderJsonSchema,
+  evidenceFirstMcqProviderSchema,
+  evidenceFirstRubricProviderJsonSchema,
+  evidenceFirstRubricProviderSchema,
+  evidenceFirstWrittenQuestionProviderJsonSchema,
+  evidenceFirstWrittenQuestionProviderSchema,
+} from "../../shared/schemas/evidence-first-question-schemas";
 import {
   revisionItemCandidateProviderJsonSchema,
   revisionItemCandidateProviderSchema,
 } from "../../shared/schemas/revision-schemas";
 import {
   buildRevisionItemPrompt,
-  buildRevisionRetryPrompt,
   REVISION_PROMPT_VERSIONS,
-  type RevisionRetryGroundingAssignment,
 } from "./revision-prompts";
+import { buildEvidenceFirstAssessmentPrompt } from "./learning-content-prompts";
 
 const MODEL = "gemma-4-26b-a4b-it" as const;
+type RetryRepairPromptContext = NonNullable<
+  Parameters<typeof buildEvidenceFirstAssessmentPrompt>[0]["repair"]
+>;
 
 const RETRY_MCQ_OUTPUT_TOKEN_BUDGET = 1_800;
 const RETRY_WRITTEN_OUTPUT_TOKEN_BUDGET = 1_800;
 const RETRY_RUBRIC_OUTPUT_TOKEN_BUDGET = 1_600;
-
-function optionsWithDistinctOrder(input: {
-  readonly values: readonly [string, string, string, string];
-  readonly correctOptionId: McqOption["id"];
-  readonly original: ActivitySet["questions"][0];
-}): { readonly options: readonly [McqOption, McqOption, McqOption, McqOption]; readonly correctOptionId: McqOption["id"] } {
-  const ids = ["A", "B", "C", "D"] as const;
-  const sameOrder = input.values.every((value, index) =>
-    normalizeSourceText(value).toLocaleLowerCase() ===
-      normalizeSourceText(input.original.options[index]?.text ?? "").toLocaleLowerCase(),
-  );
-  const orderedValues = sameOrder
-    ? [input.values[1], input.values[2], input.values[3], input.values[0]] as const
-    : input.values;
-  const originalCorrectIndex = ids.indexOf(input.correctOptionId);
-  const correctIndex = sameOrder ? (originalCorrectIndex + 3) % 4 : originalCorrectIndex;
-  return {
-    options: ids.map((id, index) => ({ id, text: orderedValues[index] })) as [McqOption, McqOption, McqOption, McqOption],
-    correctOptionId: ids[correctIndex] ?? input.correctOptionId,
-  };
-}
 
 function learnerIssueSummary(input: {
   readonly name: string;
@@ -78,114 +63,256 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
     input: Parameters<RevisionGenerationPort["generateRevisionPlan"]>[0],
     promptVersion: (typeof REVISION_PROMPT_VERSIONS)[keyof typeof REVISION_PROMPT_VERSIONS],
   ): Promise<{ readonly activity: ActivitySet; readonly latencyMs: number; readonly repaired: boolean }> {
-    const allowedSegmentIds = new Set(input.source.segments.map((segment) => segment.id));
-    const groundedConcepts = input.selection.targetConceptIds.flatMap((conceptId) => {
-      const concept = input.preparationMap.concepts.find((candidate) => candidate.id === conceptId);
-      const evidence = concept?.evidence.find((reference) => allowedSegmentIds.has(reference.segmentId));
-      return concept === undefined || evidence === undefined ? [] : [{ concept, evidence }];
-    });
-    if (groundedConcepts.length !== input.selection.targetConceptIds.length || groundedConcepts.length === 0) {
-      throw new ProviderError("INVALID_OUTPUT");
-    }
-    const assignmentFor = (index: number): RevisionRetryGroundingAssignment["mcq"] => {
-      const grounded = groundedConcepts[index % groundedConcepts.length];
-      if (grounded === undefined) throw new ProviderError("INVALID_OUTPUT");
-      return {
-        conceptId: grounded.concept.id,
-        conceptName: grounded.concept.name,
-        conceptDescription: grounded.concept.description,
-        evidenceSegmentId: grounded.evidence.segmentId,
-      };
-    };
-    const assignment: RevisionRetryGroundingAssignment = {
-      mcq: assignmentFor(0),
-      writtenCriteria: [assignmentFor(0), assignmentFor(1), assignmentFor(2)],
-    };
     const title = `${input.selection.mode === "weak_area" ? "Weak-area" : input.selection.mode === "reinforcement" ? "Reinforcement" : "Challenge"} retry · ${input.preparationMap.title}`.slice(0, 160);
     const difficulty = input.selection.mode === "challenge" ? "hard" : "medium";
-    const basePromptInput = {
-      source: input.source,
-      originalActivity: input.originalActivity,
-      retryMode: input.selection.mode,
-      title,
-      difficulty,
-      ...(input.repair === undefined ? {} : { repair: input.repair }),
-    } as const;
-    const mcqResult = await this.model.generateStructured({
-      task: "structured_generation", modelId: MODEL, promptVersion, schemaVersion: "revision-retry-mcq.v1",
-      thinkingLevel: "high", temperature: 0.1, maxOutputTokens: RETRY_MCQ_OUTPUT_TOKEN_BUDGET, timeoutMs: this.timeoutMs,
-      contents: [{ kind: "text", text: buildRevisionRetryPrompt(basePromptInput, "mcq", assignment) }], outputMode: "native",
-      jsonSchema: createMcqCandidateProviderJsonSchema(), schema: mcqCandidateProviderSchema, maxSchemaRepairs: 1,
-    });
-    const writtenResult = await this.model.generateStructured({
-      task: "structured_generation", modelId: MODEL, promptVersion, schemaVersion: "revision-retry-written-question.v1",
-      thinkingLevel: "high", temperature: 0.1, maxOutputTokens: RETRY_WRITTEN_OUTPUT_TOKEN_BUDGET, timeoutMs: this.timeoutMs,
-      contents: [{ kind: "text", text: buildRevisionRetryPrompt(basePromptInput, "written_question", assignment, mcqResult.value.prompt) }], outputMode: "native",
-      jsonSchema: createWrittenQuestionCandidateProviderJsonSchema(), schema: writtenQuestionCandidateProviderSchema, maxSchemaRepairs: 1,
-    });
-    const referenceAnswer = [...new Set(groundedConcepts.map(({ concept }) => concept.description))]
-      .join(" ").slice(0, 1_200).trim();
-    if (referenceAnswer.length === 0) throw new ProviderError("INVALID_OUTPUT");
-    const rubricResult = await this.model.generateStructured({
-      task: "structured_generation", modelId: MODEL, promptVersion, schemaVersion: "revision-retry-rubric.v1",
-      thinkingLevel: "high", temperature: 0.1, maxOutputTokens: RETRY_RUBRIC_OUTPUT_TOKEN_BUDGET, timeoutMs: this.timeoutMs,
-      contents: [{ kind: "text", text: buildRevisionRetryPrompt(basePromptInput, "written_rubric", assignment, referenceAnswer) }], outputMode: "native",
-      jsonSchema: createWrittenRubricCandidateProviderJsonSchema(), schema: writtenRubricCandidateProviderSchema, maxSchemaRepairs: 1,
-    });
-    const optionResult = optionsWithDistinctOrder({
-      values: [mcqResult.value.optionA, mcqResult.value.optionB, mcqResult.value.optionC, mcqResult.value.optionD],
-      correctOptionId: mcqResult.value.correctOptionId,
-      original: input.originalActivity.questions[0],
-    });
-    const criterionDescription = (
-      grounding: RevisionRetryGroundingAssignment["mcq"],
-      providerDescription: string,
-    ) => `${grounding.conceptName}: ${grounding.conceptDescription.slice(0, 220)} — ${providerDescription.slice(0, 160)}`.slice(0, 400);
-    const rubric = [
-      {
-        id: "criterion-retry-001", description: criterionDescription(assignment.writtenCriteria[0], rubricResult.value.criterion1Description), maximumMarks: 2,
-        requiredConceptIds: [assignment.writtenCriteria[0].conceptId], evidence: [{ segmentId: assignment.writtenCriteria[0].evidenceSegmentId }],
+    let evidencePlan;
+    try {
+      evidencePlan = createEvidenceFirstAssessmentPlan({
+        source: input.source,
+        preparationMap: input.preparationMap,
+        selectedConceptIds: input.selection.targetConceptIds,
+        idPrefix: "retry",
+      });
+    } catch (error) {
+      throw new ProviderError("INVALID_OUTPUT", { cause: error });
+    }
+    const originalPrompts = input.originalActivity.questions.map((question) => question.prompt);
+    const semanticRepair: RetryRepairPromptContext | undefined = input.repair === undefined ? undefined : {
+      failureCodes: input.repair.validationErrors,
+      invalidFields: { retryActivity: input.repair.invalidArtifact.retryActivity },
+      lockedFields: {
+        mcqCanonicalAnswer: evidencePlan.mcqCanonicalAnswer,
+        writtenCanonicalAnswer: evidencePlan.writtenCanonicalAnswer,
+        targetConceptIds: input.selection.targetConceptIds,
       },
-      {
-        id: "criterion-retry-002", description: criterionDescription(assignment.writtenCriteria[1], rubricResult.value.criterion2Description), maximumMarks: 2,
-        requiredConceptIds: [assignment.writtenCriteria[1].conceptId], evidence: [{ segmentId: assignment.writtenCriteria[1].evidenceSegmentId }],
-      },
-      {
-        id: "criterion-retry-003", description: criterionDescription(assignment.writtenCriteria[2], rubricResult.value.criterion3Description), maximumMarks: 1,
-        requiredConceptIds: [assignment.writtenCriteria[2].conceptId], evidence: [{ segmentId: assignment.writtenCriteria[2].evidenceSegmentId }],
-      },
-    ] as const;
-    const writtenConceptIds = [...new Set(rubric.flatMap((criterion) => criterion.requiredConceptIds))];
-    const writtenEvidence = [...new Set(rubric.flatMap((criterion) => criterion.evidence.map((reference) => reference.segmentId)))]
-      .map((segmentId) => ({ segmentId }));
-    const latencyMs = mcqResult.metadata.latencyMs + writtenResult.metadata.latencyMs + rubricResult.metadata.latencyMs;
-    const repaired = input.repair !== undefined || mcqResult.repaired || writtenResult.repaired || rubricResult.repaired;
-    const artifact: ModelArtifactMetadata = {
-      provider: "gemini_api", modelId: MODEL, task: "revision_generation", promptVersion, schemaVersion: "activity-set.v2",
-      thinkingLevel: "high", requestId: input.requestId, createdAt: new Date().toISOString(), latencyMs, repaired,
     };
+    const generate = async (repair: RetryRepairPromptContext | undefined = semanticRepair) => {
+      const mcqResult = await this.model.generateStructured({
+        task: "structured_generation",
+        modelId: MODEL,
+        promptVersion,
+        schemaVersion: "revision-question.v2",
+        thinkingLevel: "high",
+        temperature: 0.1,
+        maxOutputTokens: RETRY_MCQ_OUTPUT_TOKEN_BUDGET,
+        timeoutMs: this.timeoutMs,
+        contents: [{
+          kind: "text",
+          text: buildEvidenceFirstAssessmentPrompt({
+            source: input.source,
+            title,
+            difficulty,
+            target: "mcq",
+            canonicalAnswer: evidencePlan.mcqCanonicalAnswer,
+            excludedPrompts: originalPrompts,
+            retryMode: input.selection.mode,
+            ...(repair === undefined ? {} : { repair }),
+          }),
+        }],
+        outputMode: "native",
+        jsonSchema: evidenceFirstMcqProviderJsonSchema,
+        schema: evidenceFirstMcqProviderSchema,
+        maxSchemaRepairs: 1,
+      });
+      const writtenResult = await this.model.generateStructured({
+        task: "structured_generation",
+        modelId: MODEL,
+        promptVersion,
+        schemaVersion: "revision-question.v2",
+        thinkingLevel: "high",
+        temperature: 0.1,
+        maxOutputTokens: RETRY_WRITTEN_OUTPUT_TOKEN_BUDGET,
+        timeoutMs: this.timeoutMs,
+        contents: [{
+          kind: "text",
+          text: buildEvidenceFirstAssessmentPrompt({
+            source: input.source,
+            title,
+            difficulty,
+            target: "written_question",
+            canonicalAnswer: evidencePlan.writtenCanonicalAnswer,
+            priorMcqPrompt: mcqResult.value.prompt,
+            excludedPrompts: originalPrompts,
+            retryMode: input.selection.mode,
+            ...(repair === undefined ? {} : { repair }),
+          }),
+        }],
+        outputMode: "native",
+        jsonSchema: evidenceFirstWrittenQuestionProviderJsonSchema,
+        schema: evidenceFirstWrittenQuestionProviderSchema,
+        maxSchemaRepairs: 1,
+      });
+      const placeholderMetadata: ModelArtifactMetadata = {
+        provider: "gemini_api",
+        modelId: MODEL,
+        task: "revision_generation",
+        promptVersion,
+        schemaVersion: "activity-set.v2",
+        thinkingLevel: "high",
+        requestId: input.requestId,
+        createdAt: new Date().toISOString(),
+        latencyMs: 0,
+        repaired: repair !== undefined,
+      };
+      const placeholderRubric = {
+        criterion1Description: evidencePlan.writtenCanonicalAnswer.requiredClaims[0]?.text ?? evidencePlan.writtenCanonicalAnswer.canonicalAnswer,
+        criterion2Description: evidencePlan.writtenCanonicalAnswer.requiredClaims[1]?.text ?? evidencePlan.writtenCanonicalAnswer.canonicalAnswer,
+        criterion3Description: evidencePlan.writtenCanonicalAnswer.requiredClaims[2]?.text ?? evidencePlan.writtenCanonicalAnswer.canonicalAnswer,
+      };
+      const beforeRubric = assembleEvidenceFirstAssessment({
+        source: input.source,
+        plan: evidencePlan,
+        mcqProvider: mcqResult.value,
+        writtenQuestionProvider: writtenResult.value,
+        rubricProvider: placeholderRubric,
+        title,
+        difficulty,
+        metadata: placeholderMetadata,
+        idPrefix: "retry-question",
+        criterionIdPrefix: "retry",
+      });
+      const rubricResult = await this.model.generateStructured({
+        task: "structured_generation",
+        modelId: MODEL,
+        promptVersion,
+        schemaVersion: "written-rubric.v2",
+        thinkingLevel: "high",
+        temperature: 0.1,
+        maxOutputTokens: RETRY_RUBRIC_OUTPUT_TOKEN_BUDGET,
+        timeoutMs: this.timeoutMs,
+        contents: [{
+          kind: "text",
+          text: buildEvidenceFirstAssessmentPrompt({
+            source: input.source,
+            title,
+            difficulty,
+            target: "written_rubric",
+            canonicalAnswer: evidencePlan.writtenCanonicalAnswer,
+            writtenQuestion: beforeRubric.writtenQuestion,
+            excludedPrompts: originalPrompts,
+            retryMode: input.selection.mode,
+            ...(repair === undefined ? {} : { repair }),
+          }),
+        }],
+        outputMode: "native",
+        jsonSchema: evidenceFirstRubricProviderJsonSchema,
+        schema: evidenceFirstRubricProviderSchema,
+        maxSchemaRepairs: 1,
+      });
+      const latencyMs =
+        mcqResult.metadata.latencyMs +
+        writtenResult.metadata.latencyMs +
+        rubricResult.metadata.latencyMs;
+      const repaired =
+        repair !== undefined ||
+        mcqResult.repaired ||
+        writtenResult.repaired ||
+        rubricResult.repaired;
+      const artifact: ModelArtifactMetadata = {
+        ...placeholderMetadata,
+        latencyMs,
+        repaired,
+      };
+      const assembled = assembleEvidenceFirstAssessment({
+        source: input.source,
+        plan: evidencePlan,
+        mcqProvider: mcqResult.value,
+        writtenQuestionProvider: writtenResult.value,
+        rubricProvider: rubricResult.value,
+        title,
+        difficulty,
+        metadata: artifact,
+        idPrefix: "retry-question",
+        criterionIdPrefix: "retry",
+      });
+      const acceptedBank = input.originalActivity.questions.map((question) => ({
+        recordId: question.id,
+        prompt: question.prompt,
+        materialId: evidencePlan.mcqCanonicalAnswer.materialId,
+        pipeline: "ankur_structured" as const,
+        operationId: input.originalActivity.id,
+        kind: "assessment" as const,
+      }));
+      const revisionFailures = [
+        ...validateRevisionQuestion(
+          input.source,
+          evidencePlan.mcqCanonicalAnswer,
+          {
+            schemaVersion: "revision-question.v2",
+            id: assembled.mcq.id,
+            originalQuestionId: input.originalActivity.questions[0].id,
+            retryMode: input.selection.mode,
+            materialId: assembled.mcq.materialId,
+            sourceVersionId: assembled.mcq.sourceVersionId,
+            prompt: assembled.mcq.prompt,
+            canonicalAnswerId: assembled.mcq.canonicalAnswerId,
+            requiredClaimIds: assembled.mcq.requiredClaimIds,
+            requiredConceptIds: assembled.mcq.conceptIds,
+            evidenceReferences: assembled.mcq.evidenceReferences,
+            questionType: "single_mcq",
+          },
+          acceptedBank,
+        ),
+        ...validateRevisionQuestion(
+          input.source,
+          evidencePlan.writtenCanonicalAnswer,
+          {
+            schemaVersion: "revision-question.v2",
+            id: assembled.writtenQuestion.id,
+            originalQuestionId: input.originalActivity.questions[1].id,
+            retryMode: input.selection.mode,
+            materialId: assembled.writtenQuestion.materialId,
+            sourceVersionId: assembled.writtenQuestion.sourceVersionId,
+            prompt: assembled.writtenQuestion.prompt,
+            canonicalAnswerId: assembled.writtenQuestion.canonicalAnswerId,
+            requiredClaimIds: assembled.writtenQuestion.requiredClaimIds,
+            requiredConceptIds: assembled.writtenQuestion.conceptIds,
+            evidenceReferences: assembled.writtenQuestion.evidenceReferences,
+            questionType: "short_written",
+          },
+          acceptedBank,
+        ),
+      ];
+      return {
+        assembled,
+        failures: [...assembled.failures, ...revisionFailures],
+        latencyMs,
+        repaired,
+      };
+    };
+    let result = await generate();
+    if (result.failures.length > 0) {
+      const failureCodes = [...new Set(result.failures.map((failure) => failure.code))];
+      result = await generate({
+        failureCodes,
+        invalidFields: {
+          mcq: result.assembled.mcq,
+          writtenQuestion: result.assembled.writtenQuestion,
+          rubric: result.assembled.rubric,
+        },
+        lockedFields: {
+          mcqCanonicalAnswer: evidencePlan.mcqCanonicalAnswer,
+          writtenCanonicalAnswer: evidencePlan.writtenCanonicalAnswer,
+          targetConceptIds: input.selection.targetConceptIds,
+          originalQuestionIds: input.originalActivity.questions.map((question) => question.id),
+          marks: { mcq: 1, written: 5, rubric: [2, 2, 1] },
+        },
+      });
+      if (result.failures.length > 0) {
+        throw new ProviderError("INVALID_OUTPUT", {
+          cause: new Error(
+            result.failures.map((failure) => `${failure.code}:${failure.path}`).join(","),
+          ),
+        });
+      }
+    }
     return {
       activity: {
-        schemaVersion: "activity-set.v2", id: `retry-activity-${input.source.sourceVersionId}`,
-        sourceVersionId: input.source.sourceVersionId, title,
-        questions: [
-          {
-            id: "retry-question-001", type: "single_mcq", sourceVersionId: input.source.sourceVersionId,
-            prompt: mcqResult.value.prompt, conceptIds: [assignment.mcq.conceptId], difficulty, marks: 1,
-            explanation: mcqResult.value.explanation, options: optionResult.options, correctOptionId: optionResult.correctOptionId,
-            evidence: [{ segmentId: assignment.mcq.evidenceSegmentId }], artifact,
-          },
-          {
-            id: "retry-question-002", type: "short_written", sourceVersionId: input.source.sourceVersionId,
-            prompt: writtenResult.value.prompt, conceptIds: writtenConceptIds, difficulty, marks: 5,
-            explanation: writtenResult.value.explanation, expectedLength: writtenResult.value.expectedLength,
-            referenceAnswer, requiredConceptIds: writtenConceptIds, evidence: writtenEvidence, rubric, artifact,
-          },
-        ],
-        warnings: [], artifact,
+        ...result.assembled.activitySet,
+        id: `retry-activity-${input.source.sourceVersionId}`,
       },
-      latencyMs,
-      repaired,
+      latencyMs: result.latencyMs,
+      repaired: result.repaired,
     };
   }
 

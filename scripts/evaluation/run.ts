@@ -77,17 +77,20 @@ import {
 import {
   evaluationCorpus,
   materialText,
+  task06cEvaluationCorpus,
   type EvaluationCorpusMaterial,
 } from "./corpus";
 
-const PRIVATE_ROOT = resolve("evaluation/records/private");
-const PUBLIC_ROOT = resolve("evaluation/records/public");
-const EXPORT_ROOT = resolve("evaluation/exports");
-const ANNOTATION_ROOT = resolve("evaluation/annotations/templates");
+const TASK06C = process.argv.includes("--task06c");
+const ACTIVE_CORPUS = TASK06C ? task06cEvaluationCorpus : evaluationCorpus;
+const PRIVATE_ROOT = resolve(TASK06C ? "evaluation/task06c/records/private" : "evaluation/records/private");
+const PUBLIC_ROOT = resolve(TASK06C ? "evaluation/task06c/records/public" : "evaluation/records/public");
+const EXPORT_ROOT = resolve(TASK06C ? "evaluation/task06c/exports/run" : "evaluation/exports");
+const ANNOTATION_ROOT = resolve(TASK06C ? "evaluation/task06c/annotations/private/generated" : "evaluation/annotations/templates");
 const STATE_PATH = resolve(PRIVATE_ROOT, "task06-state.json");
-const MANIFEST_PATH = resolve("evaluation/corpus/public/manifest.json");
+const MANIFEST_PATH = resolve(TASK06C ? "evaluation/task06c/corpus/public/manifest.json" : "evaluation/corpus/public/manifest.json");
 const MODEL = "gemma-4-26b-a4b-it" as const;
-const ASSESSMENT_RUN_COUNTS = new Map(evaluationCorpus.map((material, index) => [material.id, index < 3 ? 3 : 2]));
+const ASSESSMENT_RUN_COUNTS = new Map(ACTIVE_CORPUS.map((material, index) => [material.id, index < 3 ? 3 : 2]));
 const ANSWER_CASES = [
   ["correct", "partially_correct"],
   ["incorrect", "empty"],
@@ -95,7 +98,14 @@ const ANSWER_CASES = [
   ["correct", "partially_correct"],
   ["incorrect", "empty"],
   ["unsupported_claim", "missing_key_concept"],
+  ["correct", "partially_correct"],
+  ["incorrect", "empty"],
+  ["unsupported_claim", "missing_key_concept"],
 ] as const;
+
+function baselineQuestionCount(materialId: string): number {
+  return TASK06C ? (ASSESSMENT_RUN_COUNTS.get(materialId) ?? 0) * 2 : 5;
+}
 
 interface TransportObservation {
   readonly request: TextGenerationRequest | StructuredGenerationRequest<unknown>;
@@ -356,9 +366,9 @@ function primaryActivityEntry(state: PrivateState, materialId: string): [string,
 
 function materialSelection(): readonly EvaluationCorpusMaterial[] {
   const selected = process.env["ANKUR_EVALUATION_MATERIALS"]?.split(",").map((item) => item.trim()).filter(Boolean);
-  if (selected === undefined || selected.length === 0) return evaluationCorpus;
+  if (selected === undefined || selected.length === 0) return ACTIVE_CORPUS;
   const allowed = new Set(selected);
-  const materials = evaluationCorpus.filter((item) => allowed.has(item.id));
+  const materials = ACTIVE_CORPUS.filter((item) => allowed.has(item.id));
   if (materials.length !== allowed.size) throw new Error("UNKNOWN_EVALUATION_MATERIAL");
   return materials;
 }
@@ -506,7 +516,7 @@ async function runLive(state: PrivateState): Promise<void> {
               timeoutMs: config.requestTimeoutMs,
               contents: [{
                 kind: "text",
-                text: `Read this source and create a quiz.\n\nCreate exactly five questions in the source's language. For each, give the question, the answer, and a short exact evidence quotation. Use this plain-text format exactly: Q: ...\\nA: ...\\nEVIDENCE: ...\n\nSOURCE\n${materialText(material)}`,
+                text: `Read this source and create a quiz.\n\nCreate exactly ${String(baselineQuestionCount(material.id))} questions in the source's language. For each, give the question, the answer, and a short exact evidence quotation. Use this plain-text format exactly: Q: ...\\nA: ...\\nEVIDENCE: ...\n\nSOURCE\n${materialText(material)}`,
               }],
             });
             return result.text;
@@ -574,7 +584,7 @@ async function runLive(state: PrivateState): Promise<void> {
     const primaryActivity = primaryActivityEntry(state, material.id);
     if (primaryActivity === undefined) continue;
     const [, activity] = primaryActivity;
-    const materialIndex = evaluationCorpus.findIndex((item) => item.id === material.id);
+    const materialIndex = ACTIVE_CORPUS.findIndex((item) => item.id === material.id);
     const cases = ANSWER_CASES[materialIndex];
     if (cases === undefined) throw new Error("ANSWER_CASES_MISSING");
     const window = gradingWindow(source, activity);
@@ -791,7 +801,7 @@ async function runLive(state: PrivateState): Promise<void> {
               timeoutMs: config.requestTimeoutMs,
               contents: [{
                 kind: "text",
-                text: `Read this source and create a quiz.\n\nCreate exactly five questions in the source's language. For each, give the question, the answer, and a short exact evidence quotation. Use this plain-text format exactly: Q: ...\\nA: ...\\nEVIDENCE: ...\n\nSOURCE\n${materialText(material)}`,
+                text: `Read this source and create a quiz.\n\nCreate exactly ${String(baselineQuestionCount(material.id))} questions in the source's language. For each, give the question, the answer, and a short exact evidence quotation. Use this plain-text format exactly: Q: ...\\nA: ...\\nEVIDENCE: ...\n\nSOURCE\n${materialText(material)}`,
               }],
             });
             return result.text;
@@ -818,7 +828,7 @@ function parseBaseline(value: string): { parsed: number; transparent: number } {
 
 function questionRecords(state: PrivateState): GeneratedQuestionRecord[] {
   const records: GeneratedQuestionRecord[] = [];
-  for (const material of evaluationCorpus) {
+  for (const material of ACTIVE_CORPUS) {
     const activities: ReadonlyArray<readonly [string, ActivitySet, "original_assessment" | "adaptive_retry"]> = [
       ...Object.entries(state.activities)
         .filter(([id]) => id.startsWith(`assessment:${material.id}:`))
@@ -863,8 +873,8 @@ function questionRecords(state: PrivateState): GeneratedQuestionRecord[] {
 
 function writtenRecords(state: PrivateState, questions: readonly GeneratedQuestionRecord[]): WrittenGradingRecord[] {
   const records: WrittenGradingRecord[] = [];
-  for (const material of evaluationCorpus) {
-    const materialIndex = evaluationCorpus.findIndex((item) => item.id === material.id);
+  for (const material of ACTIVE_CORPUS) {
+    const materialIndex = ACTIVE_CORPUS.findIndex((item) => item.id === material.id);
     const cases = ANSWER_CASES[materialIndex];
     const primaryActivity = primaryActivityEntry(state, material.id);
     const activity = primaryActivity?.[1];
@@ -948,13 +958,17 @@ function toCsv(rows: readonly Record<string, unknown>[], headers: readonly strin
 }
 
 async function readManifest(): Promise<EvaluationMaterial[]> {
-  const value = JSON.parse(await readFile(MANIFEST_PATH, "utf8")) as { materials?: unknown[] };
-  return (value.materials ?? []).map((item) => evaluationMaterialSchema.parse(item));
+  const value = JSON.parse(await readFile(MANIFEST_PATH, "utf8")) as {
+    materials?: unknown[];
+    evaluationMaterials?: unknown[];
+  };
+  return (TASK06C ? value.evaluationMaterials ?? [] : value.materials ?? [])
+    .map((item) => evaluationMaterialSchema.parse(item));
 }
 
 async function exportPublic(state: PrivateState): Promise<void> {
   const materials = await readManifest();
-  const extraction = await extractionRecords(state, evaluationCorpus);
+  const extraction = await extractionRecords(state, ACTIVE_CORPUS);
   const questions = questionRecords(state);
   const written = writtenRecords(state, questions);
   const provider = state.providerOperations
@@ -970,7 +984,7 @@ async function exportPublic(state: PrivateState): Promise<void> {
     .toSorted((left, right) => left.operationId.localeCompare(right.operationId));
   const completedAdaptive = state.adaptiveRecords.toSorted((left, right) => left.recordId.localeCompare(right.recordId));
   const adaptiveByMaterial = new Map(completedAdaptive.map((item) => [item.materialId, item]));
-  const adaptive: AdaptiveLoopRecord[] = evaluationCorpus.map((material) => {
+  const adaptive: AdaptiveLoopRecord[] = ACTIVE_CORPUS.map((material) => {
     const completed = adaptiveByMaterial.get(material.id);
     if (completed !== undefined) return adaptiveLoopRecordSchema.parse({
       ...completed,
@@ -1008,7 +1022,7 @@ async function exportPublic(state: PrivateState): Promise<void> {
       statePreservationPassed: null,
     });
   });
-  const baseline: BaselineRecord[] = evaluationCorpus.map((material) => {
+  const baseline: BaselineRecord[] = ACTIVE_CORPUS.map((material) => {
     const operationId = `baseline:${material.id}`;
     const output = state.baselineOutput[operationId];
     const parsed = output === undefined ? { parsed: 0, transparent: 0 } : parseBaseline(output);
@@ -1017,9 +1031,9 @@ async function exportPublic(state: PrivateState): Promise<void> {
       recordId: `baseline-record:${material.id}`,
       operationId: output === undefined ? null : operationId,
       materialId: material.id,
-      requestedQuestionCount: 5,
+      requestedQuestionCount: baselineQuestionCount(material.id),
       parsedQuestionCount: parsed.parsed,
-      parseSuccess: parsed.parsed === 5,
+      parseSuccess: parsed.parsed === baselineQuestionCount(material.id),
       evidenceTransparencyCount: parsed.transparent,
       outputHash: output === undefined ? null : sha256(output),
       reviewerStatus: "pending",
@@ -1174,14 +1188,19 @@ async function exportPublic(state: PrivateState): Promise<void> {
 
 async function validateDryRun(): Promise<void> {
   const materials = await readManifest();
-  if (materials.length !== 6) throw new Error("CORPUS_SIZE_INVALID");
+  if (materials.length !== (TASK06C ? 9 : 6)) throw new Error("CORPUS_SIZE_INVALID");
   if (new Set(materials.map((item) => item.domain)).size !== 3) throw new Error("DOMAIN_COVERAGE_INVALID");
   if (new Set(materials.map((item) => item.language)).size !== 3) throw new Error("LANGUAGE_COVERAGE_INVALID");
   if (new Set(materials.map((item) => item.inputType)).size < 4) throw new Error("INPUT_COVERAGE_INVALID");
-  if ([...ASSESSMENT_RUN_COUNTS.values()].reduce((sum, runs) => sum + runs * 2, 0) !== 30) {
+  const plannedQuestions = [...ASSESSMENT_RUN_COUNTS.values()].reduce((sum, runs) => sum + runs * 2, 0);
+  if (plannedQuestions < (TASK06C ? 30 : 30)) {
     throw new Error("QUESTION_PLAN_INVALID");
   }
-  process.stdout.write("Evaluation dry-run PASSED: 6 materials, 3 domains, 3 languages, 4 input types, 30-question fixed plan.\n");
+  process.stdout.write(
+    TASK06C
+      ? `Task 06C evaluation dry-run PASSED: 9 materials (6 frozen + 3 holdout), 3 domains, 3 languages, 4 input types, ${String(plannedQuestions)} planned Ankur questions.\n`
+      : "Evaluation dry-run PASSED: 6 materials, 3 domains, 3 languages, 4 input types, 30-question fixed plan.\n",
+  );
 }
 
 async function main(): Promise<void> {

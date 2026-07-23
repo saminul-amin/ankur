@@ -63,7 +63,7 @@ export function createEmptyWrittenEvaluation(input: {
     missingConceptIds: [...new Set(question.requiredConceptIds)],
     incorrectClaims: [],
     unsupportedClaims: [],
-    feedback: "No written answer was submitted. Review the source evidence and answer each rubric point next time.",
+    feedback: "",
     evidence: question.evidence,
     recommendedRevisionConceptIds: [...new Set(question.requiredConceptIds)],
     artifact: {
@@ -154,7 +154,11 @@ export function validateWrittenEvaluation(
   if ([...allowedConceptIds].some((id) => !classifiedConceptIds.has(id))) {
     failures.push(invariant("missingConceptIds"));
   }
-  if (evaluation.feedback.trim().length === 0 || evaluation.feedback.length > 800) failures.push(invariant("feedback"));
+  if (
+    evaluation.feedback.length > 800 ||
+    (evaluation.status !== "not_answered" && evaluation.feedback.trim().length === 0) ||
+    (evaluation.status === "not_answered" && evaluation.feedback.length !== 0)
+  ) failures.push(invariant("feedback"));
   if (
     evaluation.incorrectClaims.some((claim) => claim.trim().length === 0 || claim.length > 500) ||
     evaluation.unsupportedClaims.some((claim) => claim.trim().length === 0 || claim.length > 500)

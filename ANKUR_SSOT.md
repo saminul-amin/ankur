@@ -79,3 +79,17 @@ Under Technical quality, add:
 - Adopted a locked manual release gate using clean-install, quality, test, audit, secret, deployment, and production checks.
 - Approved removal of the knowingly non-runnable workflow from the public repository.
 - Clarified that CI may be restored after the billing issue is resolved.
+
+## Task 06C authority addendum — version 1.3.1
+
+`SSOT_UPDATE_v1.3.0_TASK06_CLOSED.md` freezes the failed Task 06 quality result and blocks Task 07. `SSOT_UPDATE_v1.3.1_TASK06C_EVIDENCE_FIRST_REMEDIATION.md` authorizes the evidence-first v2 remediation while preserving those historical facts.
+
+D-047 through D-050 are authoritative. Task 07 remains unauthorized until every unchanged Task 06C acceptance threshold has a fresh measured passing result and the SSOT is explicitly updated again.
+
+## Task 06C outcome addendum — version 1.3.2
+
+`SSOT_UPDATE_v1.3.2_TASK06C_FAILED.md` records the frozen Task 06C live-run
+failure: 33/45 final-valid logical operations and seven eligible written cases.
+No fresh human review was started from the incomplete sample. Historical Task 06
+evidence remains immutable, all unchanged thresholds remain authoritative, and
+Task 07 remains unauthorized.

@@ -1,0 +1,59 @@
+<!doctype html><html><head><meta charset='utf-8'><title>Ankur Task 06C Evaluation</title>
+<style>body{max-width:1080px;margin:40px auto;padding:0 24px;font:16px/1.55 system-ui;color:#173c31}h1,h2,h3{color:#0d5d43}pre{white-space:pre-wrap;background:#f5f2e8;padding:18px;border-radius:12px}code{font-family:ui-monospace,monospace}.cell{margin:32px 0}.output{border-left:4px solid #d8a640}</style></head><body>
+<section class='cell'><h1>Ankur Task 06C evaluation</h1>
+
+<p>This provider-free notebook keeps the frozen Task 06 historical result separate from Task 06C. It reads only committed public-safe normalized exports and never requires an API key. The single Task 06C live run failed two measured gates before human review; human-dependent metrics remain pending.</p></section>
+<section class='cell'><pre><code>import json
+from pathlib import Path
+
+ROOT = Path(&#x27;evaluation/task06c&#x27;)
+manifest = json.loads((ROOT / &#x27;corpus/public/manifest.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+pending_metrics = json.loads((ROOT / &#x27;exports/task06c-metrics.pending.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+pending_gates = json.loads((ROOT / &#x27;exports/task06c-gate-status.pending.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+metrics = json.loads((ROOT / &#x27;exports/task06c-metrics.live-run.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+gates = json.loads((ROOT / &#x27;exports/task06c-gate-status.live-run.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+operations = json.loads((ROOT / &#x27;records/public/provider-operations.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+questions = json.loads((ROOT / &#x27;records/public/question-records.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+written = json.loads((ROOT / &#x27;records/public/written-grading-records.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+baseline = json.loads((ROOT / &#x27;records/public/baseline-records.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+historical = json.loads(Path(metrics[&#x27;historicalTask06MetricsPath&#x27;]).read_text(encoding=&#x27;utf-8&#x27;))
+print(f&quot;Task 06C corpus: {manifest[&#x27;frozenMaterialCount&#x27;]} frozen + {manifest[&#x27;holdoutMaterialCount&#x27;]} holdout&quot;)
+print(f&quot;Historical Task 06 quality gate: {historical[&#x27;gate&#x27;][&#x27;productQualityGate&#x27;]}&quot;)
+print(f&quot;Task 06C live-run gate: {gates[&#x27;overallStatus&#x27;]}&quot;)</code></pre><pre class='output'>Task 06C corpus: 6 frozen + 3 holdout
+Historical Task 06 quality gate: failed
+Task 06C live-run gate: failed
+</pre></section>
+<section class='cell'><pre><code>assert manifest[&#x27;frozenMaterialCount&#x27;] == 6
+assert manifest[&#x27;holdoutMaterialCount&#x27;] &gt;= 3
+assert len(manifest[&#x27;materials&#x27;]) &gt;= 9
+assert pending_metrics[&#x27;providerAttempts&#x27;] == 0
+assert pending_gates[&#x27;overallStatus&#x27;] == &#x27;pending&#x27;
+assert metrics[&#x27;materials&#x27;] == {&#x27;frozen&#x27;: 6, &#x27;holdout&#x27;: 3, &#x27;total&#x27;: 9}
+logical_operations = len(operations)
+provider_attempts = logical_operations + sum(1 for operation in operations if operation[&#x27;repairAttempted&#x27;])
+final_valid = sum(1 for operation in operations if operation[&#x27;finalStatus&#x27;] == &#x27;valid&#x27;)
+baseline_questions = sum(record[&#x27;parsedQuestionCount&#x27;] for record in baseline)
+assert (logical_operations, provider_attempts, final_valid) == (45, 72, 33)
+assert metrics[&#x27;logicalOperations&#x27;] == logical_operations
+assert metrics[&#x27;providerAttempts&#x27;] == provider_attempts
+assert metrics[&#x27;finalLogicalArtifactValidity&#x27;][&#x27;numerator&#x27;] == final_valid
+assert metrics[&#x27;finalLogicalArtifactValidity&#x27;][&#x27;denominator&#x27;] == logical_operations
+assert (len(questions), baseline_questions, len(written)) == (18, 42, 7)
+assert metrics[&#x27;eligibleWrittenCases&#x27;] == len(written)
+print(&#x27;Live-run denominators reconciled: 45 logical operations, 72 provider attempts, 33 final-valid operations.&#x27;)
+print(&#x27;Artifacts reconciled: 18 Ankur questions, 42 baseline questions, 7 written cases.&#x27;)</code></pre><pre class='output'>Live-run denominators reconciled: 45 logical operations, 72 provider attempts, 33 final-valid operations.
+Artifacts reconciled: 18 Ankur questions, 42 baseline questions, 7 written cases.
+</pre></section>
+<section class='cell'><pre><code>pending = [gate for gate in gates[&#x27;gates&#x27;] if gate[&#x27;status&#x27;] == &#x27;pending&#x27;]
+failed = [gate for gate in gates[&#x27;gates&#x27;] if gate[&#x27;status&#x27;] == &#x27;failed&#x27;]
+assert gates[&#x27;overallStatus&#x27;] == &#x27;failed&#x27;
+assert gates[&#x27;task07Authorized&#x27;] is False
+assert [gate[&#x27;gate&#x27;] for gate in failed] == [&#x27;eligible_written_cases&#x27;, &#x27;final_logical_artifact_validity&#x27;]
+assert metrics[&#x27;humanReviewStatus&#x27;] == &#x27;pending&#x27;
+print(&#x27;Failed measured gates: &#x27; + &#x27;, &#x27;.join(gate[&#x27;gate&#x27;] for gate in failed))
+print(f&quot;Pending human-dependent gates: {len(pending)}&quot;)
+print(&#x27;TASK 07 remains blocked.&#x27;)</code></pre><pre class='output'>Failed measured gates: eligible_written_cases, final_logical_artifact_validity
+Pending human-dependent gates: 7
+TASK 07 remains blocked.
+</pre></section>
+</body></html>

@@ -29,6 +29,12 @@
     "evaluation:verify": "node --import tsx scripts/evaluation/verify-public.ts && node --import tsx scripts/evaluation/verify-closure.ts",
     "notebook:run": "python scripts/evaluation/run-notebook.py",
     "evaluation:human-close": "node --import tsx scripts/evaluation/close-human-review.ts"
+    ,
+    "evaluation:task06c:prepare": "node --import tsx scripts/evaluation/prepare-task06c.ts",
+    "evaluation:task06c:verify": "node --import tsx scripts/evaluation/verify-task06c.ts",
+    "evaluation:task06c:dry-run": "node --import tsx scripts/evaluation/run.ts --task06c --mode=dry-run",
+    "evaluation:task06c:run": "node --env-file-if-exists=.env.local --import tsx scripts/evaluation/run.ts --task06c",
+    "notebook:task06c": "python scripts/evaluation/run-notebook.py --task06c"
   },
   "dependencies": {
     "@google/genai": "latest",

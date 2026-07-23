@@ -13,6 +13,8 @@ tsconfig.tsbuildinfo
 /evaluation/corpus/private/
 /evaluation/records/private/
 /evaluation/annotations/completed-private/
+/evaluation/task06c/annotations/private/
+/evaluation/task06c/records/private/
 /evaluation/notebook/.ipynb_checkpoints/
 
 .vercel

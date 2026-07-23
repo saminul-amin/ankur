@@ -2,6 +2,18 @@
 
 All JSON record types are strict, versioned Zod contracts in `src/shared/evaluation/task06-schemas.ts`. Null means not measured, not available after a controlled failure, or pending human work; it never means a negative label.
 
+## Task 06C versioning note
+
+The Task 06 files documented below are historical and immutable. Task 06C uses separate strict contracts and locations under `evaluation/task06c/`:
+
+- `task06c-material.v1` distinguishes `frozen_task06` and `holdout_task06c`;
+- `task06c-question-record.v1` records pipeline, composite evidence IDs, schema and semantic validity, repair, duplicate scope, alignment, and fresh-review status;
+- `task06c-written-record.v1` records alignment eligibility and deterministic empty-answer behavior;
+- `task06c-metrics.v1` separates provider-attempt and logical-operation denominators;
+- `task06c-gate-result.v1` represents every fixed acceptance gate as passed, failed, or pending.
+
+Task 06C public records contain public-safe source text, hashes, and neutral identifiers. Private packet order, coordinator mappings, reviewer notes, attestations, and provider semantic artifacts remain Git-ignored.
+
 | File | Grain | Primary ID | Purpose |
 |---|---|---|---|
 | `corpus/public/manifest.json` | material and page | `materialId` | Provenance, licence, language/domain/input coverage, source hashes, expected and confirmed reference text |

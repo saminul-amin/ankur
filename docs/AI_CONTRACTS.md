@@ -43,10 +43,10 @@ Only `src/infrastructure/gemma/*` may import the Google SDK.
 |---|---|---|---|---|
 | Page transcription | `transcription.v1` | `transcription.v1` | minimal | 26B A4B |
 | Material analysis | `analysis.v1` | `preparation-map.v1` | high | 26B A4B |
-| Assessment generation | `assessment.v5` | `assessment-mcq.v5` / `assessment-written-question.v5` / `assessment-written-rubric.v5` | minimal | 26B A4B |
-| Candidate review/repair | `assessment-evidence-repair.v5` | `activity-set.v2` | high | 26B A4B |
+| Assessment generation | `assessment-evidence-first.v6` | `canonical-answer.v2` / `single-mcq-question.v2` / `short-written-question.v2` / `written-rubric.v2` | minimal | 26B A4B |
+| Candidate review/repair | `assessment-evidence-first-repair.v6` | failing v2 component; public compatibility remains `activity-set.v2` | high | 26B A4B |
 | Written evaluation | `written-evaluation.v5` | `written-evaluation-transport.v5` | high | 26B A4B |
-| Revision and retry | `revision.v2` / `revision-repair.v2` | `revision-item.v1` / `revision-retry-mcq.v1` / `revision-retry-written-question.v1` / `revision-retry-rubric.v1`; application `revision-plan.v1` | high | 26B A4B |
+| Revision and retry | `revision.v2` / `revision-repair.v2` | `revision-item.v1` / `revision-question.v2` / `written-rubric.v2`; application `revision-plan.v1` | high | 26B A4B |
 
 Thinking levels reflect official Gemma 4 hosted controls: `high` for enabled and `minimal` for disabled/minimal behavior.
 
@@ -171,7 +171,23 @@ Quality rules:
 - all questions answerable from confirmed evidence;
 - rubric criteria independently gradeable and mark-bounded.
 
-The P0 assessment transport uses three shallow native-schema calls: MCQ wording/options, written-question wording, and three rubric descriptions. Application code assembles the fixed reference answer from selected preparation-map concept descriptions, prepends each rubric description with a bounded concept anchor, then deterministically assigns the selected concept IDs, their already validated immutable evidence segment IDs, and criterion marks. Provider output cannot introduce or alter those values.
+Task 06C uses this construction order:
+
+```text
+source-scoped evidence
+→ deterministic canonical answer and required claims
+→ entailment validation
+→ question wording
+→ question-type validation
+→ distractors or rubric
+→ semantic alignment validation
+→ one bounded component repair
+→ persistence or controlled failure
+```
+
+The application locks the canonical answer, material ID, source-version ID, segment IDs, concept IDs, marks, IDs, and metadata. Gemma returns only bounded wording and distractor classifications. For MCQs the correct option is the locked canonical answer; Gemma supplies only three distractors. A written rubric is requested only after the final written question exists, and application code attaches its required claims, concepts, scoped evidence, IDs, and 2/2/1 mark allocation. Provider output cannot introduce or alter those values.
+
+Every v2 evidence lookup uses `materialId/sourceVersionId/segmentId`. A global lookup by `segmentId` alone is invalid.
 
 ### 7.4 Written evaluation
 
@@ -205,7 +221,20 @@ Output:
 
 Application code owns the learner-issue summary derived from reconciled result signals, source-grounded correction, key fact, model-answer outline, evidence links, target IDs, retry marks, metadata, and final plan assembly. Retry questions use the verified revision-specific MCQ, written-question, and rubric transports listed in the task registry and remain subject to native-schema, grounding, concept, mark, duplicate, and bounded-repair validation.
 
-Retry prompts must test only selected concepts and be materially distinct from both original prompts. No hidden reasoning is requested, returned, or persisted.
+Retry prompts must test only selected concepts and be materially distinct from both original prompts. They use `revision-question.v2`, the same locked canonical-answer stage, language validation, duplicate bank, composite evidence scope, and rubric-alignment gate as the original assessment. No hidden reasoning is requested, returned, or persisted.
+
+### 7.6 Deterministic quality failure codes
+
+The v2 validators return structured codes. Major groups are:
+
+- canonical answer: `CANONICAL_ANSWER_*`;
+- evidence scope: `EVIDENCE_REFERENCE_INVALID`, `EVIDENCE_CROSS_MATERIAL`, `EVIDENCE_CROSS_SOURCE_VERSION`;
+- language: `LANG_REPEATED_TOKEN`, `LANG_DUPLICATED_CLAUSE`, `LANG_PLACEHOLDER_TEXT`, `LANG_INCOMPLETE_SENTENCE`, `LANG_MALFORMED_VERB`, `LANG_MIXED_LANGUAGE_CORRUPTION`, `LANG_UNSTABLE_INTERPRETATION`, `LANG_NONSENSICAL_TOKEN`, `LANG_TRUNCATED_SENTENCE`;
+- MCQ: `MCQ_OPTION_COUNT_INVALID`, `MCQ_DUPLICATE_OPTIONS`, `MCQ_MULTIPLE_CORRECT_OPTIONS`, `MCQ_NO_SUPPORTED_CORRECT_OPTION`, `MCQ_KEY_CANONICAL_MISMATCH`, `MCQ_AMBIGUOUS_STEM`, `MCQ_CROSS_SOURCE_EVIDENCE`, `MCQ_PLACEHOLDER_OPTION`, `MCQ_DISTRACTOR_INVALID`;
+- duplicate and alignment: `QUESTION_DUPLICATE`, `QUESTION_REQUIRED_CLAIM_MISSING`, and `RUBRIC_*`;
+- repair: `REPAIR_LOCKED_FIELD_CHANGED`, `REPAIR_FAILED`.
+
+An invalid repaired artifact is rejected atomically.
 
 ## 8. Generation configuration
 
