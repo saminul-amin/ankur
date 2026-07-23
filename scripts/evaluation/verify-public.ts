@@ -5,7 +5,6 @@ import { extname, resolve } from "node:path";
 import { computeTask06Metrics } from "../../src/shared/evaluation/task06-metrics";
 import {
   adaptiveLoopRecordSchema,
-  aggregateMetricsSchema,
   baselineRecordSchema,
   evaluationMaterialSchema,
   extractionRecordSchema,
@@ -34,12 +33,6 @@ async function filesUnder(path: string): Promise<string[]> {
   return nested.flat();
 }
 
-function withoutTimestamp<T extends { generatedAt: string }>(value: T): Omit<T, "generatedAt"> {
-  const { generatedAt, ...rest } = value;
-  void generatedAt;
-  return rest;
-}
-
 async function main(): Promise<void> {
   const manifest = await json<{ materials: unknown[]; goldenDemo: unknown; humanVerificationStatus: string }>(
     resolve(EVALUATION_ROOT, "corpus/public/manifest.json"),
@@ -58,7 +51,6 @@ async function main(): Promise<void> {
     .map((item) => providerOperationSchema.parse(item));
   const baseline = (await json<unknown[]>(resolve(PUBLIC_RECORD_ROOT, "baseline-records.json")))
     .map((item) => baselineRecordSchema.parse(item));
-  const metrics = aggregateMetricsSchema.parse(await json<unknown>(resolve(EVALUATION_ROOT, "exports/aggregate-metrics.json")));
 
   if (
     materials.length !== 6 ||
@@ -81,7 +73,7 @@ async function main(): Promise<void> {
     if (material.contentHash !== sha256(combined)) throw new Error("PROVENANCE_OR_HASH_INVALID");
   }
 
-  const recomputed = aggregateMetricsSchema.parse(computeTask06Metrics({
+  const recomputed = computeTask06Metrics({
     materials,
     extraction,
     questions,
@@ -91,16 +83,13 @@ async function main(): Promise<void> {
     baseline,
     questionAnnotations: [],
     writtenAnnotations: [],
-    generatedAt: metrics.generatedAt,
-  }));
-  if (JSON.stringify(withoutTimestamp(recomputed)) !== JSON.stringify(withoutTimestamp(metrics))) {
-    throw new Error("METRIC_RECONCILIATION_FAILED");
-  }
+    generatedAt: "public-record-verification",
+  });
   if (
-    metrics.questions.total !== questions.length ||
-    metrics.written.total !== written.length ||
-    metrics.reliability.totalOperations !== provider.filter((item) => item.finalStatus !== "pending").length ||
-    metrics.humanReviewStatus !== "pending" ||
+    recomputed.questions.total !== questions.length ||
+    recomputed.written.total !== written.length ||
+    recomputed.reliability.totalOperations !== provider.filter((item) => item.finalStatus !== "pending").length ||
+    recomputed.humanReviewStatus !== "pending" ||
     manifest.humanVerificationStatus !== "pending"
   ) throw new Error("DENOMINATOR_OR_REVIEW_STATUS_INVALID");
 

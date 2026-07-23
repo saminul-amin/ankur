@@ -30,13 +30,29 @@ The runner is sequential, checkpointed, uses stable operation IDs, and writes se
 
 ## Current evidence status
 
-- Corpus: 6 team-authored CC BY 4.0 materials, 3 domains, Bengali/English/mixed, and 4 input types.
+- Corpus: 6 team-authored CC BY 4.0 materials across 3 domains, Bengali/English/mixed language, and 4 input types.
 - Golden demo: 1 separate team-authored source.
-- Generated questions: 30.
-- Written-answer records: 14, including 2 deterministic empty cases; one provider result is unavailable after a controlled timeout.
-- Adaptive records: 6 planned/material paths; 3 completed and 3 controlled failures.
-- Baseline: 6 materials with the same Gemma model and five requested questions each.
-- Human review: templates prepared; R1, R2, and adjudication are pending.
-- Source-text manual verification: pending.
+- Ankur structured questions: 30, independently reviewed and adjudicated.
+- One-prompt baseline questions: 30, independently reviewed and adjudicated.
+- Written-answer records: 14; all were excluded from semantic grading-accuracy metrics because their generated rubrics did not validly align with their questions.
+- Source-page verification: complete for 9/9 pages.
+- Human review and disagreement-only adjudication: complete.
+- Task 06 evidence closure: passed.
+- Product quality gate: failed.
+- Task 07 authorization: blocked pending Task 06C remediation and re-evaluation.
 
-See `reports/TASK_06_EVALUATION_REPORT.md` for measured values and target interpretation. Human-dependent quality metrics are deliberately reported as pending.
+## Final human-review closure
+
+Task 06 human review is complete. Read `reports/TASK_06_FINAL_CLOSURE_REPORT.md` first.
+
+Public-safe closure exports:
+
+- `exports/task06-closure-metrics.json`
+- `exports/question-pipeline-comparison.csv`
+- `exports/reviewer-agreement.csv`
+- `exports/reliability-reclassification.json`
+- `exports/reliability-by-operation.csv`
+- `exports/written-evaluation-validity.csv`
+- `exports/question-error-analysis-v2.csv`
+
+Private reviewer packets, attestations, mappings, and the adjudication workbook are intentionally excluded from this public-safe folder and must remain outside Git.

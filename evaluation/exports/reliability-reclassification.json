@@ -1,0 +1,105 @@
+{
+  "provider_attempts": {
+    "count": 51
+  },
+  "provider_availability": {
+    "count": 47,
+    "denominator": 51,
+    "percentage": 92.16
+  },
+  "logical_operations": {
+    "count": 44
+  },
+  "first_pass_valid": {
+    "count": 24,
+    "denominator": 44,
+    "percentage": 54.55
+  },
+  "repair_attempted": {
+    "count": 19,
+    "denominator": 44,
+    "percentage": 43.18
+  },
+  "repair_success": {
+    "count": 16,
+    "denominator": 19,
+    "percentage": 84.21
+  },
+  "final_artifact_valid": {
+    "count": 40,
+    "denominator": 44,
+    "percentage": 90.91
+  },
+  "controlled_failure": {
+    "count": 4,
+    "denominator": 44,
+    "percentage": 9.09
+  },
+  "byOperationType": {
+    "analysis": {
+      "logical_operations": 6,
+      "first_pass_valid": 0,
+      "final_valid": 5,
+      "controlled_failure": 1,
+      "repair_attempted": 6,
+      "repair_success": 5,
+      "median_latency_ms": 28960.5,
+      "max_latency_ms": 34937
+    },
+    "assessment_generation": {
+      "logical_operations": 12,
+      "first_pass_valid": 5,
+      "final_valid": 11,
+      "controlled_failure": 1,
+      "repair_attempted": 7,
+      "repair_success": 6,
+      "median_latency_ms": 33977.0,
+      "max_latency_ms": 190269
+    },
+    "one_prompt_baseline": {
+      "logical_operations": 6,
+      "first_pass_valid": 6,
+      "final_valid": 6,
+      "controlled_failure": 0,
+      "repair_attempted": 0,
+      "repair_success": 0,
+      "median_latency_ms": 6515.0,
+      "max_latency_ms": 32363
+    },
+    "page_transcription": {
+      "logical_operations": 3,
+      "first_pass_valid": 3,
+      "final_valid": 3,
+      "controlled_failure": 0,
+      "repair_attempted": 0,
+      "repair_success": 0,
+      "median_latency_ms": 9496,
+      "max_latency_ms": 11691
+    },
+    "revision_retry_generation": {
+      "logical_operations": 5,
+      "first_pass_valid": 2,
+      "final_valid": 4,
+      "controlled_failure": 1,
+      "repair_attempted": 3,
+      "repair_success": 2,
+      "median_latency_ms": 51194,
+      "max_latency_ms": 117914
+    },
+    "written_grading": {
+      "logical_operations": 12,
+      "first_pass_valid": 8,
+      "final_valid": 11,
+      "controlled_failure": 1,
+      "repair_attempted": 3,
+      "repair_success": 3,
+      "median_latency_ms": 5209.5,
+      "max_latency_ms": 55010
+    }
+  },
+  "denominatorPolicy": {
+    "providerAvailability": "all 51 request attempts; infrastructure failures are RATE_LIMITED, TIMEOUT, or UNAVAILABLE",
+    "logicalArtifactMetrics": "44 primary logical operations after excluding seven :attemptN rows",
+    "oldMixedRate": "40/51 = 78.43% mixed request attempts with logical artifacts and is retired"
+  }
+}

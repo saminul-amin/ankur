@@ -1,0 +1,15 @@
+﻿record_id,material_id,answer_case,final_eligibility,model_awarded_marks,model_status,diagnostic_feedback_grounded,diagnostic_feedback_usefulness,metric_treatment
+written-record:CIV-MIX-PDF-01:correct,CIV-MIX-PDF-01,correct,exclude_invalid_rubric,5,correct,no,1,exclude_from_semantic_grading_metrics
+written-record:CIV-MIX-PDF-01:partially_correct,CIV-MIX-PDF-01,partially_correct,exclude_invalid_rubric,4,partially_correct,no,1,exclude_from_semantic_grading_metrics
+written-record:SCI-BN-PASTE-01:correct,SCI-BN-PASTE-01,correct,exclude_invalid_rubric,5,correct,no,1,exclude_from_semantic_grading_metrics
+written-record:SCI-BN-PASTE-01:partially_correct,SCI-BN-PASTE-01,partially_correct,exclude_invalid_rubric,3,partially_correct,yes,3,exclude_from_semantic_grading_metrics
+written-record:SCI-BN-PASTE-01:retry-correct,SCI-BN-PASTE-01,correct,exclude_invalid_rubric,5,correct,no,1,exclude_from_semantic_grading_metrics
+written-record:SCI-EN-PDF-01:empty,SCI-EN-PDF-01,empty,exclude_invalid_rubric,0,not_answered,not_applicable,not_applicable,exclude_from_semantic_grading_metrics
+written-record:SCI-EN-PDF-01:incorrect,SCI-EN-PDF-01,incorrect,exclude_invalid_rubric,0,incorrect,yes,3,exclude_from_semantic_grading_metrics
+written-record:SCI-EN-PDF-01:retry-correct,SCI-EN-PDF-01,correct,exclude_invalid_rubric,5,correct,no,1,exclude_from_semantic_grading_metrics
+written-record:VOC-EN-PASTE-01:empty,VOC-EN-PASTE-01,empty,exclude_invalid_rubric,0,not_answered,not_applicable,not_applicable,exclude_from_semantic_grading_metrics
+written-record:VOC-EN-PASTE-01:incorrect,VOC-EN-PASTE-01,incorrect,exclude_invalid_rubric,0,incorrect,no,2,exclude_from_semantic_grading_metrics
+written-record:VOC-EN-PASTE-01:retry-correct,VOC-EN-PASTE-01,correct,exclude_invalid_rubric,5,correct,no,1,exclude_from_semantic_grading_metrics
+written-record:VOC-MIX-IMG-01:missing_key_concept,VOC-MIX-IMG-01,missing_key_concept,exclude_invalid_rubric,0,incorrect,no,1,exclude_from_semantic_grading_metrics
+written-record:VOC-MIX-IMG-01:retry-correct,VOC-MIX-IMG-01,correct,exclude_invalid_rubric,,pending,not_applicable,not_applicable,exclude_from_semantic_grading_metrics
+written-record:VOC-MIX-IMG-01:unsupported_claim,VOC-MIX-IMG-01,unsupported_claim,exclude_invalid_rubric,0,incorrect,no,1,exclude_from_semantic_grading_metrics

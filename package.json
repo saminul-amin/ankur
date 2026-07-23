@@ -26,8 +26,9 @@
     "evaluation:dry-run": "node --import tsx scripts/evaluation/run.ts --mode=dry-run",
     "evaluation:run": "node --env-file-if-exists=.env.local --import tsx scripts/evaluation/run.ts",
     "evaluation:export": "node --import tsx scripts/evaluation/run.ts --mode=public-export",
-    "evaluation:verify": "node --import tsx scripts/evaluation/verify-public.ts",
-    "notebook:run": "python scripts/evaluation/run-notebook.py"
+    "evaluation:verify": "node --import tsx scripts/evaluation/verify-public.ts && node --import tsx scripts/evaluation/verify-closure.ts",
+    "notebook:run": "python scripts/evaluation/run-notebook.py",
+    "evaluation:human-close": "node --import tsx scripts/evaluation/close-human-review.ts"
   },
   "dependencies": {
     "@google/genai": "latest",
@@ -64,7 +65,7 @@
   },
   "overrides": {
     "next": {
-      "postcss": "8.5.10",
+      "postcss": "8.5.22",
       "sharp": "0.35.0"
     }
   }

@@ -1,17 +1,15 @@
-node_modules/
-dist/
 .env
 .env.*
 !.env.example
-coverage/
+node_modules/
+dist/
 .next/
-test-results/
+coverage/
 playwright-report/
+test-results/
 tsconfig.tsbuildinfo
 *.log
 .npm-cache-task06/
-
-# Evaluation checkpoints, raw provider artifacts, and completed private review data.
 /evaluation/corpus/private/
 /evaluation/records/private/
 /evaluation/annotations/completed-private/
@@ -19,10 +17,9 @@ tsconfig.tsbuildinfo
 
 .vercel
 
-# Internal project authority and orchestration material. Kept locally, never published.
+# Local engineering/orchestration material that is not part of the public closure.
 /AGENTS.md
 /ANKUR_PRE_CODEX_ARCHITECTURE_PACK_COMBINED.md
-/ANKUR_SSOT.md
 /MANIFEST.json
 /SSOT_UPDATE_v1.2.0.md
 /codex/

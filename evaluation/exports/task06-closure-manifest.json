@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "task06-closure-manifest.v1",
+  "files": [
+    {
+      "path": "evaluation/exports/question-error-analysis-v2.csv",
+      "sha256": "17feb75557f4e7834a2a94282ef207389acf9cf7754c80457a4775e3ca384351",
+      "sizeBytes": 12283
+    },
+    {
+      "path": "evaluation/exports/question-pipeline-comparison.csv",
+      "sha256": "544cfe5d1e63c2a21a3ed59dee61d9b5eaca4aff72416bc88040c01f7084373d",
+      "sizeBytes": 1226
+    },
+    {
+      "path": "evaluation/exports/reliability-by-operation.csv",
+      "sha256": "442667c9b88eca85fc5d8fde5f59309fa98524f60a8adeeb10b5955e16e07b52",
+      "sizeBytes": 543
+    },
+    {
+      "path": "evaluation/exports/reliability-reclassification.json",
+      "sha256": "7a1d6670aeb4265208527fc881e5d7e79485f3feea85874e1ca0e7eb8787bf36",
+      "sizeBytes": 2667
+    },
+    {
+      "path": "evaluation/exports/reviewer-agreement.csv",
+      "sha256": "4762a51651f0525f8fa0b1f349492999bf419614b66bc95a1d4698182acaacba",
+      "sizeBytes": 1705
+    },
+    {
+      "path": "evaluation/exports/task06-closure-metrics.json",
+      "sha256": "0d6891c52c3406d07f4da612f964bfb11c16db2cb192fb6fbbfbf58c66c5d0b0",
+      "sizeBytes": 14945
+    },
+    {
+      "path": "evaluation/exports/written-evaluation-validity.csv",
+      "sha256": "31fe87b8d9af52866097ebdc88231990b5bfd76413a80b10a201b88f53892d2f",
+      "sizeBytes": 2326
+    }
+  ]
+}

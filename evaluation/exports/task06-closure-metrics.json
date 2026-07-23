@@ -1,0 +1,562 @@
+{
+  "schemaVersion": "task06-closure-metrics.v1",
+  "generatedAt": "2026-07-23T15:43:03+06:00",
+  "productBaseline": "3728724ef4140666566bb9f72fd5dfb55bc523c3",
+  "evaluationCommit": "7487ea020c609a1973378a0216a57e2258fc9713",
+  "model": "gemma-4-26b-a4b-it",
+  "humanEvidenceStatus": "complete",
+  "corpus": {
+    "materials": 6,
+    "questions": 60,
+    "ankurQuestions": 30,
+    "baselineQuestions": 30,
+    "writtenCases": 14,
+    "sourcePages": 9
+  },
+  "extraction": {
+    "pages": 9,
+    "page_success": {
+      "count": 9,
+      "denominator": 9,
+      "percentage": 100.0
+    },
+    "routing_accuracy": {
+      "count": 9,
+      "denominator": 9,
+      "percentage": 100.0
+    },
+    "mean_character_error_rate": 0.00686,
+    "material_correction_pages": {
+      "count": 2,
+      "denominator": 9,
+      "percentage": 22.22
+    }
+  },
+  "sourceVerification": {
+    "pages_reviewed": 9,
+    "r1_r2_full_agreement": {
+      "count": 9,
+      "denominator": 9,
+      "percentage": 100.0
+    },
+    "confirmed_text_checked": {
+      "count": 9,
+      "denominator": 9,
+      "percentage": 100.0
+    },
+    "material_omission_found": {
+      "count": 0,
+      "denominator": 9,
+      "percentage": 0.0
+    },
+    "material_error_found": {
+      "count": 0,
+      "denominator": 9,
+      "percentage": 0.0
+    }
+  },
+  "reviewerAgreement": {
+    "question_fields": {
+      "question_grounded_in_permitted_source": {
+        "exact_count": 58,
+        "denominator": 60,
+        "exact_percentage": 96.67,
+        "kappa": 0.4872,
+        "kappa_type": "cohens_kappa"
+      },
+      "answerable_from_source": {
+        "exact_count": 58,
+        "denominator": 60,
+        "exact_percentage": 96.67,
+        "kappa": 0.4872,
+        "kappa_type": "cohens_kappa"
+      },
+      "clear": {
+        "exact_count": 54,
+        "denominator": 60,
+        "exact_percentage": 90.0,
+        "kappa": 0.6897,
+        "kappa_type": "cohens_kappa"
+      },
+      "ambiguous": {
+        "exact_count": 54,
+        "denominator": 60,
+        "exact_percentage": 90.0,
+        "kappa": 0.6897,
+        "kappa_type": "cohens_kappa"
+      },
+      "fair_difficulty": {
+        "exact_count": 55,
+        "denominator": 60,
+        "exact_percentage": 91.67,
+        "kappa": 0.75,
+        "kappa_type": "cohens_kappa"
+      },
+      "materially_duplicate": {
+        "exact_count": 52,
+        "denominator": 60,
+        "exact_percentage": 86.67,
+        "kappa": 0.6364,
+        "kappa_type": "cohens_kappa"
+      },
+      "question_text_accept_or_reject": {
+        "exact_count": 55,
+        "denominator": 60,
+        "exact_percentage": 91.67,
+        "kappa": 0.8201,
+        "kappa_type": "cohens_kappa"
+      },
+      "language_quality": {
+        "exact_count": 43,
+        "denominator": 60,
+        "exact_percentage": 71.67,
+        "kappa": 0.6517,
+        "kappa_type": "quadratic_weighted_kappa"
+      },
+      "proposed_answer_or_key_correct": {
+        "exact_count": 53,
+        "denominator": 60,
+        "exact_percentage": 88.33,
+        "kappa": 0.7009,
+        "kappa_type": "cohens_kappa"
+      },
+      "proposed_answer_or_key_grounded": {
+        "exact_count": 53,
+        "denominator": 60,
+        "exact_percentage": 88.33,
+        "kappa": 0.6008,
+        "kappa_type": "cohens_kappa"
+      },
+      "final_accept_or_reject": {
+        "exact_count": 55,
+        "denominator": 60,
+        "exact_percentage": 91.67,
+        "kappa": 0.8,
+        "kappa_type": "cohens_kappa"
+      },
+      "explanation_or_evidence_usefulness": {
+        "exact_count": 40,
+        "denominator": 60,
+        "exact_percentage": 66.67,
+        "kappa": 0.8187,
+        "kappa_type": "quadratic_weighted_kappa"
+      }
+    },
+    "overall_acceptance": {
+      "exact_count": 57,
+      "denominator": 60,
+      "exact_percentage": 95.0,
+      "kappa": 0.9,
+      "kappa_type": "cohens_kappa"
+    },
+    "all_12_fields_exact": {
+      "count": 28,
+      "denominator": 60,
+      "percentage": 46.67
+    },
+    "source_verification_full_agreement": {
+      "count": 9,
+      "denominator": 9,
+      "percentage": 100.0
+    },
+    "written_labels_interpretation": "excluded_invalid_rubric",
+    "written_raw_descriptive_only": {
+      "mark_exact": {
+        "count": 7,
+        "denominator": 14,
+        "percentage": 50.0
+      },
+      "mean_absolute_reviewer_mark_difference": 0.9286,
+      "status_exact": {
+        "count": 8,
+        "denominator": 14,
+        "percentage": 57.14
+      }
+    }
+  },
+  "questionQuality": {
+    "pipelines": {
+      "ankur_structured": {
+        "questions": 30,
+        "source_grounded": {
+          "count": 27,
+          "denominator": 30,
+          "percentage": 90.0
+        },
+        "answerable": {
+          "count": 27,
+          "denominator": 30,
+          "percentage": 90.0
+        },
+        "clear": {
+          "count": 17,
+          "denominator": 30,
+          "percentage": 56.67
+        },
+        "ambiguous": {
+          "count": 13,
+          "denominator": 30,
+          "percentage": 43.33
+        },
+        "fair_difficulty": {
+          "count": 16,
+          "denominator": 30,
+          "percentage": 53.33
+        },
+        "within_pipeline_duplicates": {
+          "count": 18,
+          "denominator": 30,
+          "percentage": 60.0
+        },
+        "pass_a_accepted": {
+          "count": 7,
+          "denominator": 30,
+          "percentage": 23.33
+        },
+        "answer_or_key_correct": {
+          "count": 11,
+          "denominator": 30,
+          "percentage": 36.67
+        },
+        "answer_or_key_grounded": {
+          "count": 16,
+          "denominator": 30,
+          "percentage": 53.33
+        },
+        "pass_b_accepted": {
+          "count": 10,
+          "denominator": 30,
+          "percentage": 33.33
+        },
+        "overall_accepted": {
+          "count": 1,
+          "denominator": 30,
+          "percentage": 3.33
+        },
+        "grounded_overall_accepted": {
+          "count": 1,
+          "denominator": 30,
+          "percentage": 3.33
+        },
+        "language_quality_mean": 3.3,
+        "language_quality_at_least_4": {
+          "count": 14,
+          "denominator": 30,
+          "percentage": 46.67
+        },
+        "explanation_usefulness_mean": 3.367,
+        "explanation_usefulness_at_least_4": {
+          "count": 18,
+          "denominator": 30,
+          "percentage": 60.0
+        }
+      },
+      "one_prompt_baseline": {
+        "questions": 30,
+        "source_grounded": {
+          "count": 30,
+          "denominator": 30,
+          "percentage": 100.0
+        },
+        "answerable": {
+          "count": 30,
+          "denominator": 30,
+          "percentage": 100.0
+        },
+        "clear": {
+          "count": 29,
+          "denominator": 30,
+          "percentage": 96.67
+        },
+        "ambiguous": {
+          "count": 1,
+          "denominator": 30,
+          "percentage": 3.33
+        },
+        "fair_difficulty": {
+          "count": 30,
+          "denominator": 30,
+          "percentage": 100.0
+        },
+        "within_pipeline_duplicates": {
+          "count": 0,
+          "denominator": 30,
+          "percentage": 0.0
+        },
+        "pass_a_accepted": {
+          "count": 29,
+          "denominator": 30,
+          "percentage": 96.67
+        },
+        "answer_or_key_correct": {
+          "count": 30,
+          "denominator": 30,
+          "percentage": 100.0
+        },
+        "answer_or_key_grounded": {
+          "count": 30,
+          "denominator": 30,
+          "percentage": 100.0
+        },
+        "pass_b_accepted": {
+          "count": 30,
+          "denominator": 30,
+          "percentage": 100.0
+        },
+        "overall_accepted": {
+          "count": 29,
+          "denominator": 30,
+          "percentage": 96.67
+        },
+        "grounded_overall_accepted": {
+          "count": 29,
+          "denominator": 30,
+          "percentage": 96.67
+        },
+        "language_quality_mean": 4.967,
+        "language_quality_at_least_4": {
+          "count": 30,
+          "denominator": 30,
+          "percentage": 100.0
+        },
+        "explanation_usefulness_mean": 4.9,
+        "explanation_usefulness_at_least_4": {
+          "count": 30,
+          "denominator": 30,
+          "percentage": 100.0
+        }
+      }
+    },
+    "ankurMinusBaselinePercentagePoints": {
+      "source_grounded": -10.0,
+      "answerable": -10.0,
+      "clear": -40.0,
+      "ambiguous": 40.0,
+      "fair_difficulty": -46.67,
+      "within_pipeline_duplicates": 60.0,
+      "pass_a_accepted": -73.34,
+      "answer_or_key_correct": -63.33,
+      "answer_or_key_grounded": -46.67,
+      "pass_b_accepted": -66.67,
+      "overall_accepted": -93.34,
+      "grounded_overall_accepted": -93.34,
+      "language_quality_at_least_4": -53.33,
+      "explanation_usefulness_at_least_4": -40.0,
+      "language_quality_mean": -1.667,
+      "explanation_usefulness_mean": -1.533
+    },
+    "duplicateMetricCaveat": "Pooled within-pipeline duplicate review spans multiple Ankur generation runs but one baseline run per material; interpret as a corpus-level diagnostic, not a per-call rate.",
+    "ankurStageBreakdown": {
+      "adaptive_retry": {
+        "n": 8,
+        "overall_accept_pct": 0.0,
+        "pass_a_accept_pct": 25.0,
+        "pass_b_accept_pct": 37.5,
+        "correct_pct": 37.5,
+        "duplicate_pct": 37.5,
+        "clear_pct": 50.0
+      },
+      "baseline": {
+        "n": 30,
+        "overall_accept_pct": 96.67,
+        "pass_a_accept_pct": 96.67,
+        "pass_b_accept_pct": 100.0,
+        "correct_pct": 100.0,
+        "duplicate_pct": 0.0,
+        "clear_pct": 96.67
+      },
+      "original_assessment": {
+        "n": 22,
+        "overall_accept_pct": 4.55,
+        "pass_a_accept_pct": 22.73,
+        "pass_b_accept_pct": 31.82,
+        "correct_pct": 36.36,
+        "duplicate_pct": 68.18,
+        "clear_pct": 59.09
+      }
+    }
+  },
+  "written": {
+    "total_cases": 14,
+    "eligibility": {
+      "eligible": 0,
+      "excluded_invalid_rubric": 14,
+      "exclusion_percentage": 100.0,
+      "human_confirmation": "complete"
+    },
+    "grading_accuracy": {
+      "status": "not_applicable_invalid_rubric",
+      "mean_absolute_error": null,
+      "exact_agreement": null,
+      "within_one_mark": null,
+      "status_agreement": null
+    },
+    "deterministic_empty_answer_handling": {
+      "count": 2,
+      "denominator": 2,
+      "percentage": 100.0
+    },
+    "provider_called": {
+      "count": 12,
+      "denominator": 14,
+      "percentage": 85.71
+    },
+    "model_outputs_available": {
+      "count": 13,
+      "denominator": 14,
+      "percentage": 92.86
+    },
+    "diagnostic_only": {
+      "feedback_grounded": {
+        "count": 2,
+        "denominator": 11,
+        "percentage": 18.18
+      },
+      "feedback_usefulness_mean": 1.455,
+      "interpretation": "diagnostic_only_not_a_valid_grading_benchmark"
+    }
+  },
+  "reliability": {
+    "provider_attempts": {
+      "count": 51
+    },
+    "provider_availability": {
+      "count": 47,
+      "denominator": 51,
+      "percentage": 92.16
+    },
+    "logical_operations": {
+      "count": 44
+    },
+    "first_pass_valid": {
+      "count": 24,
+      "denominator": 44,
+      "percentage": 54.55
+    },
+    "repair_attempted": {
+      "count": 19,
+      "denominator": 44,
+      "percentage": 43.18
+    },
+    "repair_success": {
+      "count": 16,
+      "denominator": 19,
+      "percentage": 84.21
+    },
+    "final_artifact_valid": {
+      "count": 40,
+      "denominator": 44,
+      "percentage": 90.91
+    },
+    "controlled_failure": {
+      "count": 4,
+      "denominator": 44,
+      "percentage": 9.09
+    },
+    "byOperationType": {
+      "analysis": {
+        "logical_operations": 6,
+        "first_pass_valid": 0,
+        "final_valid": 5,
+        "controlled_failure": 1,
+        "repair_attempted": 6,
+        "repair_success": 5,
+        "median_latency_ms": 28960.5,
+        "max_latency_ms": 34937
+      },
+      "assessment_generation": {
+        "logical_operations": 12,
+        "first_pass_valid": 5,
+        "final_valid": 11,
+        "controlled_failure": 1,
+        "repair_attempted": 7,
+        "repair_success": 6,
+        "median_latency_ms": 33977.0,
+        "max_latency_ms": 190269
+      },
+      "one_prompt_baseline": {
+        "logical_operations": 6,
+        "first_pass_valid": 6,
+        "final_valid": 6,
+        "controlled_failure": 0,
+        "repair_attempted": 0,
+        "repair_success": 0,
+        "median_latency_ms": 6515.0,
+        "max_latency_ms": 32363
+      },
+      "page_transcription": {
+        "logical_operations": 3,
+        "first_pass_valid": 3,
+        "final_valid": 3,
+        "controlled_failure": 0,
+        "repair_attempted": 0,
+        "repair_success": 0,
+        "median_latency_ms": 9496,
+        "max_latency_ms": 11691
+      },
+      "revision_retry_generation": {
+        "logical_operations": 5,
+        "first_pass_valid": 2,
+        "final_valid": 4,
+        "controlled_failure": 1,
+        "repair_attempted": 3,
+        "repair_success": 2,
+        "median_latency_ms": 51194,
+        "max_latency_ms": 117914
+      },
+      "written_grading": {
+        "logical_operations": 12,
+        "first_pass_valid": 8,
+        "final_valid": 11,
+        "controlled_failure": 1,
+        "repair_attempted": 3,
+        "repair_success": 3,
+        "median_latency_ms": 5209.5,
+        "max_latency_ms": 55010
+      }
+    },
+    "denominatorPolicy": {
+      "providerAvailability": "all 51 request attempts; infrastructure failures are RATE_LIMITED, TIMEOUT, or UNAVAILABLE",
+      "logicalArtifactMetrics": "44 primary logical operations after excluding seven :attemptN rows",
+      "oldMixedRate": "40/51 = 78.43% mixed request attempts with logical artifacts and is retired"
+    }
+  },
+  "adaptive": {
+    "materials": 6,
+    "valid": {
+      "count": 3,
+      "denominator": 6,
+      "percentage": 50.0
+    },
+    "controlled_failures": {
+      "count": 3,
+      "denominator": 6,
+      "percentage": 50.0
+    },
+    "fabricated_weaknesses": 0,
+    "mean_score_change_valid_only": 5
+  },
+  "baselineOperational": {
+    "parseSuccess": {
+      "count": 6,
+      "denominator": 6,
+      "percentage": 100.0
+    },
+    "evidenceTransparency": {
+      "count": 30,
+      "denominator": 30,
+      "percentage": 100.0
+    }
+  },
+  "gate": {
+    "task06EvidenceClosure": "passed",
+    "productQualityGate": "failed",
+    "task07Authorization": "blocked",
+    "reasons": [
+      "Only 1/30 Ankur structured questions passed both question-text and answer/reference acceptance.",
+      "The one-prompt baseline achieved 29/30 overall acceptance on the same six materials.",
+      "All 14 written cases were excluded because generated rubrics did not validly align with their questions.",
+      "Logical final artifact validity was 40/44 (90.91%), below the 95% internal target."
+    ]
+  }
+}

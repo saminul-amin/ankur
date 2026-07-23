@@ -1,230 +1,175 @@
 <!doctype html><html><head><meta charset='utf-8'><title>Ankur Task 06 Evaluation</title>
 <style>body{max-width:1080px;margin:40px auto;padding:0 24px;font:16px/1.55 system-ui;color:#173c31}h1,h2,h3{color:#0d5d43}pre{white-space:pre-wrap;background:#f5f2e8;padding:18px;border-radius:12px}code{font-family:ui-monospace,monospace}.cell{margin:32px 0}.output{border-left:4px solid #d8a640}</style></head><body>
-<section class='cell'><h1>Ankur Task 06: Reproducible Evaluation</h1>
+<section class='cell'><h1>Ankur Task 06: Final Human-Reviewed Evaluation</h1>
 
-<p>This notebook analyzes the frozen Task 05 product using committed sanitized exports. It makes no network or provider call and needs no API key. Human-derived metrics remain pending until R1, R2, and adjudication are complete.</p></section>
+<p>This notebook is provider-free and uses only committed sanitized public exports. It reports the completed blinded review and adjudication, the corrected reliability denominators, and the final quality-gate decision.</p></section>
 <section class='cell'><pre><code>from pathlib import Path
-import csv, json, platform, statistics, sys
+import csv, json, statistics, sys
 
-search_roots = [Path.cwd(), Path(&#x27;/kaggle/input&#x27;)]
-metric_paths = []
-for search_root in search_roots:
-    if search_root.exists():
-        metric_paths.extend(search_root.rglob(&#x27;evaluation/exports/aggregate-metrics.json&#x27;))
-if not metric_paths:
-    raise FileNotFoundError(&#x27;Attach or clone the Ankur repository so evaluation/exports is available.&#x27;)
-METRICS_PATH = sorted(metric_paths, key=lambda value: len(value.parts))[0]
-ROOT = METRICS_PATH.parents[2]
-def load_json(relative):
-    return json.loads((ROOT / relative).read_text(encoding=&#x27;utf-8&#x27;))
-metrics = load_json(&#x27;evaluation/exports/aggregate-metrics.json&#x27;)
-materials = load_json(&#x27;evaluation/records/public/materials.json&#x27;)
-extraction = load_json(&#x27;evaluation/records/public/extraction-records.json&#x27;)
-questions = load_json(&#x27;evaluation/records/public/question-records.json&#x27;)
-written = load_json(&#x27;evaluation/records/public/written-grading-records.json&#x27;)
-provider = load_json(&#x27;evaluation/records/public/provider-operations.json&#x27;)
-adaptive = load_json(&#x27;evaluation/records/public/adaptive-loop-records.json&#x27;)
-baseline = load_json(&#x27;evaluation/records/public/baseline-records.json&#x27;)
-print(&#x27;Data root:&#x27;, ROOT)
-print(&#x27;Loaded:&#x27;, len(materials), &#x27;materials,&#x27;, len(questions), &#x27;questions,&#x27;, len(written), &#x27;written cases&#x27;)</code></pre><pre class='output'>Data root: E:\WorkBench\hackathon\build-with-gemma-4\ankur
-Loaded: 6 materials, 30 questions, 14 written cases
-</pre></section>
-<section class='cell'><h2>1. Project and evaluation objectives</h2>
+roots = [Path.cwd(), Path(&#x27;/kaggle/input&#x27;)]
+metric_path = None
+for root in roots:
+    candidate = root / &#x27;evaluation/exports/task06-closure-metrics.json&#x27;
+    if candidate.exists():
+        metric_path = candidate
+        break
+if metric_path is None:
+    raise FileNotFoundError(&#x27;task06-closure-metrics.json not found&#x27;)
 
-<p>Ankur converts learner-confirmed source material into grounded assessment, grading, revision, and retry artifacts. Task 06 measures corpus coverage, extraction, structural grounding, provider reliability, adaptive completion, and a fair one-prompt baseline. Semantic acceptance and grading agreement require independent human review.</p></section>
-<section class='cell'><h2>2. Corpus summary and provenance/licensing</h2></section>
-<section class='cell'><pre><code>def counts(rows, field):
-    values = {}
-    for row in rows:
-        values[row[field]] = values.get(row[field], 0) + 1
-    return dict(sorted(values.items()))
-print(&#x27;Domains:&#x27;, counts(materials, &#x27;domain&#x27;))
-print(&#x27;Languages:&#x27;, counts(materials, &#x27;language&#x27;))
-print(&#x27;Input types:&#x27;, counts(materials, &#x27;inputType&#x27;))
-print(&#x27;Provenance:&#x27;, counts(materials, &#x27;provenance&#x27;))
-print(&#x27;Licences:&#x27;, counts(materials, &#x27;licence&#x27;))
-print(&#x27;Manual source verification:&#x27;, counts(materials, &#x27;manualVerificationStatus&#x27;))</code></pre><pre class='output'>Domains: {&#x27;academic_science&#x27;: 2, &#x27;bangladesh_civics&#x27;: 2, &#x27;vocational_safety&#x27;: 2}
-Languages: {&#x27;bn&#x27;: 2, &#x27;en&#x27;: 2, &#x27;mixed&#x27;: 2}
-Input types: {&#x27;digital_pdf&#x27;: 1, &#x27;mixed_pdf&#x27;: 1, &#x27;page_image&#x27;: 2, &#x27;pasted_text&#x27;: 2}
-Provenance: {&#x27;team-authored&#x27;: 6}
-Licences: {&#x27;CC-BY-4.0&#x27;: 6}
-Manual source verification: {&#x27;pending&#x27;: 6}
+export_root = metric_path.parent
+metrics = json.loads(metric_path.read_text(encoding=&#x27;utf-8&#x27;))
+print(&#x27;Python:&#x27;, sys.version.split()[0])
+print(&#x27;Metrics:&#x27;, metric_path)
+print(&#x27;Human evidence:&#x27;, metrics[&#x27;humanEvidenceStatus&#x27;])
+print(&#x27;Task 06 evidence closure:&#x27;, metrics[&#x27;gate&#x27;][&#x27;task06EvidenceClosure&#x27;])
+print(&#x27;Product quality gate:&#x27;, metrics[&#x27;gate&#x27;][&#x27;productQualityGate&#x27;])
+print(&#x27;Task 07:&#x27;, metrics[&#x27;gate&#x27;][&#x27;task07Authorization&#x27;])
+</code></pre><pre class='output'>Python: 3.11.9
+Metrics: E:\WorkBench\hackathon\build-with-gemma-4\ankur\evaluation\exports\task06-closure-metrics.json
+Human evidence: complete
+Task 06 evidence closure: passed
+Product quality gate: failed
+Task 07: blocked
 </pre></section>
-<section class='cell'><h2>3. Evaluation protocol</h2>
+<section class='cell'><h2>Corpus and source verification</h2></section>
+<section class='cell'><pre><code>print(&#x27;Materials:&#x27;, metrics[&#x27;corpus&#x27;][&#x27;materials&#x27;])
+print(&#x27;Questions:&#x27;, metrics[&#x27;corpus&#x27;][&#x27;questions&#x27;])
+print(&#x27;Written cases:&#x27;, metrics[&#x27;corpus&#x27;][&#x27;writtenCases&#x27;])
+source = metrics[&#x27;sourceVerification&#x27;]
+print(&#x27;Source pages reviewed:&#x27;, source[&#x27;pages_reviewed&#x27;])
+print(&#x27;Full source agreement:&#x27;, f&quot;{source[&#x27;r1_r2_full_agreement&#x27;][&#x27;count&#x27;]}/{source[&#x27;r1_r2_full_agreement&#x27;][&#x27;denominator&#x27;]}&quot;)
+</code></pre><pre class='output'>Materials: 6
+Questions: 60
+Written cases: 14
+Source pages reviewed: 9
+Full source agreement: 9/9
+</pre></section>
+<section class='cell'><h2>Extraction</h2></section>
+<section class='cell'><pre><code>ex = metrics[&#x27;extraction&#x27;]
+print(&#x27;Page success:&#x27;, ex[&#x27;page_success&#x27;])
+print(&#x27;Routing accuracy:&#x27;, ex[&#x27;routing_accuracy&#x27;])
+print(&#x27;Mean CER:&#x27;, f&quot;{ex[&#x27;mean_character_error_rate&#x27;]:.3%}&quot;)
+print(&#x27;Correction-heuristic pages:&#x27;, ex[&#x27;material_correction_pages&#x27;])
+</code></pre><pre class='output'>Page success: {&#x27;count&#x27;: 9, &#x27;denominator&#x27;: 9, &#x27;percentage&#x27;: 100.0}
+Routing accuracy: {&#x27;count&#x27;: 9, &#x27;denominator&#x27;: 9, &#x27;percentage&#x27;: 100.0}
+Mean CER: 0.686%
+Correction-heuristic pages: {&#x27;count&#x27;: 2, &#x27;denominator&#x27;: 9, &#x27;percentage&#x27;: 22.22}
+</pre></section>
+<section class='cell'><h2>Reviewer agreement</h2></section>
+<section class='cell'><pre><code>agreement = metrics[&#x27;reviewerAgreement&#x27;]
+for field, row in agreement[&#x27;question_fields&#x27;].items():
+    print(field, &#x27;exact=&#x27;, f&quot;{row[&#x27;exact_percentage&#x27;]:.2f}%&quot;, &#x27;kappa=&#x27;, row[&#x27;kappa&#x27;], row[&#x27;kappa_type&#x27;])
+print(&#x27;Overall acceptance agreement:&#x27;, agreement[&#x27;overall_acceptance&#x27;])
+print(&#x27;All 12 fields exact:&#x27;, agreement[&#x27;all_12_fields_exact&#x27;])
+</code></pre><pre class='output'>question_grounded_in_permitted_source exact= 96.67% kappa= 0.4872 cohens_kappa
+answerable_from_source exact= 96.67% kappa= 0.4872 cohens_kappa
+clear exact= 90.00% kappa= 0.6897 cohens_kappa
+ambiguous exact= 90.00% kappa= 0.6897 cohens_kappa
+fair_difficulty exact= 91.67% kappa= 0.75 cohens_kappa
+materially_duplicate exact= 86.67% kappa= 0.6364 cohens_kappa
+question_text_accept_or_reject exact= 91.67% kappa= 0.8201 cohens_kappa
+language_quality exact= 71.67% kappa= 0.6517 quadratic_weighted_kappa
+proposed_answer_or_key_correct exact= 88.33% kappa= 0.7009 cohens_kappa
+proposed_answer_or_key_grounded exact= 88.33% kappa= 0.6008 cohens_kappa
+final_accept_or_reject exact= 91.67% kappa= 0.8 cohens_kappa
+explanation_or_evidence_usefulness exact= 66.67% kappa= 0.8187 quadratic_weighted_kappa
+Overall acceptance agreement: {&#x27;exact_count&#x27;: 57, &#x27;denominator&#x27;: 60, &#x27;exact_percentage&#x27;: 95.0, &#x27;kappa&#x27;: 0.9, &#x27;kappa_type&#x27;: &#x27;cohens_kappa&#x27;}
+All 12 fields exact: {&#x27;count&#x27;: 28, &#x27;denominator&#x27;: 60, &#x27;percentage&#x27;: 46.67}
+</pre></section>
+<section class='cell'><h2>Ankur versus one-prompt baseline</h2></section>
+<section class='cell'><pre><code>pipelines = metrics[&#x27;questionQuality&#x27;][&#x27;pipelines&#x27;]
+for name in [&#x27;ankur_structured&#x27;, &#x27;one_prompt_baseline&#x27;]:
+    row = pipelines[name]
+    print(&#x27;\n&#x27; + name)
+    print(&#x27;  Overall accepted:&#x27;, row[&#x27;overall_accepted&#x27;])
+    print(&#x27;  Answer/key correct:&#x27;, row[&#x27;answer_or_key_correct&#x27;])
+    print(&#x27;  Answer/key grounded:&#x27;, row[&#x27;answer_or_key_grounded&#x27;])
+    print(&#x27;  Clear:&#x27;, row[&#x27;clear&#x27;])
+    print(&#x27;  Ambiguous:&#x27;, row[&#x27;ambiguous&#x27;])
+    print(&#x27;  Pass A accepted:&#x27;, row[&#x27;pass_a_accepted&#x27;])
+    print(&#x27;  Pass B accepted:&#x27;, row[&#x27;pass_b_accepted&#x27;])
+    print(&#x27;  Language mean:&#x27;, row[&#x27;language_quality_mean&#x27;])
+    print(&#x27;  Explanation mean:&#x27;, row[&#x27;explanation_usefulness_mean&#x27;])
+print(&#x27;\nCaveat:&#x27;, metrics[&#x27;questionQuality&#x27;][&#x27;duplicateMetricCaveat&#x27;])
+</code></pre><pre class='output'>
+ankur_structured
+  Overall accepted: {&#x27;count&#x27;: 1, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 3.33}
+  Answer/key correct: {&#x27;count&#x27;: 11, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 36.67}
+  Answer/key grounded: {&#x27;count&#x27;: 16, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 53.33}
+  Clear: {&#x27;count&#x27;: 17, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 56.67}
+  Ambiguous: {&#x27;count&#x27;: 13, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 43.33}
+  Pass A accepted: {&#x27;count&#x27;: 7, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 23.33}
+  Pass B accepted: {&#x27;count&#x27;: 10, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 33.33}
+  Language mean: 3.3
+  Explanation mean: 3.367
 
-<p>The live plan fixed operation IDs and generation counts before calls, ran sequentially with checkpoint/resume, retained controlled failures, and never regenerated a valid output for preference. Raw provider artifacts stay in ignored private paths. Public records contain sanitized semantic fields, hashes, validation outcomes, and safe operation metadata. R1/R2 review is blinded and adjudicated using the committed guide.</p></section>
-<section class='cell'><h2>4. Extraction metrics</h2></section>
-<section class='cell'><pre><code>for row in extraction:
-    cer = row[&#x27;characterErrorRate&#x27;]
-    print(row[&#x27;materialId&#x27;], &#x27;p&#x27;+str(row[&#x27;pageNumber&#x27;]), row[&#x27;expectedRoute&#x27;], &#x27;CER=&#x27;, &#x27;pending&#x27; if cer is None else f&#x27;{cer:.4%}&#x27;, &#x27;changed=&#x27;, row[&#x27;changedCharacterCount&#x27;])
-print(&#x27;Page success:&#x27;, metrics[&#x27;extraction&#x27;][&#x27;pageSuccess&#x27;])
-print(&#x27;Routing accuracy:&#x27;, metrics[&#x27;extraction&#x27;][&#x27;routingAccuracy&#x27;])
-print(&#x27;Mean CER:&#x27;, metrics[&#x27;extraction&#x27;][&#x27;meanCharacterErrorRate&#x27;])
-print(&#x27;Material-correction heuristic:&#x27;, metrics[&#x27;extraction&#x27;][&#x27;materialCorrectionPages&#x27;])</code></pre><pre class='output'>SCI-BN-PASTE-01 p1 pasted_text CER= 0.0000% changed= 0
-SCI-EN-PDF-01 p1 embedded_text CER= 0.0000% changed= 0
-SCI-EN-PDF-01 p2 embedded_text CER= 0.0000% changed= 0
-CIV-BN-IMG-01 p1 page_transcription CER= 3.0905% changed= 14
-CIV-MIX-PDF-01 p1 embedded_text CER= 0.0000% changed= 0
-CIV-MIX-PDF-01 p2 page_transcription CER= 1.0000% changed= 2
-CIV-MIX-PDF-01 p3 embedded_text CER= 0.0000% changed= 0
-VOC-EN-PASTE-01 p1 pasted_text CER= 0.0000% changed= 0
-VOC-MIX-IMG-01 p1 page_transcription CER= 2.0833% changed= 8
-Page success: {&#x27;count&#x27;: 9, &#x27;denominator&#x27;: 9, &#x27;percentage&#x27;: 100, &#x27;status&#x27;: &#x27;measured&#x27;}
-Routing accuracy: {&#x27;count&#x27;: 9, &#x27;denominator&#x27;: 9, &#x27;percentage&#x27;: 100, &#x27;status&#x27;: &#x27;measured&#x27;}
-Mean CER: 0.00686
-Material-correction heuristic: {&#x27;count&#x27;: 2, &#x27;denominator&#x27;: 9, &#x27;percentage&#x27;: 22.22, &#x27;status&#x27;: &#x27;measured&#x27;}
-</pre></section>
-<section class='cell'><h2>5. Question-quality metrics</h2></section>
-<section class='cell'><pre><code>print(&#x27;Total questions:&#x27;, metrics[&#x27;questions&#x27;][&#x27;total&#x27;])
-print(&#x27;Deterministic grounding:&#x27;, metrics[&#x27;questions&#x27;][&#x27;deterministicGrounding&#x27;])
-print(&#x27;Deterministic key invariant:&#x27;, metrics[&#x27;questions&#x27;][&#x27;deterministicKeyValidity&#x27;])
-print(&#x27;Potential cross-run duplicates:&#x27;, metrics[&#x27;questions&#x27;][&#x27;duplicates&#x27;])
-print(&#x27;Human acceptance:&#x27;, metrics[&#x27;questions&#x27;][&#x27;humanAccepted&#x27;])
-print(&#x27;Human grounding/key/ambiguity:&#x27;, metrics[&#x27;questions&#x27;][&#x27;humanGroundedAccepted&#x27;], metrics[&#x27;questions&#x27;][&#x27;humanCorrectKeys&#x27;], metrics[&#x27;questions&#x27;][&#x27;humanAmbiguous&#x27;])</code></pre><pre class='output'>Total questions: 30
-Deterministic grounding: {&#x27;count&#x27;: 30, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 100, &#x27;status&#x27;: &#x27;measured&#x27;}
-Deterministic key invariant: {&#x27;count&#x27;: 30, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 100, &#x27;status&#x27;: &#x27;measured&#x27;}
-Potential cross-run duplicates: {&#x27;count&#x27;: 2, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 6.67, &#x27;status&#x27;: &#x27;measured&#x27;}
-Human acceptance: {&#x27;count&#x27;: 0, &#x27;denominator&#x27;: 0, &#x27;percentage&#x27;: None, &#x27;status&#x27;: &#x27;pending_human_review&#x27;}
-Human grounding/key/ambiguity: {&#x27;count&#x27;: 0, &#x27;denominator&#x27;: 0, &#x27;percentage&#x27;: None, &#x27;status&#x27;: &#x27;pending_human_review&#x27;} {&#x27;count&#x27;: 0, &#x27;denominator&#x27;: 0, &#x27;percentage&#x27;: None, &#x27;status&#x27;: &#x27;pending_human_review&#x27;} {&#x27;count&#x27;: 0, &#x27;denominator&#x27;: 0, &#x27;percentage&#x27;: None, &#x27;status&#x27;: &#x27;pending_human_review&#x27;}
-</pre></section>
-<section class='cell'><h2>6. Written-grading metrics</h2></section>
-<section class='cell'><pre><code>print(&#x27;Answer-case coverage:&#x27;, counts(written, &#x27;answerCase&#x27;))
-print(&#x27;Provider-eligible cases:&#x27;, metrics[&#x27;written&#x27;][&#x27;providerOperations&#x27;])
-print(&#x27;Available mark/status pairs:&#x27;)
-for row in written:
-    print(&#x27; &#x27;, row[&#x27;recordId&#x27;], row[&#x27;awardedMarks&#x27;], row[&#x27;status&#x27;])
-print(&#x27;Human reviewed:&#x27;, metrics[&#x27;written&#x27;][&#x27;humanReviewed&#x27;])
-print(&#x27;MAE / agreement:&#x27;, metrics[&#x27;written&#x27;][&#x27;meanAbsoluteError&#x27;], metrics[&#x27;written&#x27;][&#x27;exactAgreement&#x27;], metrics[&#x27;written&#x27;][&#x27;withinOneMark&#x27;], metrics[&#x27;written&#x27;][&#x27;statusAgreement&#x27;])</code></pre><pre class='output'>Answer-case coverage: {&#x27;correct&#x27;: 6, &#x27;empty&#x27;: 2, &#x27;incorrect&#x27;: 2, &#x27;missing_key_concept&#x27;: 1, &#x27;partially_correct&#x27;: 2, &#x27;unsupported_claim&#x27;: 1}
-Provider-eligible cases: 12
-Available mark/status pairs:
-  written-record:SCI-BN-PASTE-01:correct 5 correct
-  written-record:SCI-BN-PASTE-01:partially_correct 3 partially_correct
-  written-record:SCI-BN-PASTE-01:retry-correct 5 correct
-  written-record:SCI-EN-PDF-01:incorrect 0 incorrect
-  written-record:SCI-EN-PDF-01:empty 0 not_answered
-  written-record:SCI-EN-PDF-01:retry-correct 5 correct
-  written-record:CIV-MIX-PDF-01:correct 5 correct
-  written-record:CIV-MIX-PDF-01:partially_correct 4 partially_correct
-  written-record:VOC-EN-PASTE-01:incorrect 0 incorrect
-  written-record:VOC-EN-PASTE-01:empty 0 not_answered
-  written-record:VOC-EN-PASTE-01:retry-correct 5 correct
-  written-record:VOC-MIX-IMG-01:unsupported_claim 0 incorrect
-  written-record:VOC-MIX-IMG-01:missing_key_concept 0 incorrect
-  written-record:VOC-MIX-IMG-01:retry-correct None pending
-Human reviewed: 0
-MAE / agreement: None {&#x27;count&#x27;: 0, &#x27;denominator&#x27;: 0, &#x27;percentage&#x27;: None, &#x27;status&#x27;: &#x27;pending_human_review&#x27;} {&#x27;count&#x27;: 0, &#x27;denominator&#x27;: 0, &#x27;percentage&#x27;: None, &#x27;status&#x27;: &#x27;pending_human_review&#x27;} {&#x27;count&#x27;: 0, &#x27;denominator&#x27;: 0, &#x27;percentage&#x27;: None, &#x27;status&#x27;: &#x27;pending_human_review&#x27;}
-</pre></section>
-<section class='cell'><h2>7. Reliability and latency</h2></section>
-<section class='cell'><pre><code>reliability = metrics[&#x27;reliability&#x27;]
-for key in [&#x27;totalOperations&#x27;,&#x27;firstPassValid&#x27;,&#x27;finalValid&#x27;,&#x27;repairRate&#x27;,&#x27;repairSuccess&#x27;,&#x27;groundingFailures&#x27;,&#x27;quoteFailures&#x27;,&#x27;conceptFailures&#x27;,&#x27;reconciliationFailures&#x27;,&#x27;medianLatencyMs&#x27;,&#x27;p95LatencyMs&#x27;,&#x27;maximumLatencyMs&#x27;]:
-    print(key, reliability[key])
-failures = [row for row in provider if row[&#x27;finalStatus&#x27;] == &#x27;controlled_failure&#x27;]
-print(&#x27;Controlled failures by category:&#x27;, counts(failures, &#x27;failureCategory&#x27;))
-print(&#x27;Controlled failures by operation:&#x27;, counts(failures, &#x27;operationType&#x27;))</code></pre><pre class='output'>totalOperations 51
-firstPassValid {&#x27;count&#x27;: 24, &#x27;denominator&#x27;: 51, &#x27;percentage&#x27;: 47.06, &#x27;status&#x27;: &#x27;measured&#x27;}
-finalValid {&#x27;count&#x27;: 40, &#x27;denominator&#x27;: 51, &#x27;percentage&#x27;: 78.43, &#x27;status&#x27;: &#x27;measured&#x27;}
-repairRate {&#x27;count&#x27;: 23, &#x27;denominator&#x27;: 51, &#x27;percentage&#x27;: 45.1, &#x27;status&#x27;: &#x27;measured&#x27;}
-repairSuccess {&#x27;count&#x27;: 16, &#x27;denominator&#x27;: 23, &#x27;percentage&#x27;: 69.57, &#x27;status&#x27;: &#x27;measured&#x27;}
-groundingFailures 0
-quoteFailures 0
-conceptFailures 0
-reconciliationFailures 0
-medianLatencyMs 26252
-p95LatencyMs 93741
-maximumLatencyMs 190269
-Controlled failures by category: {&#x27;EVIDENCE_INVALID&#x27;: 2, &#x27;INVALID_OUTPUT&#x27;: 5, &#x27;RATE_LIMITED&#x27;: 1, &#x27;TIMEOUT&#x27;: 2, &#x27;UNAVAILABLE&#x27;: 1}
-Controlled failures by operation: {&#x27;analysis&#x27;: 4, &#x27;assessment_generation&#x27;: 3, &#x27;revision_retry_generation&#x27;: 2, &#x27;written_grading&#x27;: 2}
-</pre></section>
-<section class='cell'><h2>8. Adaptive-loop metrics</h2></section>
-<section class='cell'><pre><code>print(&#x27;Adaptive aggregate:&#x27;, metrics[&#x27;adaptive&#x27;])
-for row in adaptive:
-    print(row[&#x27;materialId&#x27;], row[&#x27;status&#x27;], row[&#x27;revisionMode&#x27;], row[&#x27;originalScore&#x27;], row[&#x27;retryScore&#x27;], row[&#x27;scoreChange&#x27;], row[&#x27;failureCategory&#x27;])</code></pre><pre class='output'>Adaptive aggregate: {&#x27;total&#x27;: 6, &#x27;valid&#x27;: {&#x27;count&#x27;: 3, &#x27;denominator&#x27;: 6, &#x27;percentage&#x27;: 50, &#x27;status&#x27;: &#x27;measured&#x27;}, &#x27;fabricatedWeaknesses&#x27;: 0, &#x27;meanObservedScoreChange&#x27;: 5}
-SCI-BN-PASTE-01 valid reinforcement 3 6 3 None
-SCI-EN-PDF-01 valid weak_area 0 6 6 None
-CIV-BN-IMG-01 controlled_failure None None None None EVIDENCE_INVALID
-CIV-MIX-PDF-01 controlled_failure None None None None INVALID_OUTPUT
-VOC-EN-PASTE-01 valid weak_area 0 6 6 None
-VOC-MIX-IMG-01 controlled_failure weak_area None None None TIMEOUT
-</pre></section>
-<section class='cell'><h2>9. Structured Ankur versus one-prompt baseline</h2></section>
-<section class='cell'><pre><code>print(&#x27;Structured questions:&#x27;, len(questions), &#x27;grounding-valid:&#x27;, sum(row[&#x27;deterministicGroundingValid&#x27;] for row in questions))
-print(&#x27;Baseline materials:&#x27;, len(baseline), &#x27;parsed questions:&#x27;, sum(row[&#x27;parsedQuestionCount&#x27;] for row in baseline))
-print(&#x27;Baseline parse success:&#x27;, metrics[&#x27;baseline&#x27;][&#x27;parseSuccess&#x27;])
-print(&#x27;Baseline evidence-labelled lines:&#x27;, metrics[&#x27;baseline&#x27;][&#x27;evidenceTransparency&#x27;])
-print(&#x27;Human quality comparison: pending for both systems&#x27;)</code></pre><pre class='output'>Structured questions: 30 grounding-valid: 30
-Baseline materials: 6 parsed questions: 30
-Baseline parse success: {&#x27;count&#x27;: 6, &#x27;denominator&#x27;: 6, &#x27;percentage&#x27;: 100, &#x27;status&#x27;: &#x27;measured&#x27;}
-Baseline evidence-labelled lines: {&#x27;count&#x27;: 30, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 100, &#x27;status&#x27;: &#x27;measured&#x27;}
-Human quality comparison: pending for both systems
-</pre></section>
-<section class='cell'><h2>10. Per-language and per-domain breakdowns</h2></section>
-<section class='cell'><pre><code>def question_breakdown(field):
-    result = {}
-    for row in questions:
-        bucket = result.setdefault(row[field], {&#x27;questions&#x27;:0,&#x27;grounded&#x27;:0,&#x27;duplicates&#x27;:0})
-        bucket[&#x27;questions&#x27;] += 1
-        bucket[&#x27;grounded&#x27;] += int(row[&#x27;deterministicGroundingValid&#x27;])
-        bucket[&#x27;duplicates&#x27;] += int(row[&#x27;duplicateOfRecordId&#x27;] is not None)
-    return dict(sorted(result.items()))
-print(&#x27;Language:&#x27;, question_breakdown(&#x27;language&#x27;))
-print(&#x27;Domain:&#x27;, question_breakdown(&#x27;domain&#x27;))
-print(&#x27;Stage:&#x27;, counts(questions, &#x27;questionStage&#x27;))</code></pre><pre class='output'>Language: {&#x27;bn&#x27;: {&#x27;questions&#x27;: 8, &#x27;grounded&#x27;: 8, &#x27;duplicates&#x27;: 1}, &#x27;en&#x27;: {&#x27;questions&#x27;: 12, &#x27;grounded&#x27;: 12, &#x27;duplicates&#x27;: 1}, &#x27;mixed&#x27;: {&#x27;questions&#x27;: 10, &#x27;grounded&#x27;: 10, &#x27;duplicates&#x27;: 0}}
-Domain: {&#x27;academic_science&#x27;: {&#x27;questions&#x27;: 16, &#x27;grounded&#x27;: 16, &#x27;duplicates&#x27;: 2}, &#x27;bangladesh_civics&#x27;: {&#x27;questions&#x27;: 4, &#x27;grounded&#x27;: 4, &#x27;duplicates&#x27;: 0}, &#x27;vocational_safety&#x27;: {&#x27;questions&#x27;: 10, &#x27;grounded&#x27;: 10, &#x27;duplicates&#x27;: 0}}
-Stage: {&#x27;adaptive_retry&#x27;: 8, &#x27;original_assessment&#x27;: 22}
-</pre></section>
-<section class='cell'><h2>11. Error analysis</h2></section>
-<section class='cell'><pre><code>for row in failures:
-    print(row[&#x27;operationId&#x27;], row[&#x27;operationType&#x27;], row[&#x27;failureCategory&#x27;], str(row[&#x27;latencyMs&#x27;])+&#x27;ms&#x27;, &#x27;repair=&#x27;+str(row[&#x27;repairAttempted&#x27;]))
-print(&#x27;Accepted-artifact grounding/quote/concept/reconciliation failures:&#x27;, reliability[&#x27;groundingFailures&#x27;], reliability[&#x27;quoteFailures&#x27;], reliability[&#x27;conceptFailures&#x27;], reliability[&#x27;reconciliationFailures&#x27;])</code></pre><pre class='output'>analysis:CIV-BN-IMG-01 analysis EVIDENCE_INVALID 26252ms repair=True
-analysis:CIV-BN-IMG-01:attempt1 analysis RATE_LIMITED 55729ms repair=False
-analysis:VOC-EN-PASTE-01:attempt1 analysis UNAVAILABLE 5797ms repair=False
-analysis:VOC-MIX-IMG-01:attempt1 analysis EVIDENCE_INVALID 24884ms repair=True
-assessment:CIV-MIX-PDF-01:r1:attempt1 assessment_generation INVALID_OUTPUT 49254ms repair=True
-assessment:VOC-EN-PASTE-01:r1 assessment_generation INVALID_OUTPUT 51241ms repair=True
-assessment:VOC-EN-PASTE-01:r1:attempt1 assessment_generation INVALID_OUTPUT 62391ms repair=True
-retry-written:VOC-MIX-IMG-01:correct written_grading TIMEOUT 55010ms repair=False
-revision:CIV-MIX-PDF-01 revision_retry_generation INVALID_OUTPUT 75495ms repair=True
-revision:CIV-MIX-PDF-01:attempt1 revision_retry_generation INVALID_OUTPUT 75112ms repair=True
-written:SCI-EN-PDF-01:incorrect:attempt1 written_grading TIMEOUT 55021ms repair=False
-Accepted-artifact grounding/quote/concept/reconciliation failures: 0 0 0 0
-</pre></section>
-<section class='cell'><h2>12. Public-safe figures</h2></section>
-<section class='cell'><pre><code>FIGURES = ROOT / &#x27;evaluation/notebook/figures&#x27;
-FIGURES.mkdir(parents=True, exist_ok=True)
-def bar_svg(path, title, labels, values, maximum=100):
-    width, height = 820, 110 + 58*len(labels)
-    parts = [f&#x27;&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;{width}&quot; height=&quot;{height}&quot; viewBox=&quot;0 0 {width} {height}&quot;&gt;&#x27;, &#x27;&lt;rect width=&quot;100%&quot; height=&quot;100%&quot; fill=&quot;#fffdf5&quot;/&gt;&#x27;, f&#x27;&lt;text x=&quot;28&quot; y=&quot;42&quot; font-family=&quot;system-ui&quot; font-size=&quot;24&quot; fill=&quot;#0d5d43&quot;&gt;{title}&lt;/text&gt;&#x27;]
-    for index, (label, value) in enumerate(zip(labels, values)):
-        y = 76 + index*58
-        bar = 560 * value / maximum if maximum else 0
-        parts += [f&#x27;&lt;text x=&quot;28&quot; y=&quot;{y+22}&quot; font-family=&quot;system-ui&quot; font-size=&quot;16&quot; fill=&quot;#173c31&quot;&gt;{label}&lt;/text&gt;&#x27;, f&#x27;&lt;rect x=&quot;220&quot; y=&quot;{y}&quot; width=&quot;560&quot; height=&quot;28&quot; rx=&quot;8&quot; fill=&quot;#e5eadf&quot;/&gt;&#x27;, f&#x27;&lt;rect x=&quot;220&quot; y=&quot;{y}&quot; width=&quot;{bar:.1f}&quot; height=&quot;28&quot; rx=&quot;8&quot; fill=&quot;#2f8a62&quot;/&gt;&#x27;, f&#x27;&lt;text x=&quot;230&quot; y=&quot;{y+20}&quot; font-family=&quot;system-ui&quot; font-size=&quot;14&quot; fill=&quot;#173c31&quot;&gt;{value:.2f}%&lt;/text&gt;&#x27;]
-    parts.append(&#x27;&lt;/svg&gt;&#x27;)
-    path.write_text(&#x27;&#x27;.join(parts), encoding=&#x27;utf-8&#x27;)
-bar_svg(FIGURES/&#x27;reliability.svg&#x27;, &#x27;Provider reliability&#x27;, [&#x27;First pass valid&#x27;,&#x27;Final valid&#x27;,&#x27;Repair success&#x27;], [reliability[&#x27;firstPassValid&#x27;][&#x27;percentage&#x27;], reliability[&#x27;finalValid&#x27;][&#x27;percentage&#x27;], reliability[&#x27;repairSuccess&#x27;][&#x27;percentage&#x27;]])
-bar_svg(FIGURES/&#x27;coverage.svg&#x27;, &#x27;Automated evaluation coverage&#x27;, [&#x27;Extraction pages&#x27;,&#x27;Question grounding&#x27;,&#x27;Written records&#x27;,&#x27;Adaptive valid&#x27;], [metrics[&#x27;extraction&#x27;][&#x27;pageSuccess&#x27;][&#x27;percentage&#x27;], metrics[&#x27;questions&#x27;][&#x27;deterministicGrounding&#x27;][&#x27;percentage&#x27;], 100.0, metrics[&#x27;adaptive&#x27;][&#x27;valid&#x27;][&#x27;percentage&#x27;]])
-print(&#x27;Wrote:&#x27;, FIGURES/&#x27;reliability.svg&#x27;, &#x27;and&#x27;, FIGURES/&#x27;coverage.svg&#x27;)</code></pre><pre class='output'>Wrote: E:\WorkBench\hackathon\build-with-gemma-4\ankur\evaluation\notebook\figures\reliability.svg and E:\WorkBench\hackathon\build-with-gemma-4\ankur\evaluation\notebook\figures\coverage.svg
-</pre></section>
-<section class='cell'><h2>13. Limitations</h2>
+one_prompt_baseline
+  Overall accepted: {&#x27;count&#x27;: 29, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 96.67}
+  Answer/key correct: {&#x27;count&#x27;: 30, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 100.0}
+  Answer/key grounded: {&#x27;count&#x27;: 30, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 100.0}
+  Clear: {&#x27;count&#x27;: 29, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 96.67}
+  Ambiguous: {&#x27;count&#x27;: 1, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 3.33}
+  Pass A accepted: {&#x27;count&#x27;: 29, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 96.67}
+  Pass B accepted: {&#x27;count&#x27;: 30, &#x27;denominator&#x27;: 30, &#x27;percentage&#x27;: 100.0}
+  Language mean: 4.967
+  Explanation mean: 4.9
 
-<li>Human source verification, question acceptance, answer-key correctness, ambiguity, written-score agreement, and feedback usefulness are pending.</li>
-<li>Deterministic grounding validates IDs and quotations, not pedagogical correctness.</li>
-<li>The small team-authored corpus cannot represent all layouts, dialects, domains, or provider conditions.</li>
-<li>Immediate retry changes do not demonstrate durable learning.</li>
-<li>The one-prompt baseline is a simple documented comparison, not a claim against every alternative design.</li></section>
-<section class='cell'><h2>14. Reproducibility and data dictionary</h2></section>
-<section class='cell'><pre><code>print(&#x27;Python:&#x27;, sys.version.split()[0])
-print(&#x27;Platform:&#x27;, platform.platform())
-print(&#x27;Dependencies: Python standard library only; no network or API key&#x27;)
-print(&#x27;Authoritative data dictionary:&#x27;, ROOT/&#x27;evaluation/DATA_DICTIONARY.md&#x27;)
-print(&#x27;Metric schema:&#x27;, metrics[&#x27;schemaVersion&#x27;])
-print(&#x27;Record schema versions:&#x27;, sorted({row[&#x27;schemaVersion&#x27;] for row in questions + written + provider + adaptive + baseline}))</code></pre><pre class='output'>Python: 3.11.9
-Platform: Windows-10-10.0.26200-SP0
-Dependencies: Python standard library only; no network or API key
-Authoritative data dictionary: E:\WorkBench\hackathon\build-with-gemma-4\ankur\evaluation\DATA_DICTIONARY.md
-Metric schema: aggregate-metrics.v1
-Record schema versions: [&#x27;adaptive-loop-record.v1&#x27;, &#x27;baseline-record.v1&#x27;, &#x27;generated-question-record.v1&#x27;, &#x27;provider-operation.v1&#x27;, &#x27;written-grading-record.v1&#x27;]
+Caveat: Pooled within-pipeline duplicate review spans multiple Ankur generation runs but one baseline run per material; interpret as a corpus-level diagnostic, not a per-call rate.
 </pre></section>
-<section class='cell'><h2>15. Conclusions</h2>
+<section class='cell'><h2>Written-evaluation validity</h2></section>
+<section class='cell'><pre><code>written = metrics[&#x27;written&#x27;]
+print(&#x27;Total written cases:&#x27;, written[&#x27;total_cases&#x27;])
+print(&#x27;Eligibility:&#x27;, written[&#x27;eligibility&#x27;])
+print(&#x27;Grading accuracy status:&#x27;, written[&#x27;grading_accuracy&#x27;][&#x27;status&#x27;])
+print(&#x27;MAE:&#x27;, written[&#x27;grading_accuracy&#x27;][&#x27;mean_absolute_error&#x27;])
+print(&#x27;Deterministic empty-answer handling:&#x27;, written[&#x27;deterministic_empty_answer_handling&#x27;])
+print(&#x27;Diagnostic-only feedback:&#x27;, written[&#x27;diagnostic_only&#x27;])
+</code></pre><pre class='output'>Total written cases: 14
+Eligibility: {&#x27;eligible&#x27;: 0, &#x27;excluded_invalid_rubric&#x27;: 14, &#x27;exclusion_percentage&#x27;: 100.0, &#x27;human_confirmation&#x27;: &#x27;complete&#x27;}
+Grading accuracy status: not_applicable_invalid_rubric
+MAE: None
+Deterministic empty-answer handling: {&#x27;count&#x27;: 2, &#x27;denominator&#x27;: 2, &#x27;percentage&#x27;: 100.0}
+Diagnostic-only feedback: {&#x27;feedback_grounded&#x27;: {&#x27;count&#x27;: 2, &#x27;denominator&#x27;: 11, &#x27;percentage&#x27;: 18.18}, &#x27;feedback_usefulness_mean&#x27;: 1.455, &#x27;interpretation&#x27;: &#x27;diagnostic_only_not_a_valid_grading_benchmark&#x27;}
+</pre></section>
+<section class='cell'><h2>Reliability denominator correction</h2></section>
+<section class='cell'><pre><code>rel = metrics[&#x27;reliability&#x27;]
+print(&#x27;Provider attempts:&#x27;, rel[&#x27;provider_attempts&#x27;])
+print(&#x27;Provider availability:&#x27;, rel[&#x27;provider_availability&#x27;])
+print(&#x27;Logical operations:&#x27;, rel[&#x27;logical_operations&#x27;])
+print(&#x27;First-pass valid:&#x27;, rel[&#x27;first_pass_valid&#x27;])
+print(&#x27;Repair success:&#x27;, rel[&#x27;repair_success&#x27;])
+print(&#x27;Final logical artifact valid:&#x27;, rel[&#x27;final_artifact_valid&#x27;])
+print(&#x27;Controlled failure:&#x27;, rel[&#x27;controlled_failure&#x27;])
+print(&#x27;Retired metric:&#x27;, rel[&#x27;denominatorPolicy&#x27;][&#x27;oldMixedRate&#x27;])
+</code></pre><pre class='output'>Provider attempts: {&#x27;count&#x27;: 51}
+Provider availability: {&#x27;count&#x27;: 47, &#x27;denominator&#x27;: 51, &#x27;percentage&#x27;: 92.16}
+Logical operations: {&#x27;count&#x27;: 44}
+First-pass valid: {&#x27;count&#x27;: 24, &#x27;denominator&#x27;: 44, &#x27;percentage&#x27;: 54.55}
+Repair success: {&#x27;count&#x27;: 16, &#x27;denominator&#x27;: 19, &#x27;percentage&#x27;: 84.21}
+Final logical artifact valid: {&#x27;count&#x27;: 40, &#x27;denominator&#x27;: 44, &#x27;percentage&#x27;: 90.91}
+Controlled failure: {&#x27;count&#x27;: 4, &#x27;denominator&#x27;: 44, &#x27;percentage&#x27;: 9.09}
+Retired metric: 40/51 = 78.43% mixed request attempts with logical artifacts and is retired
+</pre></section>
+<section class='cell'><h2>Adaptive loop</h2></section>
+<section class='cell'><pre><code>print(metrics[&#x27;adaptive&#x27;])
+</code></pre><pre class='output'>{&#x27;materials&#x27;: 6, &#x27;valid&#x27;: {&#x27;count&#x27;: 3, &#x27;denominator&#x27;: 6, &#x27;percentage&#x27;: 50.0}, &#x27;controlled_failures&#x27;: {&#x27;count&#x27;: 3, &#x27;denominator&#x27;: 6, &#x27;percentage&#x27;: 50.0}, &#x27;fabricated_weaknesses&#x27;: 0, &#x27;mean_score_change_valid_only&#x27;: 5}
+</pre></section>
+<section class='cell'><h2>Final gate decision</h2></section>
+<section class='cell'><pre><code>gate = metrics[&#x27;gate&#x27;]
+print(&#x27;Evidence closure:&#x27;, gate[&#x27;task06EvidenceClosure&#x27;])
+print(&#x27;Product quality gate:&#x27;, gate[&#x27;productQualityGate&#x27;])
+print(&#x27;Task 07 authorization:&#x27;, gate[&#x27;task07Authorization&#x27;])
+for reason in gate[&#x27;reasons&#x27;]:
+    print(&#x27;-&#x27;, reason)
+</code></pre><pre class='output'>Evidence closure: passed
+Product quality gate: failed
+Task 07 authorization: blocked
+- Only 1/30 Ankur structured questions passed both question-text and answer/reference acceptance.
+- The one-prompt baseline achieved 29/30 overall acceptance on the same six materials.
+- All 14 written cases were excluded because generated rubrics did not validly align with their questions.
+- Logical final artifact validity was 40/44 (90.91%), below the 95% internal target.
+</pre></section>
+<section class='cell'><h2>Interpretation</h2>
 
-<p>The measured package meets the corpus, 30-question, 12-written-case, six-adaptive-record, and six-material baseline scale. Accepted structured artifacts had zero recorded grounding, quotation, concept-reference, or mark-reconciliation failures, while final-valid provider reliability was below the 95% target. Human quality and grading agreement cannot be concluded until the prepared two-reviewer protocol is completed.</p></section>
+<p>The evaluation infrastructure and review process are complete. Extraction and source verification are strong. The current structured question and rubric-generation pipeline does not meet the product-quality gate and performs substantially worse than the simple baseline on this internal corpus. The authorized next work is Task 06C remediation and a fresh re-evaluation.</p></section>
 </body></html>

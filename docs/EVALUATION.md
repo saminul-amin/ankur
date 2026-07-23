@@ -221,3 +221,28 @@ The application may be submitted with honest limitations, but these defects bloc
 - grading marks outside rubric bounds;
 - revision introducing unsupported facts;
 - fabricated or irreproducible metric.
+
+## 14. Final Task 06 human-reviewed result — 23 July 2026
+
+The pending-human-review status is closed. The authoritative artifacts are:
+
+- `evaluation/exports/task06-closure-metrics.json`
+- `evaluation/exports/question-pipeline-comparison.csv`
+- `evaluation/exports/reviewer-agreement.csv`
+- `evaluation/exports/reliability-reclassification.json`
+- `evaluation/exports/written-evaluation-validity.csv`
+- `evaluation/reports/TASK_06_FINAL_CLOSURE_REPORT.md`
+
+Two independent reviewers completed blinded Pass A and Pass B review, confirmed duplicate-scope corrections, and jointly adjudicated all 155 disagreement fields.
+
+The evaluation process passed, but the product-quality gate failed:
+
+- Ankur overall question acceptance: 1/30 (3.33%).
+- One-prompt baseline overall acceptance: 29/30 (96.67%).
+- Ankur answer/key correctness: 11/30 (36.67%).
+- Written cases eligible for grading-accuracy metrics: 0/14 because every generated rubric was materially misaligned with its question.
+- Final logical artifact validity: 40/44 (90.91%), below the 95% target.
+
+The former 40/51 final-valid percentage is retired because it mixed seven attempt rows with 44 logical operations. Reliability is now reported separately for request attempts, provider availability, logical first-pass validity, repair success, and final logical artifact validity.
+
+Task 07 is blocked. The authorized next work is Task 06C question and rubric remediation followed by a fresh evaluation.

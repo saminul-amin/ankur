@@ -136,7 +136,7 @@ Repository-owned reports record only redacted, reproducible metadata:
 
 See the [evaluation directory](evaluation) for the recorded fixtures, methodology, screenshots, and limitations. These are bounded prototype measurements, not claims of universal accuracy.
 
-The frozen-product Task 06 package adds a six-material, three-domain CC BY 4.0 corpus, 30 structured questions, 14 written-answer records, six adaptive material records, a fair one-prompt Gemma 4 baseline, and a provider-free reproducible notebook. Independent two-reviewer annotations are prepared but pending. The bounded run reached 40/51 final-valid recorded provider operations or retained attempts (78.43%), below the internal 95% target; this miss and every controlled failure are retained in the public report.
+The frozen-product Task 06 package now has complete blinded two-reviewer assessment and joint adjudication. On the internal six-material corpus, 1/30 Ankur structured questions passed both question-text and answer/reference acceptance, versus 29/30 one-prompt baseline questions. All 14 written cases were excluded from grading-accuracy metrics because their generated rubrics did not validly align with the questions. Reliability is now correctly separated into 47/51 provider-attempt availability and 40/44 final logical-artifact validity; the former mixed 40/51 rate is retired. Task 06 evidence closure passed, the product-quality gate failed, and Task 07 is blocked pending Task 06C remediation.
 
 ## Privacy and security
 
