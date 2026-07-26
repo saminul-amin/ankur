@@ -1,0 +1,110 @@
+[
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:SCI-BN-PASTE-01",
+    "operationId": "baseline:SCI-BN-PASTE-01",
+    "materialId": "SCI-BN-PASTE-01",
+    "requestedQuestionCount": 6,
+    "parsedQuestionCount": 6,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 6,
+    "outputHash": "sha256:c61f6774f42015c150710cf102683b454b8dc12b531aa56ab0b09c063a9b0679",
+    "reviewerStatus": "pending"
+  },
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:SCI-EN-PDF-01",
+    "operationId": "baseline:SCI-EN-PDF-01",
+    "materialId": "SCI-EN-PDF-01",
+    "requestedQuestionCount": 6,
+    "parsedQuestionCount": 6,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 6,
+    "outputHash": "sha256:d12f3943d3bb91f19b5f74d04f3c79b0df9dfde757f702322b9f6b9902274883",
+    "reviewerStatus": "pending"
+  },
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:CIV-BN-IMG-01",
+    "operationId": "baseline:CIV-BN-IMG-01",
+    "materialId": "CIV-BN-IMG-01",
+    "requestedQuestionCount": 6,
+    "parsedQuestionCount": 6,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 6,
+    "outputHash": "sha256:e3fed4ed3b2038439bff245d732e8b3998de4815d8a105b9959244d8cdc094f4",
+    "reviewerStatus": "pending"
+  },
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:CIV-MIX-PDF-01",
+    "operationId": "baseline:CIV-MIX-PDF-01",
+    "materialId": "CIV-MIX-PDF-01",
+    "requestedQuestionCount": 4,
+    "parsedQuestionCount": 4,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 4,
+    "outputHash": "sha256:56e8ed7cae287cdd1224b93f390c82c94bade02c69bedc6da44b70a68f9ceb51",
+    "reviewerStatus": "pending"
+  },
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:VOC-EN-PASTE-01",
+    "operationId": "baseline:VOC-EN-PASTE-01",
+    "materialId": "VOC-EN-PASTE-01",
+    "requestedQuestionCount": 4,
+    "parsedQuestionCount": 4,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 4,
+    "outputHash": "sha256:ed7e0bf9bf1f1969cd6c16564b348c9fb3df92e8cf791588022a6ff8b848d87f",
+    "reviewerStatus": "pending"
+  },
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:VOC-MIX-IMG-01",
+    "operationId": "baseline:VOC-MIX-IMG-01",
+    "materialId": "VOC-MIX-IMG-01",
+    "requestedQuestionCount": 4,
+    "parsedQuestionCount": 4,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 4,
+    "outputHash": "sha256:90749d82afccca4751cc66a233408d4c87e8770a179fca0a2e1ab4af44367b76",
+    "reviewerStatus": "pending"
+  },
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:SCI-MIX-PASTE-02",
+    "operationId": "baseline:SCI-MIX-PASTE-02",
+    "materialId": "SCI-MIX-PASTE-02",
+    "requestedQuestionCount": 4,
+    "parsedQuestionCount": 4,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 4,
+    "outputHash": "sha256:93337c2133b20ca5a7dc22d2b01461d28b342e226ff02b206f833110b25cd1eb",
+    "reviewerStatus": "pending"
+  },
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:CIV-BN-PASTE-02",
+    "operationId": "baseline:CIV-BN-PASTE-02",
+    "materialId": "CIV-BN-PASTE-02",
+    "requestedQuestionCount": 4,
+    "parsedQuestionCount": 4,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 4,
+    "outputHash": "sha256:2e3ecbbf3a1bb1e830dc3e0753f3b84d39fe7d50a26a5835cd3e1fc523be9ce2",
+    "reviewerStatus": "pending"
+  },
+  {
+    "schemaVersion": "baseline-record.v1",
+    "recordId": "baseline-record:VOC-EN-PASTE-02",
+    "operationId": "baseline:VOC-EN-PASTE-02",
+    "materialId": "VOC-EN-PASTE-02",
+    "requestedQuestionCount": 4,
+    "parsedQuestionCount": 4,
+    "parseSuccess": true,
+    "evidenceTransparencyCount": 4,
+    "outputHash": "sha256:f448d131ebfb542a328bde1d1f5a04b76e606e28b9e16eca6741baa18b0bcc59",
+    "reviewerStatus": "pending"
+  }
+]

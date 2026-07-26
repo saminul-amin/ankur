@@ -1,0 +1,52 @@
+[
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r2:q1",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r2",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:e721448df4dc7a82704c0e2f3f49386416a4d7b1ec1553a7d059b539a92851f9",
+    "questionText": "How does a rechargeable battery work? ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং সরবরাহ করা হয় কীভাবে? ",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r2:q2",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r2",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:21f81aa674e40ab6a9c586ac9171030c1cc890ec39938563dd39e38623c75768",
+    "questionText": "Explain the process of energy storage and the safety requirements for charging a rechargeable battery. ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং চার্জিং এর জন্য প্রয়োজনীয় শর্তাবলী ব্যাখ্যা করুন।",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  }
+]

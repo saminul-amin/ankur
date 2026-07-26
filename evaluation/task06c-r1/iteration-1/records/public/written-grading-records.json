@@ -1,0 +1,38 @@
+[
+  {
+    "schemaVersion": "written-grading-record.v1",
+    "recordId": "written-record:SCI-MIX-PASTE-02:correct",
+    "operationId": "written:SCI-MIX-PASTE-02:correct",
+    "materialId": "SCI-MIX-PASTE-02",
+    "questionRecordId": "question:assessment:SCI-MIX-PASTE-02:r2:q2",
+    "answerCase": "correct",
+    "answerText": "A rechargeable battery stores energy through chemical changes during charging and supplies electrical energy during use. Charging also produces heat, so the charger must match the battery type and rated voltage.",
+    "answerHash": "sha256:0d2e0ad084e42587b1fc436d2c0078f2bc6c4d85ba884cb5f8f50947a810df6a",
+    "providerCalled": true,
+    "awardedMarks": 5,
+    "status": "correct",
+    "groundingValid": true,
+    "reconciliationValid": true,
+    "reviewerStatus": "pending",
+    "adjudicatedMark": null,
+    "adjudicatedStatus": null
+  },
+  {
+    "schemaVersion": "written-grading-record.v1",
+    "recordId": "written-record:SCI-MIX-PASTE-02:partially_correct",
+    "operationId": "written:SCI-MIX-PASTE-02:partially_correct",
+    "materialId": "SCI-MIX-PASTE-02",
+    "questionRecordId": "question:assessment:SCI-MIX-PASTE-02:r2:q2",
+    "answerCase": "partially_correct",
+    "answerText": "A rechargeable battery stores energy through chemical changes during charging and supplies electrical energy during use.",
+    "answerHash": "sha256:d4720556d1b2cc60841b42285caf8c3fccede6b0857fd4d53ed464c846b777c3",
+    "providerCalled": true,
+    "awardedMarks": 2,
+    "status": "partially_correct",
+    "groundingValid": true,
+    "reconciliationValid": true,
+    "reviewerStatus": "pending",
+    "adjudicatedMark": null,
+    "adjudicatedStatus": null
+  }
+]
