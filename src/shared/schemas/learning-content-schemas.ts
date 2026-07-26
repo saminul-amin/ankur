@@ -38,22 +38,16 @@ export const preparationMapModelSchema = z.object({
 }).strict();
 
 export const preparationMapProviderSchema = z.object({
-  schemaVersion: z.literal("preparation-map.v1"),
-  sourceVersionId: z.string().min(1),
   title: z.string().min(1).max(160),
   language: z.enum(["bn", "en", "mixed"]),
   domain: z.string().min(1).max(120),
-  topicId: z.string().regex(/^topic-[a-z0-9-]+$/),
   topicName: z.string().min(1).max(120),
   topicPriority: prioritySchema,
-  conceptId: conceptIdSchema,
   conceptName: z.string().min(1).max(120),
   conceptDescription: z.string().min(1).max(500),
   conceptPriority: prioritySchema,
-  objectiveId: z.string().regex(/^objective-[a-z0-9-]+$/),
   objectiveDescription: z.string().min(1).max(300),
-  evidenceSegmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
-  evidenceQuote: z.string().min(1).max(600),
+  evidenceIndex: z.number().int().min(1).max(24),
   warnings: z.array(z.string().max(240)).max(3),
 }).strict();
 
@@ -89,14 +83,13 @@ export type WrittenRubricCandidateProviderOutput = z.infer<typeof writtenRubricC
 export const preparationMapProviderJsonSchema = {
   type: "object", additionalProperties: false,
   properties: {
-    schemaVersion: { type: "string", enum: ["preparation-map.v1"] }, sourceVersionId: { type: "string" },
     title: { type: "string" }, language: { type: "string", enum: ["bn", "en", "mixed"] }, domain: { type: "string" },
-    topicId: { type: "string" }, topicName: { type: "string" }, topicPriority: { type: "string", enum: ["high", "medium", "low"] },
-    conceptId: { type: "string" }, conceptName: { type: "string" }, conceptDescription: { type: "string" }, conceptPriority: { type: "string", enum: ["high", "medium", "low"] },
-    objectiveId: { type: "string" }, objectiveDescription: { type: "string" }, evidenceSegmentId: { type: "string" }, evidenceQuote: { type: "string" },
+    topicName: { type: "string" }, topicPriority: { type: "string", enum: ["high", "medium", "low"] },
+    conceptName: { type: "string" }, conceptDescription: { type: "string" }, conceptPriority: { type: "string", enum: ["high", "medium", "low"] },
+    objectiveDescription: { type: "string" }, evidenceIndex: { type: "integer", minimum: 1, maximum: 24 },
     warnings: { type: "array", maxItems: 3, items: { type: "string" } },
   },
-  required: ["schemaVersion", "sourceVersionId", "title", "language", "domain", "topicId", "topicName", "topicPriority", "conceptId", "conceptName", "conceptDescription", "conceptPriority", "objectiveId", "objectiveDescription", "evidenceSegmentId", "evidenceQuote", "warnings"],
+  required: ["title", "language", "domain", "topicName", "topicPriority", "conceptName", "conceptDescription", "conceptPriority", "objectiveDescription", "evidenceIndex", "warnings"],
 } as const;
 
 export function createMcqCandidateProviderJsonSchema() {

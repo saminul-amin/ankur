@@ -44,6 +44,42 @@ class QueueProvider implements GenerativeModelPort {
 }
 
 describe("provider transport hardening", () => {
+  it("maps a bounded analysis evidence index to application-owned composite evidence", async () => {
+    const source = createSampleSource();
+    const provider = new QueueProvider([{
+      title: "Grounded preparation",
+      language: source.language,
+      domain: "science",
+      topicName: "Photosynthesis",
+      topicPriority: "high",
+      conceptName: "Inputs and outputs",
+      conceptDescription: "Plants use the stated inputs to make food.",
+      conceptPriority: "high",
+      objectiveDescription: "Explain the source-described process.",
+      evidenceIndex: 1,
+      warnings: [],
+    }]);
+
+    const map = await new GemmaLearningContentAdapter(provider).generatePreparationMap({
+      source,
+      requestId: "analysis-indexed-evidence",
+    });
+
+    expect(map.sourceVersionId).toBe(source.sourceVersionId);
+    expect(map.topics[0]?.id).toBe("topic-primary");
+    expect(map.concepts[0]?.id).toBe("concept-primary");
+    expect(map.objectives[0]?.id).toBe("objective-primary");
+    expect(map.concepts[0]?.evidence[0]).toEqual({
+      segmentId: source.segments[0]?.id,
+      quote: source.segments[0]?.text.slice(0, 600),
+    });
+    expect(provider.requests[0]?.schemaVersion).toBe("analysis-semantic.v2");
+    const schemaText = JSON.stringify(provider.requests[0]?.jsonSchema);
+    expect(schemaText).not.toContain("segmentId");
+    expect(schemaText).not.toContain("sourceVersionId");
+    expect(schemaText).not.toContain("conceptId");
+  });
+
   it("keeps grounding IDs out of provider output and deterministically assembles the five-mark rubric", async () => {
     const source = createSampleSource();
     const map = createSamplePreparationMap(source);

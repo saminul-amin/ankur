@@ -50,6 +50,8 @@ export interface GenerationMetadata {
   readonly promptTokenCount?: number;
   readonly outputTokenCount?: number;
   readonly networkRetryCount?: number;
+  readonly providerAttemptCount?: number;
+  readonly finishReason?: string;
 }
 
 export interface TextGenerationResult {

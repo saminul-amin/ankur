@@ -34,7 +34,9 @@
     "evaluation:task06c:verify": "node --import tsx scripts/evaluation/verify-task06c.ts",
     "evaluation:task06c:dry-run": "node --import tsx scripts/evaluation/run.ts --task06c --mode=dry-run",
     "evaluation:task06c:run": "node --env-file-if-exists=.env.local --import tsx scripts/evaluation/run.ts --task06c",
-    "notebook:task06c": "python scripts/evaluation/run-notebook.py --task06c"
+    "notebook:task06c": "python scripts/evaluation/run-notebook.py --task06c",
+    "evaluation:task06c-r1:dry-run": "node --import tsx scripts/evaluation/run-task06c-r1.ts --mode=dry-run",
+    "evaluation:task06c-r1:run": "node --env-file-if-exists=.env.local --import tsx scripts/evaluation/run-task06c-r1.ts --mode=resume"
   },
   "dependencies": {
     "@google/genai": "latest",

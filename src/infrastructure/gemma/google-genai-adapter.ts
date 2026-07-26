@@ -69,12 +69,15 @@ function metadata(
 ): GenerationMetadata {
   const promptTokenCount = response.usageMetadata?.promptTokenCount;
   const outputTokenCount = response.usageMetadata?.candidatesTokenCount;
+  const finishReason = response.candidates?.[0]?.finishReason;
   return {
     provider: "gemini_api",
     modelId: request.modelId,
     thinkingLevel: request.thinkingLevel,
     latencyMs,
     networkRetryCount,
+    providerAttemptCount: 1,
+    ...(typeof finishReason === "string" ? { finishReason } : {}),
     ...(promptTokenCount === undefined ? {} : { promptTokenCount }),
     ...(outputTokenCount === undefined ? {} : { outputTokenCount }),
   };
@@ -95,12 +98,15 @@ function repairedMetadata(
   const outputTokenCount = firstOutput === undefined && repairedOutput === undefined
     ? undefined
     : (firstOutput ?? 0) + (repairedOutput ?? 0);
+  const finishReason = repaired.response.candidates?.[0]?.finishReason;
   return {
     provider: "gemini_api",
     modelId: request.modelId,
     thinkingLevel: request.thinkingLevel,
     latencyMs: first.latencyMs + repaired.latencyMs,
     networkRetryCount: first.networkRetryCount + repaired.networkRetryCount,
+    providerAttemptCount: 2,
+    ...(typeof finishReason === "string" ? { finishReason } : {}),
     ...(promptTokenCount === undefined ? {} : { promptTokenCount }),
     ...(outputTokenCount === undefined ? {} : { outputTokenCount }),
   };
@@ -287,11 +293,15 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
     const repairContents: readonly GenerationContentPart[] = repairFromEmptyResponse
       ? [...request.contents, repairInstruction]
       : [repairInstruction];
+    const firstFinishReason: string = first.response.candidates?.[0]?.finishReason ?? "";
+    const repairOutputBudget = firstFinishReason === "MAX_TOKENS"
+      ? Math.min(Math.max(request.maxOutputTokens + 400, Math.ceil(request.maxOutputTokens * 1.5)), 4_000)
+      : Math.min(request.maxOutputTokens, 1_600);
     const repaired = await this.#call({
       ...request,
       thinkingLevel: repairFromEmptyResponse ? request.thinkingLevel : "minimal",
       temperature: repairFromEmptyResponse ? request.temperature : 0,
-      maxOutputTokens: repairFromEmptyResponse ? request.maxOutputTokens : Math.min(request.maxOutputTokens, 1_600),
+      maxOutputTokens: repairFromEmptyResponse ? request.maxOutputTokens : repairOutputBudget,
       contents: repairContents,
     }, mode === "native");
     const repairedText = structuredText(repaired.response);

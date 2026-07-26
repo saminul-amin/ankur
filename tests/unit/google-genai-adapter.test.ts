@@ -72,6 +72,25 @@ describe("Google GenAI structured repair", () => {
     expect(JSON.stringify(diagnostics)).not.toContain("not json");
   });
 
+  it("retains the normal bounded repair budget for non-truncated output", async () => {
+    const generateContent = vi.fn<GoogleGenAI["models"]["generateContent"]>()
+      .mockResolvedValueOnce({ text: "not json", candidates: [{ finishReason: "STOP" }] } as GenerateContentResponse)
+      .mockResolvedValueOnce({ text: JSON.stringify({ prompt: "valid" }) } as GenerateContentResponse);
+    const adapter = new GoogleGenAiAdapter("unit-test-key", "gemma-4-26b-a4b-it", { generateContent });
+    const schema = z.object({ prompt: z.string().min(1) }).strict();
+
+    const result = await adapter.generateStructured({
+      task: "structured_generation", modelId: "gemma-4-26b-a4b-it", promptVersion: "budget.v1",
+      schemaVersion: "budget.v1", thinkingLevel: "high", temperature: 0.1, maxOutputTokens: 1_800,
+      timeoutMs: 10_000, contents: [{ kind: "text", text: "bounded" }], outputMode: "native",
+      jsonSchema: { type: "object", properties: { prompt: { type: "string" } }, required: ["prompt"] },
+      schema, maxSchemaRepairs: 1,
+    });
+
+    expect(result.metadata.providerAttemptCount).toBe(2);
+    expect(generateContent.mock.calls[1]?.[0].config?.maxOutputTokens).toBe(1_600);
+  });
+
   it("classifies a max-token truncated revision object and empty repair without retaining content", async () => {
     const generateContent = vi.fn<GoogleGenAI["models"]["generateContent"]>()
       .mockResolvedValueOnce({
@@ -95,6 +114,7 @@ describe("Google GenAI structured repair", () => {
       schema, maxSchemaRepairs: 1,
     })).rejects.toMatchObject({ code: "INVALID_OUTPUT" });
 
+    expect(generateContent.mock.calls[1]?.[0].config?.maxOutputTokens).toBe(2_700);
     expect(diagnostics).toEqual([
       expect.objectContaining({
         phase: "first_pass", category: "invalid_json", code: "INVALID_JSON_MAX_TOKENS",

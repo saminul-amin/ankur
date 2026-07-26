@@ -14,21 +14,17 @@ export class AnalyzeConfirmedSource {
     readonly source: ConfirmedSource;
     readonly requestId: string;
   }): Promise<PreparationMap> {
-    const first = await this.generator.generatePreparationMap(input);
-    const firstFailures = validatePreparationMap(input.source, first);
-    if (firstFailures.length === 0) {
-      return first;
+    const generated = await this.generator.generatePreparationMap(input);
+    const failures = validatePreparationMap(input.source, generated);
+    if (failures.length === 0) return generated;
+    if (generated.artifact.repaired) {
+      throw new ApplicationError("EVIDENCE_INVALID");
     }
-
     const repaired = await this.generator.generatePreparationMap({
       ...input,
-      repair: {
-        invalidArtifact: first,
-        validationErrors: failureMessages(firstFailures),
-      },
+      repair: { invalidArtifact: generated, validationErrors: failureMessages(failures) },
     });
-    const repairedFailures = validatePreparationMap(input.source, repaired);
-    if (repairedFailures.length > 0) {
+    if (validatePreparationMap(input.source, repaired).length > 0) {
       throw new ApplicationError("EVIDENCE_INVALID");
     }
     return repaired;

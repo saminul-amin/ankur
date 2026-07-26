@@ -77,16 +77,7 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
       throw new ProviderError("INVALID_OUTPUT", { cause: error });
     }
     const originalPrompts = input.originalActivity.questions.map((question) => question.prompt);
-    const semanticRepair: RetryRepairPromptContext | undefined = input.repair === undefined ? undefined : {
-      failureCodes: input.repair.validationErrors,
-      invalidFields: { retryActivity: input.repair.invalidArtifact.retryActivity },
-      lockedFields: {
-        mcqCanonicalAnswer: evidencePlan.mcqCanonicalAnswer,
-        writtenCanonicalAnswer: evidencePlan.writtenCanonicalAnswer,
-        targetConceptIds: input.selection.targetConceptIds,
-      },
-    };
-    const generate = async (repair: RetryRepairPromptContext | undefined = semanticRepair) => {
+    const generate = async (repair?: RetryRepairPromptContext) => {
       const mcqResult = await this.model.generateStructured({
         task: "structured_generation",
         modelId: MODEL,
@@ -112,7 +103,7 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
         outputMode: "native",
         jsonSchema: evidenceFirstMcqProviderJsonSchema,
         schema: evidenceFirstMcqProviderSchema,
-        maxSchemaRepairs: 1,
+        maxSchemaRepairs: repair === undefined ? 1 : 0,
       });
       const writtenResult = await this.model.generateStructured({
         task: "structured_generation",
@@ -140,7 +131,7 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
         outputMode: "native",
         jsonSchema: evidenceFirstWrittenQuestionProviderJsonSchema,
         schema: evidenceFirstWrittenQuestionProviderSchema,
-        maxSchemaRepairs: 1,
+        maxSchemaRepairs: repair === undefined ? 1 : 0,
       });
       const placeholderMetadata: ModelArtifactMetadata = {
         provider: "gemini_api",
@@ -197,7 +188,7 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
         outputMode: "native",
         jsonSchema: evidenceFirstRubricProviderJsonSchema,
         schema: evidenceFirstRubricProviderSchema,
-        maxSchemaRepairs: 1,
+        maxSchemaRepairs: repair === undefined ? 1 : 0,
       });
       const latencyMs =
         mcqResult.metadata.latencyMs +
@@ -282,20 +273,29 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
     };
     let result = await generate();
     if (result.failures.length > 0) {
+      if (result.repaired) throw new ProviderError("INVALID_OUTPUT");
       const failureCodes = [...new Set(result.failures.map((failure) => failure.code))];
       result = await generate({
+        artifactType: "revision_item",
+        outputSchemaVersion: "revision-question.v2",
         failureCodes,
-        invalidFields: {
+        invalidArtifact: {
           mcq: result.assembled.mcq,
           writtenQuestion: result.assembled.writtenQuestion,
           rubric: result.assembled.rubric,
         },
-        lockedFields: {
-          mcqCanonicalAnswer: evidencePlan.mcqCanonicalAnswer,
-          writtenCanonicalAnswer: evidencePlan.writtenCanonicalAnswer,
-          targetConceptIds: input.selection.targetConceptIds,
-          originalQuestionIds: input.originalActivity.questions.map((question) => question.id),
-          marks: { mcq: 1, written: 5, rubric: [2, 2, 1] },
+        mutableFields: [
+          "prompt", "explanation", "distractor1", "distractor1Classification",
+          "distractor2", "distractor2Classification", "distractor3",
+          "distractor3Classification", "expectedLength", "criterion1Description",
+          "criterion2Description", "criterion3Description",
+        ],
+        lockedOutputFields: {},
+        referenceContext: {
+          canonicalAnswer: evidencePlan.writtenCanonicalAnswer.canonicalAnswer,
+          requiredClaims: evidencePlan.writtenCanonicalAnswer.requiredClaims.map((claim) => claim.text),
+          permittedEvidence: evidencePlan.writtenCanonicalAnswer.evidenceReferences,
+          language: evidencePlan.writtenCanonicalAnswer.language,
         },
       });
       if (result.failures.length > 0) {
@@ -351,7 +351,7 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
         outputMode: "native",
         jsonSchema: revisionItemCandidateProviderJsonSchema,
         schema: revisionItemCandidateProviderSchema,
-        maxSchemaRepairs: 1,
+        maxSchemaRepairs: input.repair === undefined ? 1 : 0,
       });
       itemResults.push(result);
       const evidence = concept.evidence.filter((reference) =>

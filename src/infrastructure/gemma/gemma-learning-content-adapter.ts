@@ -59,15 +59,13 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
   async generatePreparationMap(
     input: Parameters<LearningContentGenerationPort["generatePreparationMap"]>[0],
   ): Promise<PreparationMap> {
-    const promptVersion = input.repair === undefined
-      ? LEARNING_PROMPT_VERSIONS.analysis
-      : LEARNING_PROMPT_VERSIONS.analysisEvidenceRepair;
-    const thinkingLevel = input.repair === undefined ? "minimal" : "high";
+    const promptVersion = LEARNING_PROMPT_VERSIONS.analysis;
+    const thinkingLevel = "high";
     const result = await this.model.generateStructured({
       task: "structured_generation",
       modelId: PRIMARY_MODEL,
       promptVersion,
-      schemaVersion: "preparation-map.v1",
+      schemaVersion: "analysis-semantic.v2",
       thinkingLevel,
       temperature: 0.1,
       maxOutputTokens: 2_500,
@@ -78,35 +76,34 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       schema: preparationMapProviderSchema,
       maxSchemaRepairs: 1,
     });
-    const evidence = [{
-      segmentId: result.value.evidenceSegmentId,
-      quote: result.value.evidenceQuote,
-    }];
+    const selected = input.source.segments[result.value.evidenceIndex - 1];
+    if (selected === undefined) throw new ProviderError("INVALID_OUTPUT");
+    const evidence = [{ segmentId: selected.id, quote: selected.text.slice(0, 600) }];
     return {
-      schemaVersion: result.value.schemaVersion,
+      schemaVersion: "preparation-map.v1",
       id: `preparation-${input.source.sourceVersionId}`,
-      sourceVersionId: result.value.sourceVersionId,
+      sourceVersionId: input.source.sourceVersionId,
       title: result.value.title,
       language: result.value.language,
       domain: result.value.domain,
       topics: [{
-        id: result.value.topicId,
+        id: "topic-primary",
         name: result.value.topicName,
         priority: result.value.topicPriority,
         evidence,
       }],
       concepts: [{
-        id: result.value.conceptId,
-        topicId: result.value.topicId,
+        id: "concept-primary",
+        topicId: "topic-primary",
         name: result.value.conceptName,
         description: result.value.conceptDescription,
         priority: result.value.conceptPriority,
         evidence,
       }],
       objectives: [{
-        id: result.value.objectiveId,
+        id: "objective-primary",
         description: result.value.objectiveDescription,
-        conceptIds: [result.value.conceptId],
+        conceptIds: ["concept-primary"],
         evidence,
       }],
       warnings: result.value.warnings,
@@ -114,7 +111,7 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
         result,
         task: "material_analysis",
         promptVersion,
-        schemaVersion: "preparation-map.v1",
+        schemaVersion: "analysis-semantic.v2",
         requestId: input.requestId,
         thinkingLevel,
       }),
@@ -143,15 +140,7 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       plan.writtenCanonicalAnswer.validationStatus !== "valid"
     ) throw new ProviderError("INVALID_OUTPUT");
 
-    const outerRepair = input.repair === undefined ? undefined : {
-      failureCodes: input.repair.validationErrors,
-      invalidFields: { activitySet: input.repair.invalidArtifact },
-      lockedFields: {
-        mcqCanonicalAnswer: plan.mcqCanonicalAnswer,
-        writtenCanonicalAnswer: plan.writtenCanonicalAnswer,
-      },
-    };
-    const generateMcq = (repair: RepairPromptContext | undefined = outerRepair) => this.model.generateStructured({
+    const generateMcq = (repair?: RepairPromptContext) => this.model.generateStructured({
       task: "structured_generation",
       modelId: PRIMARY_MODEL,
       promptVersion,
@@ -174,11 +163,11 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       outputMode: "native",
       jsonSchema: evidenceFirstMcqProviderJsonSchema,
       schema: evidenceFirstMcqProviderSchema,
-      maxSchemaRepairs: 1,
+      maxSchemaRepairs: repair === undefined ? 1 : 0,
     });
     const generateWritten = (
       priorMcqPrompt: string,
-      repair: RepairPromptContext | undefined = outerRepair,
+      repair?: RepairPromptContext,
     ) => this.model.generateStructured({
       task: "structured_generation",
       modelId: PRIMARY_MODEL,
@@ -203,11 +192,11 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       outputMode: "native",
       jsonSchema: evidenceFirstWrittenQuestionProviderJsonSchema,
       schema: evidenceFirstWrittenQuestionProviderSchema,
-      maxSchemaRepairs: 1,
+      maxSchemaRepairs: repair === undefined ? 1 : 0,
     });
     const generateRubric = (
       writtenQuestion: ReturnType<typeof assembleEvidenceFirstAssessment>["writtenQuestion"],
-      repair: RepairPromptContext | undefined = outerRepair,
+      repair?: RepairPromptContext,
     ) => this.model.generateStructured({
       task: "structured_generation",
       modelId: PRIMARY_MODEL,
@@ -232,7 +221,7 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       outputMode: "native",
       jsonSchema: evidenceFirstRubricProviderJsonSchema,
       schema: evidenceFirstRubricProviderSchema,
-      maxSchemaRepairs: 1,
+      maxSchemaRepairs: repair === undefined ? 1 : 0,
     });
     const placeholderMetadata: ModelArtifactMetadata = {
       provider: "gemini_api",
@@ -285,13 +274,6 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
     if (assembled.failures.length > 0) {
       semanticRepairAttempted = true;
       const failureCodes = [...new Set(assembled.failures.map((failure) => failure.code))];
-      const lockedFields = {
-        materialId: plan.mcqCanonicalAnswer.materialId,
-        sourceVersionId: input.source.sourceVersionId,
-        mcqCanonicalAnswer: plan.mcqCanonicalAnswer,
-        writtenCanonicalAnswer: plan.writtenCanonicalAnswer,
-        marks: { mcq: 1, written: 5, rubric: [2, 2, 1] },
-      };
       const mcqFailed = assembled.failures.some((failure) =>
         failure.code.startsWith("MCQ_") ||
         (failure.code.startsWith("LANG_") && failure.path.startsWith("options")),
@@ -302,24 +284,44 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
         (failure.code.startsWith("LANG_") && failure.path === "prompt"),
       );
       if (mcqFailed) {
+        if (mcqResult.repaired) throw new ProviderError("INVALID_OUTPUT");
         mcqResult = await generateMcq({
+          artifactType: "single_mcq",
+          outputSchemaVersion: "single-mcq-question.v2",
           failureCodes,
-          invalidFields: {
+          invalidArtifact: {
             prompt: assembled.mcq.prompt,
             explanation: assembled.mcq.explanation,
             distractors: assembled.mcq.options.filter((option) => option.role === "distractor"),
           },
-          lockedFields,
+          mutableFields: ["prompt", "explanation", "distractor1", "distractor1Classification", "distractor2", "distractor2Classification", "distractor3", "distractor3Classification"],
+          lockedOutputFields: {},
+          referenceContext: {
+            canonicalAnswer: plan.mcqCanonicalAnswer.canonicalAnswer,
+            requiredClaims: plan.mcqCanonicalAnswer.requiredClaims.map((claim) => claim.text),
+            permittedEvidence: plan.mcqCanonicalAnswer.evidenceReferences,
+            language: plan.mcqCanonicalAnswer.language,
+          },
         });
       }
       if (writtenPairFailed) {
+        if (writtenResult.repaired || rubricResult.repaired) throw new ProviderError("INVALID_OUTPUT");
         writtenResult = await generateWritten(mcqResult.value.prompt, {
+          artifactType: "short_written_question",
+          outputSchemaVersion: "short-written-question.v2",
           failureCodes,
-          invalidFields: {
+          invalidArtifact: {
             prompt: assembled.writtenQuestion.prompt,
             explanation: assembled.writtenQuestion.explanation,
           },
-          lockedFields,
+          mutableFields: ["prompt", "explanation", "expectedLength"],
+          lockedOutputFields: {},
+          referenceContext: {
+            canonicalAnswer: plan.writtenCanonicalAnswer.canonicalAnswer,
+            requiredClaims: plan.writtenCanonicalAnswer.requiredClaims.map((claim) => claim.text),
+            permittedEvidence: plan.writtenCanonicalAnswer.evidenceReferences,
+            language: plan.writtenCanonicalAnswer.language,
+          },
         });
         const repairedBeforeRubric = assembleEvidenceFirstAssessment({
           source: input.source,
@@ -332,11 +334,17 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
           metadata: placeholderMetadata,
         });
         rubricResult = await generateRubric(repairedBeforeRubric.writtenQuestion, {
+          artifactType: "written_rubric",
+          outputSchemaVersion: "written-rubric.v2",
           failureCodes,
-          invalidFields: { criteria: assembled.rubric.criteria },
-          lockedFields: {
-            ...lockedFields,
-            writtenQuestion: repairedBeforeRubric.writtenQuestion,
+          invalidArtifact: { criteria: assembled.rubric.criteria },
+          mutableFields: ["criterion1Description", "criterion2Description", "criterion3Description"],
+          lockedOutputFields: {},
+          referenceContext: {
+            canonicalAnswer: plan.writtenCanonicalAnswer.canonicalAnswer,
+            requiredClaims: plan.writtenCanonicalAnswer.requiredClaims.map((claim) => claim.text),
+            permittedEvidence: plan.writtenCanonicalAnswer.evidenceReferences,
+            language: plan.writtenCanonicalAnswer.language,
           },
         });
       }

@@ -169,28 +169,30 @@ export class GeneratePersonalizedRevision {
       segments,
     });
     const generationInput = { ...input, source: evidenceWindow, performance, selection };
-    const first = await this.generator.generateRevisionPlan(generationInput);
-    const firstFailures = validateRevisionPlan({
+    const generated = await this.generator.generateRevisionPlan(generationInput);
+    const failures = validateRevisionPlan({
       source: evidenceWindow,
       preparationMap: input.preparationMap,
       originalActivity: input.originalActivity,
       originalResultId: input.originalResultId,
       expectedSelection: selection,
       writtenEvaluation: input.writtenEvaluation,
-      plan: first,
+      plan: generated,
     });
-    if (firstFailures.length === 0) return first;
+    if (failures.length === 0) return generated;
     this.recordFailures({
-      failures: firstFailures,
-      plan: first,
+      failures,
+      plan: generated,
       source: evidenceWindow,
       targetConceptCount: selection.targetConceptIds.length,
       phase: "first_pass",
     });
-
+    if (generated.artifact.repaired) {
+      throw new ApplicationError(evidenceFailure(failures) ? "EVIDENCE_INVALID" : "MODEL_OUTPUT_INVALID");
+    }
     const repaired = await this.generator.generateRevisionPlan({
       ...generationInput,
-      repair: { invalidArtifact: first, validationErrors: failureMessages(firstFailures) },
+      repair: { invalidArtifact: generated, validationErrors: failureMessages(failures) },
     });
     const repairedFailures = validateRevisionPlan({
       source: evidenceWindow,

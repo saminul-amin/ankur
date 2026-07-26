@@ -51,27 +51,32 @@ export class GenerateMixedAssessment {
       throw new ApplicationError("MODEL_OUTPUT_INVALID");
     }
 
-    const first = await this.generator.generateMixedAssessment(input);
-    const firstFailures = [
-      ...validateActivitySet(input.source, input.preparationMap, first),
-      ...configurationFailures({ activitySet: first, selectedConceptIds: input.selectedConceptIds, title: input.title, difficulty: input.difficulty }),
+    const generated = await this.generator.generateMixedAssessment(input);
+    const failures = [
+      ...validateActivitySet(input.source, input.preparationMap, generated),
+      ...configurationFailures({ activitySet: generated, selectedConceptIds: input.selectedConceptIds, title: input.title, difficulty: input.difficulty }),
     ];
-    if (firstFailures.length === 0) return first;
-
-    const repaired = await this.generator.generateMixedAssessment({
-      ...input,
-      repair: { invalidArtifact: first, validationErrors: failureMessages(firstFailures) },
-    });
-    const repairedFailures = [
-      ...validateActivitySet(input.source, input.preparationMap, repaired),
-      ...configurationFailures({ activitySet: repaired, selectedConceptIds: input.selectedConceptIds, title: input.title, difficulty: input.difficulty }),
-    ];
-    if (repairedFailures.length > 0) {
-      const isEvidenceFailure = repairedFailures.some((failure) =>
+    if (failures.length > 0) {
+      if (!generated.artifact.repaired) {
+        const repaired = await this.generator.generateMixedAssessment({
+          ...input,
+          repair: { invalidArtifact: generated, validationErrors: failureMessages(failures) },
+        });
+        const repairedFailures = [
+          ...validateActivitySet(input.source, input.preparationMap, repaired),
+          ...configurationFailures({ activitySet: repaired, selectedConceptIds: input.selectedConceptIds, title: input.title, difficulty: input.difficulty }),
+        ];
+        if (repairedFailures.length === 0) return repaired;
+        const repairedEvidenceFailure = repairedFailures.some((failure) =>
+          failure.reason === "UNKNOWN_SEGMENT" || failure.reason === "QUOTE_NOT_FOUND" || failure.reason === "EVIDENCE_REQUIRED",
+        );
+        throw new ApplicationError(repairedEvidenceFailure ? "EVIDENCE_INVALID" : "MODEL_OUTPUT_INVALID");
+      }
+      const isEvidenceFailure = failures.some((failure) =>
         failure.reason === "UNKNOWN_SEGMENT" || failure.reason === "QUOTE_NOT_FOUND" || failure.reason === "EVIDENCE_REQUIRED",
       );
       throw new ApplicationError(isEvidenceFailure ? "EVIDENCE_INVALID" : "MODEL_OUTPUT_INVALID");
     }
-    return repaired;
+    return generated;
   }
 }
