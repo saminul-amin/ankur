@@ -68,7 +68,7 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       schemaVersion: "analysis-semantic.v2",
       thinkingLevel,
       temperature: 0.1,
-      maxOutputTokens: 2_500,
+      maxOutputTokens: 4_000,
       timeoutMs: this.timeoutMs,
       contents: [{ kind: "text", text: buildAnalysisPrompt(input) }],
       outputMode: "native",
@@ -276,11 +276,12 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       const failureCodes = [...new Set(assembled.failures.map((failure) => failure.code))];
       const mcqFailed = assembled.failures.some((failure) =>
         failure.code.startsWith("MCQ_") ||
+        failure.code.startsWith("QUESTION_") ||
         (failure.code.startsWith("LANG_") && failure.path.startsWith("options")),
       );
       const writtenPairFailed = assembled.failures.some((failure) =>
         failure.code.startsWith("RUBRIC_") ||
-        failure.code === "QUESTION_REQUIRED_CLAIM_MISSING" ||
+        failure.code.startsWith("QUESTION_") ||
         (failure.code.startsWith("LANG_") && failure.path === "prompt"),
       );
       if (mcqFailed) {
