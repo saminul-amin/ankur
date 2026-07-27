@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "task06c-r2e-provider-preflight.v1",
+  "generatedAt": "2026-07-27T10:07:49.691Z",
+  "modelId": "gemma-4-26b-a4b-it",
+  "promptVersion": "task06c-r2e-provider-preflight.v1",
+  "requestCount": 3,
+  "boundedDelayMs": 2000,
+  "expectedFixedPlanProviderAttemptBudget": 100,
+  "budgetConfirmation": "3/3 bounded calls succeeded without quota, rate-limit, timeout, or availability errors; provider exposes no remaining-quota endpoint",
+  "attempts": [
+    {
+      "ordinal": 1,
+      "succeeded": true,
+      "latencyMs": 1566,
+      "finishReason": "STOP",
+      "promptTokens": 14,
+      "outputTokens": 1,
+      "failure": null
+    },
+    {
+      "ordinal": 2,
+      "succeeded": true,
+      "latencyMs": 1036,
+      "finishReason": "STOP",
+      "promptTokens": 14,
+      "outputTokens": 1,
+      "failure": null
+    },
+    {
+      "ordinal": 3,
+      "succeeded": true,
+      "latencyMs": 1001,
+      "finishReason": "STOP",
+      "promptTokens": 14,
+      "outputTokens": 1,
+      "failure": null
+    }
+  ],
+  "stable": true
+}
