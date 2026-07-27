@@ -1,6 +1,7 @@
 import type { ModelArtifactMetadata } from "../../domain/ai/model-artifact";
 import {
   buildCanonicalAnswer,
+  isOptionSupportedByCanonical,
   validateCanonicalAnswer,
   validateQuestionRubricAlignment,
   validateShortWrittenQuestion,
@@ -109,16 +110,73 @@ function evidenceForCanonical(canonical: CanonicalAnswerV2): readonly ScopedEvid
   return canonical.evidenceReferences;
 }
 
-function rubricMarks(index: number): number {
-  return index === 0 ? 2 : index === 1 ? 2 : 1;
+export function deterministicRubricMarks(criterionCount: number): readonly number[] {
+  if (criterionCount < 2 || criterionCount > 5) {
+    throw new Error("A deterministic rubric requires two to five claims.");
+  }
+  const base = Math.floor(5 / criterionCount);
+  const remainder = 5 % criterionCount;
+  return Array.from({ length: criterionCount }, (_, index) => base + (index < remainder ? 1 : 0));
 }
 
-function providerDescriptions(provider: EvidenceFirstRubricProviderOutput): readonly string[] {
-  return [
-    provider.criterion1Description,
-    provider.criterion2Description,
-    provider.criterion3Description,
+function comparable(value: string): string {
+  return value.normalize("NFKC").toLocaleLowerCase()
+    .replace(/[\p{P}\p{S}]+/gu, " ")
+    .replace(/\s+/gu, " ")
+    .trim();
+}
+
+function deterministicMisconceptions(language: CanonicalAnswerV2["language"]): readonly string[] {
+  if (language === "bn") return [
+    "উৎসে বর্ণিত কারণ ও ফলের সম্পর্কটি উল্টো।",
+    "প্রক্রিয়াটির অপরিহার্য শর্তটি সম্পূর্ণ অনুপস্থিত।",
+    "ঘটনাটির শেষ ধাপটি প্রথম ধাপের আগে ঘটে।",
   ];
+  if (language === "mixed") return [
+    "Source-এ বর্ণিত cause এবং effect উল্টো।",
+    "প্রয়োজনীয় condition-টি process থেকে অনুপস্থিত।",
+    "Final stage-টি first stage-এর আগে ঘটে।",
+  ];
+  return [
+    "The source-described cause and effect are reversed.",
+    "The process occurs without its essential condition.",
+    "The final stage occurs before the first stage.",
+  ];
+}
+
+export function selectDeterministicDistractors(input: {
+  readonly canonicalAnswer: CanonicalAnswerV2;
+  readonly candidates: readonly string[];
+}): readonly [string, string, string] {
+  const accepted: string[] = [];
+  for (const candidate of [...input.candidates, ...deterministicMisconceptions(input.canonicalAnswer.language)]) {
+    const normalized = comparable(candidate);
+    if (
+      normalized.length === 0 ||
+      comparable(input.canonicalAnswer.canonicalAnswer) === normalized ||
+      isOptionSupportedByCanonical(candidate, input.canonicalAnswer) ||
+      accepted.some((existing) => comparable(existing) === normalized)
+    ) continue;
+    accepted.push(candidate.trim());
+    if (accepted.length === 3) break;
+  }
+  if (accepted.length !== 3) throw new Error("No valid deterministic distractor set remained.");
+  return accepted as unknown as readonly [string, string, string];
+}
+
+function seededPermutation(seed: string): readonly number[] {
+  let state = 2166136261;
+  for (const character of seed) {
+    state ^= character.codePointAt(0) ?? 0;
+    state = Math.imul(state, 16777619);
+  }
+  const values = [0, 1, 2, 3];
+  for (let index = values.length - 1; index > 0; index -= 1) {
+    state = Math.imul(state ^ (state >>> 13), 1274126177);
+    const swap = Math.abs(state) % (index + 1);
+    [values[index], values[swap]] = [values[swap] ?? index, values[index] ?? swap];
+  }
+  return values;
 }
 
 export function assembleEvidenceFirstAssessment(input: {
@@ -126,7 +184,7 @@ export function assembleEvidenceFirstAssessment(input: {
   readonly plan: EvidenceFirstAssessmentPlan;
   readonly mcqProvider: EvidenceFirstMcqProviderOutput;
   readonly writtenQuestionProvider: EvidenceFirstWrittenQuestionProviderOutput;
-  readonly rubricProvider: EvidenceFirstRubricProviderOutput;
+  readonly rubricProvider?: EvidenceFirstRubricProviderOutput;
   readonly title: string;
   readonly difficulty: AssessmentDifficulty;
   readonly metadata: ModelArtifactMetadata;
@@ -135,7 +193,37 @@ export function assembleEvidenceFirstAssessment(input: {
 }): EvidenceFirstAssessmentArtifacts {
   const prefix = input.idPrefix ?? "question";
   const criterionPrefix = input.criterionIdPrefix ?? prefix;
-  const correctOptionId = "A" as const;
+  const distractors = selectDeterministicDistractors({
+    canonicalAnswer: input.plan.mcqCanonicalAnswer,
+    candidates: [
+      input.mcqProvider.misconception1,
+      input.mcqProvider.misconception2,
+      input.mcqProvider.misconception3,
+    ],
+  });
+  const unassignedOptions = [
+    {
+      text: input.plan.mcqCanonicalAnswer.canonicalAnswer,
+      role: "correct" as const,
+      validationClassification: "supported_by_evidence" as const,
+    },
+    ...distractors.map((text) => ({
+      text,
+      role: "distractor" as const,
+      validationClassification: "plausible_misconception" as const,
+    })),
+  ];
+  const optionIds = ["A", "B", "C", "D"] as const;
+  const options = seededPermutation(input.metadata.requestId).map((sourceIndex, outputIndex) => {
+    const option = unassignedOptions[sourceIndex];
+    const optionId = optionIds[outputIndex];
+    if (option === undefined || optionId === undefined) {
+      throw new Error("Deterministic option assignment failed.");
+    }
+    return { ...option, id: optionId };
+  });
+  const correctOptionId = options.find((option) => option.role === "correct")?.id;
+  if (correctOptionId === undefined) throw new Error("Correct option assignment failed.");
   const mcq: SingleMcqQuestionV2 = {
     schemaVersion: "single-mcq-question.v2",
     id: `${prefix}-001`,
@@ -147,32 +235,7 @@ export function assembleEvidenceFirstAssessment(input: {
     requiredClaimIds: input.plan.mcqCanonicalAnswer.requiredClaims.map((claim) => claim.id),
     conceptIds: [input.plan.mcq.conceptId],
     evidenceReferences: [...evidenceForCanonical(input.plan.mcqCanonicalAnswer)],
-    options: [
-      {
-        id: "A",
-        text: input.plan.mcqCanonicalAnswer.canonicalAnswer,
-        role: "correct",
-        validationClassification: "supported_by_evidence",
-      },
-      {
-        id: "B",
-        text: input.mcqProvider.distractor1,
-        role: "distractor",
-        validationClassification: input.mcqProvider.distractor1Classification,
-      },
-      {
-        id: "C",
-        text: input.mcqProvider.distractor2,
-        role: "distractor",
-        validationClassification: input.mcqProvider.distractor2Classification,
-      },
-      {
-        id: "D",
-        text: input.mcqProvider.distractor3,
-        role: "distractor",
-        validationClassification: input.mcqProvider.distractor3Classification,
-      },
-    ],
+    options,
     correctOptionId,
     difficulty: input.difficulty,
     marks: 1,
@@ -192,8 +255,8 @@ export function assembleEvidenceFirstAssessment(input: {
     difficulty: input.difficulty,
     marks: 5,
   };
-  const descriptions = providerDescriptions(input.rubricProvider);
   const claims = input.plan.writtenCanonicalAnswer.requiredClaims;
+  const marks = deterministicRubricMarks(claims.length);
   const rubric: WrittenRubricV2 = {
     schemaVersion: "written-rubric.v2",
     id: `rubric-${prefix}`,
@@ -202,15 +265,13 @@ export function assembleEvidenceFirstAssessment(input: {
     materialId: writtenQuestion.materialId,
     sourceVersionId: writtenQuestion.sourceVersionId,
     language: input.plan.writtenCanonicalAnswer.language,
-    criteria: descriptions.map((providerDescription, index) => {
-      const claim = claims[index % claims.length];
-      if (claim === undefined) throw new Error("A rubric requires a canonical claim.");
+    criteria: claims.map((claim, index) => {
       const assignment = input.plan.written[index] ?? input.plan.written[0];
       if (assignment === undefined) throw new Error("A rubric requires a grounded concept.");
       return {
         id: `criterion-${criterionPrefix}-${String(index + 1).padStart(3, "0")}`,
-        description: `${providerDescription.trim()} — ${claim.text}`.slice(0, 600),
-        maximumMarks: rubricMarks(index),
+        description: claim.text.slice(0, 600),
+        maximumMarks: marks[index] ?? 0,
         requiredClaimIds: [claim.id],
         requiredConceptIds: [assignment.conceptId],
         evidenceReferences: claim.evidenceReferences,
@@ -234,18 +295,6 @@ export function assembleEvidenceFirstAssessment(input: {
     writtenQuestion,
     rubric,
   );
-  const providerRubricFailures = descriptions.flatMap<ArtifactValidationFailure>((description, index) => {
-    const claim = claims[index % claims.length];
-    if (claim === undefined) {
-      return [{ code: "RUBRIC_MISSING_CENTRAL_CONCEPT" as const, path: `criteria[${String(index)}]` }];
-    }
-    const descriptionTokens = new Set(description.toLocaleLowerCase().match(/[\p{L}\p{M}\p{N}]+/gu) ?? []);
-    const claimTokens = new Set(claim.text.toLocaleLowerCase().match(/[\p{L}\p{M}\p{N}]+/gu) ?? []);
-    const shared = [...descriptionTokens].filter((token) => claimTokens.has(token)).length;
-    return shared === 0
-      ? [{ code: "RUBRIC_CANONICAL_ANSWER_MISMATCH" as const, path: `criteria[${String(index)}].description` }]
-      : [];
-  });
   const canonicalFailures = [
     ...validateCanonicalAnswer(input.source, input.plan.mcqCanonicalAnswer),
     ...validateCanonicalAnswer(input.source, input.plan.writtenCanonicalAnswer),
@@ -314,10 +363,9 @@ export function assembleEvidenceFirstAssessment(input: {
     activitySet,
     failures: [
       ...canonicalFailures,
-      ...mcqFailures,
-      ...writtenFailures,
-      ...rubricFailures,
-      ...providerRubricFailures,
+      ...mcqFailures.map((failure) => ({ ...failure, path: `mcq.${failure.path}` })),
+      ...writtenFailures.map((failure) => ({ ...failure, path: `writtenQuestion.${failure.path}` })),
+      ...rubricFailures.map((failure) => ({ ...failure, path: `rubric.${failure.path}` })),
     ],
   };
 }

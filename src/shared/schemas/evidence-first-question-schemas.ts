@@ -168,18 +168,13 @@ export const revisionQuestionV2Schema = z.object({
 
 export const evidenceFirstMcqProviderSchema = z.object({
   prompt: z.string().min(1).max(700),
-  explanation: z.string().min(1).max(900),
-  distractor1: z.string().min(1).max(1_200),
-  distractor1Classification: distractorClassificationSchema,
-  distractor2: z.string().min(1).max(1_200),
-  distractor2Classification: distractorClassificationSchema,
-  distractor3: z.string().min(1).max(1_200),
-  distractor3Classification: distractorClassificationSchema,
+  misconception1: z.string().min(1).max(240),
+  misconception2: z.string().min(1).max(240),
+  misconception3: z.string().min(1).max(240),
 }).strict();
 
 export const evidenceFirstWrittenQuestionProviderSchema = z.object({
   prompt: z.string().min(1).max(900),
-  explanation: z.string().min(1).max(900),
   expectedLength: z.enum(["one_sentence", "short_paragraph"]),
 }).strict();
 
@@ -205,24 +200,11 @@ export const evidenceFirstMcqProviderJsonSchema = {
   additionalProperties: false,
   properties: {
     prompt: { type: "string", minLength: 1, maxLength: 700 },
-    explanation: { type: "string", minLength: 1, maxLength: 900 },
-    distractor1: { type: "string", minLength: 1, maxLength: 1200 },
-    distractor1Classification: { type: "string", enum: distractorClassificationSchema.options },
-    distractor2: { type: "string", minLength: 1, maxLength: 1200 },
-    distractor2Classification: { type: "string", enum: distractorClassificationSchema.options },
-    distractor3: { type: "string", minLength: 1, maxLength: 1200 },
-    distractor3Classification: { type: "string", enum: distractorClassificationSchema.options },
+    misconception1: { type: "string", minLength: 1, maxLength: 240 },
+    misconception2: { type: "string", minLength: 1, maxLength: 240 },
+    misconception3: { type: "string", minLength: 1, maxLength: 240 },
   },
-  required: [
-    "prompt",
-    "explanation",
-    "distractor1",
-    "distractor1Classification",
-    "distractor2",
-    "distractor2Classification",
-    "distractor3",
-    "distractor3Classification",
-  ],
+  required: ["prompt", "misconception1", "misconception2", "misconception3"],
 } as const;
 
 export const evidenceFirstWrittenQuestionProviderJsonSchema = {
@@ -230,10 +212,9 @@ export const evidenceFirstWrittenQuestionProviderJsonSchema = {
   additionalProperties: false,
   properties: {
     prompt: { type: "string", minLength: 1, maxLength: 900 },
-    explanation: { type: "string", minLength: 1, maxLength: 900 },
     expectedLength: { type: "string", enum: ["one_sentence", "short_paragraph"] },
   },
-  required: ["prompt", "explanation", "expectedLength"],
+  required: ["prompt", "expectedLength"],
 } as const;
 
 export const evidenceFirstRubricProviderJsonSchema = {

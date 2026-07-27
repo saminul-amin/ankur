@@ -12,8 +12,6 @@ import { ProviderError } from "../../shared/errors/provider-error";
 import {
   evidenceFirstMcqProviderJsonSchema,
   evidenceFirstMcqProviderSchema,
-  evidenceFirstRubricProviderJsonSchema,
-  evidenceFirstRubricProviderSchema,
   evidenceFirstWrittenQuestionProviderJsonSchema,
   evidenceFirstWrittenQuestionProviderSchema,
 } from "../../shared/schemas/evidence-first-question-schemas";
@@ -34,7 +32,6 @@ type RetryRepairPromptContext = NonNullable<
 
 const RETRY_MCQ_OUTPUT_TOKEN_BUDGET = 1_800;
 const RETRY_WRITTEN_OUTPUT_TOKEN_BUDGET = 1_800;
-const RETRY_RUBRIC_OUTPUT_TOKEN_BUDGET = 1_600;
 
 function learnerIssueSummary(input: {
   readonly name: string;
@@ -82,7 +79,7 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
         task: "structured_generation",
         modelId: MODEL,
         promptVersion,
-        schemaVersion: "revision-question.v2",
+        schemaVersion: "retry-mcq-semantic.v3",
         thinkingLevel: "high",
         temperature: 0.1,
         maxOutputTokens: RETRY_MCQ_OUTPUT_TOKEN_BUDGET,
@@ -109,7 +106,7 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
         task: "structured_generation",
         modelId: MODEL,
         promptVersion,
-        schemaVersion: "revision-question.v2",
+        schemaVersion: "retry-written-semantic.v3",
         thinkingLevel: "high",
         temperature: 0.1,
         maxOutputTokens: RETRY_WRITTEN_OUTPUT_TOKEN_BUDGET,
@@ -145,60 +142,13 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
         latencyMs: 0,
         repaired: repair !== undefined,
       };
-      const placeholderRubric = {
-        criterion1Description: evidencePlan.writtenCanonicalAnswer.requiredClaims[0]?.text ?? evidencePlan.writtenCanonicalAnswer.canonicalAnswer,
-        criterion2Description: evidencePlan.writtenCanonicalAnswer.requiredClaims[1]?.text ?? evidencePlan.writtenCanonicalAnswer.canonicalAnswer,
-        criterion3Description: evidencePlan.writtenCanonicalAnswer.requiredClaims[2]?.text ?? evidencePlan.writtenCanonicalAnswer.canonicalAnswer,
-      };
-      const beforeRubric = assembleEvidenceFirstAssessment({
-        source: input.source,
-        plan: evidencePlan,
-        mcqProvider: mcqResult.value,
-        writtenQuestionProvider: writtenResult.value,
-        rubricProvider: placeholderRubric,
-        title,
-        difficulty,
-        metadata: placeholderMetadata,
-        idPrefix: "retry-question",
-        criterionIdPrefix: "retry",
-      });
-      const rubricResult = await this.model.generateStructured({
-        task: "structured_generation",
-        modelId: MODEL,
-        promptVersion,
-        schemaVersion: "written-rubric.v2",
-        thinkingLevel: "high",
-        temperature: 0.1,
-        maxOutputTokens: RETRY_RUBRIC_OUTPUT_TOKEN_BUDGET,
-        timeoutMs: this.timeoutMs,
-        contents: [{
-          kind: "text",
-          text: buildEvidenceFirstAssessmentPrompt({
-            source: input.source,
-            title,
-            difficulty,
-            target: "written_rubric",
-            canonicalAnswer: evidencePlan.writtenCanonicalAnswer,
-            writtenQuestion: beforeRubric.writtenQuestion,
-            excludedPrompts: originalPrompts,
-            retryMode: input.selection.mode,
-            ...(repair === undefined ? {} : { repair }),
-          }),
-        }],
-        outputMode: "native",
-        jsonSchema: evidenceFirstRubricProviderJsonSchema,
-        schema: evidenceFirstRubricProviderSchema,
-        maxSchemaRepairs: repair === undefined ? 1 : 0,
-      });
       const latencyMs =
         mcqResult.metadata.latencyMs +
-        writtenResult.metadata.latencyMs +
-        rubricResult.metadata.latencyMs;
+        writtenResult.metadata.latencyMs;
       const repaired =
         repair !== undefined ||
         mcqResult.repaired ||
-        writtenResult.repaired ||
-        rubricResult.repaired;
+        writtenResult.repaired;
       const artifact: ModelArtifactMetadata = {
         ...placeholderMetadata,
         latencyMs,
@@ -209,7 +159,6 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
         plan: evidencePlan,
         mcqProvider: mcqResult.value,
         writtenQuestionProvider: writtenResult.value,
-        rubricProvider: rubricResult.value,
         title,
         difficulty,
         metadata: artifact,
@@ -285,10 +234,8 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
           rubric: result.assembled.rubric,
         },
         mutableFields: [
-          "prompt", "explanation", "distractor1", "distractor1Classification",
-          "distractor2", "distractor2Classification", "distractor3",
-          "distractor3Classification", "expectedLength", "criterion1Description",
-          "criterion2Description", "criterion3Description",
+          "prompt", "misconception1", "misconception2", "misconception3",
+          "expectedLength",
         ],
         lockedOutputFields: {},
         referenceContext: {

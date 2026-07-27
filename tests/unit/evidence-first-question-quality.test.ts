@@ -85,17 +85,12 @@ function fixture() {
     plan,
     mcqProvider: {
       prompt: "What does photosynthesis use to produce glucose?",
-      explanation: "The permitted source identifies sunlight and glucose.",
-      distractor1: "It uses soil to produce rain.",
-      distractor1Classification: "unsupported_by_evidence",
-      distractor2: "It removes all oxygen from the air.",
-      distractor2Classification: "contradicted_by_evidence",
-      distractor3: "It turns roots into sunlight.",
-      distractor3Classification: "plausible_misconception",
+      misconception1: "It uses soil to produce rain.",
+      misconception2: "It removes all oxygen from the air.",
+      misconception3: "It turns roots into sunlight.",
     },
     writtenQuestionProvider: {
       prompt: "How does the source describe photosynthesis and its result?",
-      explanation: "A complete answer addresses the process and result.",
       expectedLength: "short_paragraph",
     },
     rubricProvider: {
@@ -374,8 +369,25 @@ describe("Task 06C evidence-first question quality", () => {
     expect(failureCodes).toEqual(expect.arrayContaining([
       "RUBRIC_CANONICAL_ANSWER_MISMATCH",
       "RUBRIC_EVIDENCE_SCOPE_INVALID",
-      "RUBRIC_DUPLICATE_CRITERIA",
     ]));
+  });
+
+  it("rejects duplicate deterministic rubric criteria", () => {
+    const { source, plan, artifacts } = fixture();
+    const first = required(artifacts.rubric.criteria[0]);
+    const duplicate = {
+      ...artifacts.rubric,
+      criteria: artifacts.rubric.criteria.map((criterion) => ({
+        ...criterion,
+        description: first.description,
+      })),
+    };
+    expect(codes(validateQuestionRubricAlignment(
+      source,
+      plan.writtenCanonicalAnswer,
+      artifacts.writtenQuestion,
+      duplicate,
+    ))).toContain("RUBRIC_DUPLICATE_CRITERIA");
   });
 
   it("rejects rubric marks that do not sum to five", () => {

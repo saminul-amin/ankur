@@ -11,8 +11,8 @@ import {
 } from "../../application/services/bounded-repair-context";
 
 export const LEARNING_PROMPT_VERSIONS = {
-  analysis: "analysis-indexed-evidence.v3", assessment: "assessment-evidence-first.v8",
-  analysisEvidenceRepair: "analysis-indexed-evidence-repair.v3", assessmentEvidenceRepair: "assessment-evidence-first-repair.v8",
+  analysis: "analysis-indexed-evidence.v3", assessment: "assessment-deterministic-construction.v10",
+  analysisEvidenceRepair: "analysis-indexed-evidence-repair.v3", assessmentEvidenceRepair: "assessment-deterministic-regeneration.v10",
 } as const;
 
 export interface AssessmentGroundingAssignment {
@@ -79,9 +79,9 @@ export function buildEvidenceFirstAssessmentPrompt(input: {
 }): string {
   if (input.repair !== undefined) {
     const outputFields = input.target === "mcq"
-      ? ["prompt", "explanation", "distractor1", "distractor1Classification", "distractor2", "distractor2Classification", "distractor3", "distractor3Classification"]
+      ? ["prompt", "misconception1", "misconception2", "misconception3"]
       : input.target === "written_question"
-        ? ["prompt", "explanation", "expectedLength"]
+        ? ["prompt", "expectedLength"]
         : ["criterion1Description", "criterion2Description", "criterion3Description"];
     const repairFailures = validateBoundedRepairContext(input.repair, outputFields);
     if (repairFailures.length > 0) {
@@ -94,9 +94,9 @@ export function buildEvidenceFirstAssessmentPrompt(input: {
       ? "Write one short-written question that explicitly tests every locked required claim and differs materially from the prior MCQ."
       : "Write three concise, non-overlapping criterion descriptions for the final locked written question and canonical claims.";
   const output = input.target === "mcq"
-    ? "Return only prompt, explanation, distractor1, distractor1Classification, distractor2, distractor2Classification, distractor3, and distractor3Classification. Classifications must use contradicted_by_evidence, unsupported_by_evidence, or plausible_misconception."
+    ? "Return only prompt, misconception1, misconception2, and misconception3. Each misconception is a concise false or unsupported statement. Do not return option IDs, the correct answer, classifications, evidence, metadata, or an explanation."
     : input.target === "written_question"
-      ? "Return only prompt, explanation, and expectedLength."
+      ? "Return only prompt and expectedLength."
       : "Return only criterion1Description, criterion2Description, and criterion3Description.";
   const writtenContext = input.target === "written_question"
     ? `\n\nPRIOR MCQ PROMPT (MUST NOT DUPLICATE)\n${input.priorMcqPrompt ?? "Unavailable"}`

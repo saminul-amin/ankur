@@ -425,6 +425,13 @@ function optionSupported(option: string, canonical: CanonicalAnswerV2): boolean 
   return canonical.requiredClaims.some((claim) => similarity(option, claim.text) >= 0.78);
 }
 
+export function isOptionSupportedByCanonical(
+  option: string,
+  canonical: CanonicalAnswerV2,
+): boolean {
+  return optionSupported(option, canonical);
+}
+
 export function validateSingleMcqQuestion(
   source: ConfirmedSource,
   canonical: CanonicalAnswerV2,

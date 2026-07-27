@@ -11,8 +11,6 @@ import { ProviderError } from "../../shared/errors/provider-error";
 import {
   evidenceFirstMcqProviderJsonSchema,
   evidenceFirstMcqProviderSchema,
-  evidenceFirstRubricProviderJsonSchema,
-  evidenceFirstRubricProviderSchema,
   evidenceFirstWrittenQuestionProviderJsonSchema,
   evidenceFirstWrittenQuestionProviderSchema,
 } from "../../shared/schemas/evidence-first-question-schemas";
@@ -144,7 +142,7 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       task: "structured_generation",
       modelId: PRIMARY_MODEL,
       promptVersion,
-      schemaVersion: "single-mcq-question.v2",
+      schemaVersion: "mcq-semantic.v3",
       thinkingLevel,
       temperature: 0.1,
       maxOutputTokens: 1_200,
@@ -172,7 +170,7 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       task: "structured_generation",
       modelId: PRIMARY_MODEL,
       promptVersion,
-      schemaVersion: "short-written-question.v2",
+      schemaVersion: "written-question-semantic.v3",
       thinkingLevel,
       temperature: 0.1,
       maxOutputTokens: 1_000,
@@ -194,35 +192,6 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       schema: evidenceFirstWrittenQuestionProviderSchema,
       maxSchemaRepairs: repair === undefined ? 1 : 0,
     });
-    const generateRubric = (
-      writtenQuestion: ReturnType<typeof assembleEvidenceFirstAssessment>["writtenQuestion"],
-      repair?: RepairPromptContext,
-    ) => this.model.generateStructured({
-      task: "structured_generation",
-      modelId: PRIMARY_MODEL,
-      promptVersion,
-      schemaVersion: "written-rubric.v2",
-      thinkingLevel,
-      temperature: 0.1,
-      maxOutputTokens: 1_200,
-      timeoutMs: this.timeoutMs,
-      contents: [{
-        kind: "text",
-        text: buildEvidenceFirstAssessmentPrompt({
-          source: input.source,
-          title: input.title,
-          difficulty: input.difficulty,
-          target: "written_rubric",
-          canonicalAnswer: plan.writtenCanonicalAnswer,
-          writtenQuestion,
-          ...(repair === undefined ? {} : { repair }),
-        }),
-      }],
-      outputMode: "native",
-      jsonSchema: evidenceFirstRubricProviderJsonSchema,
-      schema: evidenceFirstRubricProviderSchema,
-      maxSchemaRepairs: repair === undefined ? 1 : 0,
-    });
     const placeholderMetadata: ModelArtifactMetadata = {
       provider: "gemini_api",
       modelId: PRIMARY_MODEL,
@@ -237,34 +206,11 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
     };
     let mcqResult = await generateMcq();
     let writtenResult = await generateWritten(mcqResult.value.prompt);
-    const placeholderRubric = {
-      criterion1Description:
-        plan.writtenCanonicalAnswer.requiredClaims[0]?.text ??
-        plan.writtenCanonicalAnswer.canonicalAnswer,
-      criterion2Description:
-        plan.writtenCanonicalAnswer.requiredClaims[1]?.text ??
-        plan.writtenCanonicalAnswer.canonicalAnswer,
-      criterion3Description:
-        plan.writtenCanonicalAnswer.requiredClaims[2]?.text ??
-        plan.writtenCanonicalAnswer.canonicalAnswer,
-    };
-    const beforeRubric = assembleEvidenceFirstAssessment({
-      source: input.source,
-      plan,
-      mcqProvider: mcqResult.value,
-      writtenQuestionProvider: writtenResult.value,
-      rubricProvider: placeholderRubric,
-      title: input.title,
-      difficulty: input.difficulty,
-      metadata: placeholderMetadata,
-    });
-    let rubricResult = await generateRubric(beforeRubric.writtenQuestion);
     let assembled = assembleEvidenceFirstAssessment({
       source: input.source,
       plan,
       mcqProvider: mcqResult.value,
       writtenQuestionProvider: writtenResult.value,
-      rubricProvider: rubricResult.value,
       title: input.title,
       difficulty: input.difficulty,
       metadata: placeholderMetadata,
@@ -275,27 +221,24 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       semanticRepairAttempted = true;
       const failureCodes = [...new Set(assembled.failures.map((failure) => failure.code))];
       const mcqFailed = assembled.failures.some((failure) =>
-        failure.code.startsWith("MCQ_") ||
-        failure.code.startsWith("QUESTION_") ||
-        (failure.code.startsWith("LANG_") && failure.path.startsWith("options")),
+        failure.path.startsWith("mcq."),
       );
       const writtenPairFailed = assembled.failures.some((failure) =>
-        failure.code.startsWith("RUBRIC_") ||
-        failure.code.startsWith("QUESTION_") ||
-        (failure.code.startsWith("LANG_") && failure.path === "prompt"),
+        failure.path.startsWith("writtenQuestion.") || failure.path.startsWith("rubric."),
       );
       if (mcqFailed) {
         if (mcqResult.repaired) throw new ProviderError("INVALID_OUTPUT");
         mcqResult = await generateMcq({
           artifactType: "single_mcq",
-          outputSchemaVersion: "single-mcq-question.v2",
+          outputSchemaVersion: "mcq-semantic.v3",
           failureCodes,
           invalidArtifact: {
             prompt: assembled.mcq.prompt,
-            explanation: assembled.mcq.explanation,
-            distractors: assembled.mcq.options.filter((option) => option.role === "distractor"),
+            misconceptionCandidates: assembled.mcq.options
+              .filter((option) => option.role === "distractor")
+              .map((option) => option.text),
           },
-          mutableFields: ["prompt", "explanation", "distractor1", "distractor1Classification", "distractor2", "distractor2Classification", "distractor3", "distractor3Classification"],
+          mutableFields: ["prompt", "misconception1", "misconception2", "misconception3"],
           lockedOutputFields: {},
           referenceContext: {
             canonicalAnswer: plan.mcqCanonicalAnswer.canonicalAnswer,
@@ -306,40 +249,15 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
         });
       }
       if (writtenPairFailed) {
-        if (writtenResult.repaired || rubricResult.repaired) throw new ProviderError("INVALID_OUTPUT");
+        if (writtenResult.repaired) throw new ProviderError("INVALID_OUTPUT");
         writtenResult = await generateWritten(mcqResult.value.prompt, {
           artifactType: "short_written_question",
-          outputSchemaVersion: "short-written-question.v2",
+          outputSchemaVersion: "written-question-semantic.v3",
           failureCodes,
           invalidArtifact: {
             prompt: assembled.writtenQuestion.prompt,
-            explanation: assembled.writtenQuestion.explanation,
           },
-          mutableFields: ["prompt", "explanation", "expectedLength"],
-          lockedOutputFields: {},
-          referenceContext: {
-            canonicalAnswer: plan.writtenCanonicalAnswer.canonicalAnswer,
-            requiredClaims: plan.writtenCanonicalAnswer.requiredClaims.map((claim) => claim.text),
-            permittedEvidence: plan.writtenCanonicalAnswer.evidenceReferences,
-            language: plan.writtenCanonicalAnswer.language,
-          },
-        });
-        const repairedBeforeRubric = assembleEvidenceFirstAssessment({
-          source: input.source,
-          plan,
-          mcqProvider: mcqResult.value,
-          writtenQuestionProvider: writtenResult.value,
-          rubricProvider: rubricResult.value,
-          title: input.title,
-          difficulty: input.difficulty,
-          metadata: placeholderMetadata,
-        });
-        rubricResult = await generateRubric(repairedBeforeRubric.writtenQuestion, {
-          artifactType: "written_rubric",
-          outputSchemaVersion: "written-rubric.v2",
-          failureCodes,
-          invalidArtifact: { criteria: assembled.rubric.criteria },
-          mutableFields: ["criterion1Description", "criterion2Description", "criterion3Description"],
+          mutableFields: ["prompt", "expectedLength"],
           lockedOutputFields: {},
           referenceContext: {
             canonicalAnswer: plan.writtenCanonicalAnswer.canonicalAnswer,
@@ -354,7 +272,6 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
         plan,
         mcqProvider: mcqResult.value,
         writtenQuestionProvider: writtenResult.value,
-        rubricProvider: rubricResult.value,
         title: input.title,
         difficulty: input.difficulty,
         metadata: placeholderMetadata,
@@ -374,12 +291,11 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       latencyMs:
         mcqResult.metadata.latencyMs +
         writtenResult.metadata.latencyMs +
-        rubricResult.metadata.latencyMs,
+        0,
       repaired:
         semanticRepairAttempted ||
         mcqResult.repaired ||
         writtenResult.repaired ||
-        rubricResult.repaired ||
         input.repair !== undefined,
     };
     return assembleEvidenceFirstAssessment({
@@ -387,7 +303,6 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       plan,
       mcqProvider: mcqResult.value,
       writtenQuestionProvider: writtenResult.value,
-      rubricProvider: rubricResult.value,
       title: input.title,
       difficulty: input.difficulty,
       metadata,

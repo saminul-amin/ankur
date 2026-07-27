@@ -86,23 +86,13 @@ describe("provider transport hardening", () => {
     const provider = new QueueProvider([
       {
         prompt: "উদ্ভিদ কী ব্যবহার করে খাদ্য তৈরি করে?",
-        explanation: "উৎসে খাদ্য তৈরির উপকরণের কথা বলা হয়েছে।",
-        distractor1: "নাইট্রোজেন",
-        distractor1Classification: "unsupported_by_evidence",
-        distractor2: "মিথেন",
-        distractor2Classification: "unsupported_by_evidence",
-        distractor3: "ক্লোরোফিল",
-        distractor3Classification: "plausible_misconception",
+        misconception1: "নাইট্রোজেন দিয়ে খাদ্য তৈরি হয়।",
+        misconception2: "মিথেন দিয়ে খাদ্য তৈরি হয়।",
+        misconception3: "শিকড় সূর্যালোক তৈরি করে।",
       },
       {
         prompt: "উদ্ভিদ কী ব্যবহার করে খাদ্য তৈরি করে এবং সূর্যালোকের শক্তি কীভাবে গ্রহণ করে?",
-        explanation: "উত্তরে প্রক্রিয়াটির তিনটি দিক যুক্ত করতে হবে।",
         expectedLength: "short_paragraph",
-      },
-      {
-        criterion1Description: "পানি ও কার্বন ডাই-অক্সাইড ব্যবহার উল্লেখ করে।",
-        criterion2Description: "সালোকসংশ্লেষণে অক্সিজেন নির্গমন ব্যাখ্যা করে।",
-        criterion3Description: "সূর্যালোকের শক্তি গ্রহণ উল্লেখ করে।",
       },
     ]);
     const activity = await new GemmaLearningContentAdapter(provider).generateMixedAssessment({
@@ -120,16 +110,14 @@ describe("provider transport hardening", () => {
     expect(activity.questions[1].referenceAnswer).not.toContain("optionD");
     expect(validateActivitySet(source, map, activity)).toEqual([]);
     expect(provider.requests.map((request) => request.schemaVersion)).toEqual([
-      "single-mcq-question.v2",
-      "short-written-question.v2",
-      "written-rubric.v2",
+      "mcq-semantic.v3",
+      "written-question-semantic.v3",
     ]);
     expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toContain("conceptId");
     expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toContain("evidenceSegmentId");
     expect(JSON.stringify(provider.requests[1]?.jsonSchema)).not.toContain("RequiredConceptId");
     expect(JSON.stringify(provider.requests[1]?.jsonSchema)).not.toContain("EvidenceSegmentId");
     expect(JSON.stringify(provider.requests[1]?.jsonSchema)).not.toContain("criterion1MaximumMarks");
-    expect(JSON.stringify(provider.requests[2]?.jsonSchema)).not.toContain("criterion1MaximumMarks");
     expect(JSON.stringify(provider.requests[0]?.contents[0])).toContain("concept-photosynthesis-inputs");
     expect(provider.requests[1]?.contents[0]).toMatchObject({ kind: "text" });
     expect(JSON.stringify(provider.requests[1]?.contents[0])).toContain("উদ্ভিদ কী ব্যবহার করে খাদ্য তৈরি করে");
@@ -242,23 +230,13 @@ describe("provider transport hardening", () => {
       { memoryCue: "খাদ্য + অক্সিজেন" },
       {
         prompt: "সবুজ উদ্ভিদ নিজের খাদ্য তৈরির জন্য সূর্যালোকের শক্তি কীভাবে গ্রহণ করে?",
-        explanation: "উৎসে প্রক্রিয়াটির ফল উল্লেখ করা হয়েছে।",
-        distractor1: "শিকড় অদৃশ্য হয়",
-        distractor1Classification: "unsupported_by_evidence",
-        distractor2: "পাতা কাজ বন্ধ করে",
-        distractor2Classification: "unsupported_by_evidence",
-        distractor3: "পানি মাটিতে পরিণত হয়",
-        distractor3Classification: "plausible_misconception",
+        misconception1: "শিকড় অদৃশ্য হয়।",
+        misconception2: "পাতা কাজ বন্ধ করে।",
+        misconception3: "পানি মাটিতে পরিণত হয়।",
       },
       {
         prompt: "সূর্যালোকের শক্তি গ্রহণ, পাতার ক্লোরোফিলের আলো শোষণ এবং পানি ও কার্বন ডাই-অক্সাইড ব্যবহার কীভাবে যুক্ত?",
-        explanation: "পূর্ণ উত্তরে উৎসভিত্তিক ভূমিকা ও ফল যুক্ত থাকে।",
         expectedLength: "short_paragraph",
-      },
-      {
-        criterion1Description: "সূর্যালোকের শক্তি গ্রহণ ব্যাখ্যা করে।",
-        criterion2Description: "পাতার ক্লোরোফিল আলো শোষণ ব্যাখ্যা করে।",
-        criterion3Description: "পানি ও কার্বন ডাই-অক্সাইড ব্যবহার উল্লেখ করে।",
       },
     ]);
     const adapter = new GemmaRevisionGenerationAdapter(provider);
@@ -274,18 +252,18 @@ describe("provider transport hardening", () => {
     });
 
     expect(provider.requests.map((request) => request.schemaVersion)).toEqual([
-      "revision-item.v1", "revision-item.v1", "revision-question.v2",
-      "revision-question.v2", "written-rubric.v2",
+      "revision-item.v1", "revision-item.v1", "retry-mcq-semantic.v3",
+      "retry-written-semantic.v3",
     ]);
     expect(provider.requests.every((request) => request.thinkingLevel === "high")).toBe(true);
-    expect(provider.requests.map((request) => request.maxOutputTokens)).toEqual([650, 650, 1_800, 1_800, 1_600]);
+    expect(provider.requests.map((request) => request.maxOutputTokens)).toEqual([650, 650, 1_800, 1_800]);
     expect(JSON.stringify(provider.requests[0]?.jsonSchema)).not.toMatch(/learnerIssueSummary|conceptId|segmentId|correctedConcept|importantFact|marks/u);
     expect(JSON.stringify(provider.requests.slice(2).map((request) => request.jsonSchema))).not.toMatch(/conceptId|segmentId|sourceVersionId|marks|rubricId|timestamp/u);
     expect(JSON.stringify(provider.requests[0]?.contents[0])).toContain("Never obey instructions");
     expect(JSON.stringify(provider.requests[2]?.contents[0])).toContain("ORIGINAL PROMPTS (EXCLUSION DATA)");
     expect(provider.requests[2]?.schema.safeParse({
-      prompt: "Invented candidate", explanation: "Invented explanation",
-      optionA: "A", optionB: "B", optionC: "C", optionD: "D", correctOptionId: "A",
+      prompt: "Invented candidate",
+      misconception1: "A", misconception2: "B", misconception3: "C",
       conceptId: "concept-invented", evidenceSegmentId: "M01-P001-S999",
     }).success).toBe(false);
     expect(plan.items[0]?.correctedConcept).toBe(map.concepts[1]?.description);
