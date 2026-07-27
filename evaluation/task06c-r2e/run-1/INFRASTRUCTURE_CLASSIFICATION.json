@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "task06c-r2e-infrastructure-classification.v1",
+  "runId": "task06c-r2e-run-1",
+  "classification": "INFRASTRUCTURE_VALID",
+  "authoritative": true,
+  "evidence": {
+    "preflightSucceeded": 3,
+    "preflightRequested": 3,
+    "baselineOperationsValid": 9,
+    "baselineOperationsRequested": 9,
+    "analysisOperationsValid": 7,
+    "analysisOperationsRequested": 9,
+    "authenticationFailures": 0,
+    "providerUnavailableFailures": 0,
+    "quotaExhaustionFailures": 0,
+    "rateLimitedFailures": 1,
+    "timeoutFailures": 1,
+    "semanticInvalidOutputFailures": 7
+  },
+  "rationale": "The run did not show provider-wide unavailability, authentication failure, explicit quota exhaustion, sustained rate limiting, or repeated timeouts across multiple unrelated materials. One rate limit and one timeout remain in the fixed denominator. Seven assessment INVALID_OUTPUT failures are semantic product-output failures and cannot be reclassified as infrastructure.",
+  "run2Authorized": false
+}

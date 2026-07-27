@@ -1,0 +1,602 @@
+[
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r1:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r1",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:8b19773857c890a507596c33bb773c779266d51f6838910af742240de2068d88",
+    "questionText": "জলচক্রে পানির বাষ্পে পরিণত হওয়ার প্রক্রিয়াটি কীভাবে শুরু হয়?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r1:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r1",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:08c587291dd85b64dd38278dde1196dcd919d4a987094b0e335cd08a0e96a16d",
+    "questionText": "সূর্যের তাপে নদী বা সমুদ্রের পানি বাষ্পে পরিণত হয়ে উপরে ওঠার প্রক্রিয়াটিকে কী বলা হয়?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r2:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r2",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:e1a65cdcd73d91054001a786555777a4282044d2fb6add8b2125ea838877d684",
+    "questionText": "জলচক্রে নদী, পুকুর ও সমুদ্রের পানি বাষ্পে পরিণত হয়ে উপরে ওঠার প্রক্রিয়াটি কীসের মাধ্যমে ঘটে?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r2:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r2",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:4915529dac1f926dd6cd420983764f3e5e8a414c3438653ef00828fb5ed27caa",
+    "questionText": "সূর্যের তাপে নদী, পুকুর বা সমুদ্রের পানি বাষ্পে পরিণত হওয়ার প্রক্রিয়াটিকে কী বলা হয়?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-BN-PASTE-01:q1",
+    "operationId": "revision:SCI-BN-PASTE-01",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:49ca47613b68bb3c9f2a3a3ea89b666c9abc98c6dc32a2b16fefaa311664b44b",
+    "questionText": "সূর্যের তাপে নদী, পুকুর বা সমুদ্রের পানি বাষ্পে পরিণত হয়ে উপরে ওঠার প্রক্রিয়াটি কীভাবে কাজ করে?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-BN-PASTE-01:q2",
+    "operationId": "revision:SCI-BN-PASTE-01",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:fee3886e4e9a93f22b9d0fc5b2bb85040bc759dceb9666d3bce3f59311d8056e",
+    "questionText": "সূর্যের তাপে নদী বা সমুদ্রের পানি বাষ্পে পরিণত হওয়ার প্রক্রিয়াটিকে কী নামে অভিহিত করা হয়?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:acb8e4516cdeff00a371ed0e6a40f0cbee3be1632f908da5c686c928438bed5f",
+    "questionText": "In a system involving thermal energy, how does heat move between different regions?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:d1f7626134b02430ba949d50b820a1e104e9ec517977610c3a6fd0dc30e43815",
+    "questionText": "Explain the direction of heat movement between regions of different temperatures and describe how conduction works via particle contact.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:38cba984d1af38abf9dd8e9d01596eef0ff4e44855359773f5dcdd85a32caba0",
+    "questionText": "In a system involving thermal energy, in which direction does heat move between two regions?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:49393937855716f34b8ff22346062bf8cb5189677a25d86ff503ce7bd6a7563f",
+    "questionText": "Explain how conduction works in terms of the direction of heat movement and the mechanism of particle contact.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:acb8e4516cdeff00a371ed0e6a40f0cbee3be1632f908da5c686c928438bed5f",
+    "questionText": "In a system involving thermal energy, how does heat move between different regions?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-EN-PDF-01:r1:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:d1f7626134b02430ba949d50b820a1e104e9ec517977610c3a6fd0dc30e43815",
+    "questionText": "Explain the direction of heat movement between regions of different temperatures and describe how conduction works via particle contact.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-EN-PDF-01:r1:q2",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-EN-PDF-01:q1",
+    "operationId": "revision:SCI-EN-PDF-01",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 7,
+    "questionHash": "sha256:a1af63d1988c3e51c0e8ba4afd12acfc2f7c2e2159e5622a8ef1f7f9e40f9d21",
+    "questionText": "In a scenario where two different temperature zones exist, what is the direction of heat movement between these regions?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-EN-PDF-01:q2",
+    "operationId": "revision:SCI-EN-PDF-01",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 8,
+    "questionHash": "sha256:cdf75a4181f9709d5e52c489f51e083331ba6d9a6a533ba6d4feeb02d2164382",
+    "questionText": "Regarding the direction of heat movement and the mechanism of conduction, how is thermal energy transferred between a warmer region and a cooler region via direct contact between particles?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r1:q1",
+    "operationId": "assessment:VOC-EN-PASTE-01:r1",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:c6cca8e4e93750b53f3a25e3a6f83afb96ac33aacc391eef921093de780d8e5a",
+    "questionText": "What is the first step a worker should take regarding energy sources and affected coworkers before maintaining a powered machine?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r1:q2",
+    "operationId": "assessment:VOC-EN-PASTE-01:r1",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:df2dc495ed420a1321233bd5923870da400b105d7b4918c1dcdec2d59c227361",
+    "questionText": "What specific actions must a worker perform regarding energy sources and the use of the normal control before operating an energy-isolating device?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r2:q1",
+    "operationId": "assessment:VOC-EN-PASTE-01:r2",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:c6cca8e4e93750b53f3a25e3a6f83afb96ac33aacc391eef921093de780d8e5a",
+    "questionText": "What is the first step a worker should take regarding energy sources and affected coworkers before maintaining a powered machine?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:VOC-EN-PASTE-01:r1:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r2:q2",
+    "operationId": "assessment:VOC-EN-PASTE-01:r2",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:78c3b006b24f20d7b8b2de2846058bc88244bab51aa3624f1d09b262800c37bc",
+    "questionText": "What specific actions must a worker perform regarding energy sources and the use of the normal control before starting maintenance on a powered machine?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r1:q1",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r1",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:b00754703990040ee1ebbf6c40889d416a1f3f3d238fe0080327481472f36d6b",
+    "questionText": "How does a rechargeable battery work? ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং ব্যবহার করার প্রক্রিয়াটি কী?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r1:q2",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r1",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:6c2268a97f8ce7a638934927978e2cef5eb6a39ba0c5a9ebdfd8c2bbc8746707",
+    "questionText": "Explain the process of energy storage in a rechargeable battery through chemical changes and why it is important to match the charger with the battery type and rated voltage. ব্যাটারি চার্জিং এর সময় chemical changes এর মাধ্যমে শক্তি সঞ্চয় এবং charger এর সাথে battery type ও rated voltage এর মিল থাকা কেন প্রয়োজন?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r2:q1",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r2",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:6de7b9fa84e9ecec1886dfc74269dd3605a47987ea43f230455333a970e92c3f",
+    "questionText": "How does a rechargeable battery work in terms of its energy storage and electrical energy supply? ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং electrical energy সরবরাহ করার প্রক্রিয়াটি কী?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r2:q2",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r2",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:96d606f67196789200d071f08cafd12ae4c06c8362f61e2f9704929d7041c712",
+    "questionText": "Explain the process of energy storage in a rechargeable battery through chemical changes and why the charger must match the battery type and rated voltage to manage heat. ব্যাটারি চার্জিং এর সময় chemical changes এর মাধ্যমে শক্তি সঞ্চয় এবং heat উৎপাদন নিয়ন্ত্রণের জন্য charger এর সাথে battery type এবং rated voltage এর মিল থাকা কেন প্রয়োজন?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-MIX-PASTE-02:q1",
+    "operationId": "revision:SCI-MIX-PASTE-02",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:1aa3ca08bc1e079a0bc3b0111052bc199ee1f717ade154a49ca0c23c20859207",
+    "questionText": "In a rechargeable battery, what is the primary mechanism of energy storage and supply? একটি rechargeable battery-তে, শক্তি সঞ্চয় এবং সরবরাহ করার প্রধান mechanism-টি কী?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-MIX-PASTE-02:q2",
+    "operationId": "revision:SCI-MIX-PASTE-02",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:1ef7ed5d709b7a51c04dcabe0b7c6bc6d968fb03f9df6b52d8db091275c05419",
+    "questionText": "Considering the heat produced during charging, why must the charger match the battery type and rated voltage? চার্জিং এর মাধ্যমে produced heat বিবেচনা করে, charger এর সাথে battery type ও rated voltage এর মিল থাকা কেন প্রয়োজন?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  }
+]
