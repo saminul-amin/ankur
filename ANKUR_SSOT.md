@@ -101,3 +101,14 @@ reliability iterations. None passed the unchanged technical gate. No reviewer
 packets or human metrics were produced. The best non-regressive product
 configuration is retained, all Task 06/06C/R1 evidence remains immutable, and
 Task 07 remains unauthorized.
+
+## Task 06C-R2 outcome addendum — version 1.3.4
+
+`SSOT_UPDATE_v1.3.4_TASK06C_R2.md` records the deterministic assessment
+construction and its single frozen fixed-denominator evaluation. The new
+assessment operations with valid upstream analyses completed successfully, but
+provider timeouts, rate limiting, and unavailability limited the full run to
+12/45 final-valid logical operations, 12 questions, and five written cases.
+No reviewer packets or human metrics were produced. Historical evidence and
+the unchanged technical thresholds remain authoritative. Task 07 remains
+unauthorized.

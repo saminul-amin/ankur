@@ -1,0 +1,302 @@
+[
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:bcc7389088788a7c51ff681dde649af2383e69a14850b820933c99e331c2bfe9",
+    "questionText": "Which process describes how energy is transferred via the movement of a fluid?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:461b8df8c3ab212f535376a1237e3876723144e7ca9e3b19620991a682d3651e",
+    "questionText": "Explain how the movement of a fluid facilitates convection and describe the specific direction of water movement that creates a circulating current.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:bcc7389088788a7c51ff681dde649af2383e69a14850b820933c99e331c2bfe9",
+    "questionText": "Which process describes how energy is transferred via the movement of a fluid?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-EN-PDF-01:r1:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:f54a81f5cd67a1c01fedec2859388b53a235d868228fcaab4e6b89c7c03d9a89",
+    "questionText": "Explain how the movement of a fluid facilitates convection and describe the resulting circulating current created by temperature differences.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:bcc7389088788a7c51ff681dde649af2383e69a14850b820933c99e331c2bfe9",
+    "questionText": "Which process describes how energy is transferred via the movement of a fluid?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-EN-PDF-01:r1:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:7ff79fa08bc06a9ce54844029f24795cf97d667fb56a759b28df7016151042a2",
+    "questionText": "Explain how the movement of a fluid facilitates convection and describe the resulting circulating current.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-EN-PDF-01:q1",
+    "operationId": "revision:SCI-EN-PDF-01",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 7,
+    "questionHash": "sha256:ab33e56ede5da876380509cd83d631dd93e99f9b0891c919c26302e66b0daad7",
+    "questionText": "Which mechanism of heat transfer involves the energy transfer through the movement of a fluid?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-EN-PDF-01:q2",
+    "operationId": "revision:SCI-EN-PDF-01",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 8,
+    "questionHash": "sha256:ed879d813ae08e86f4764ed3491d62ec8bf3ee9a91c2fdbcd3b18b808267945b",
+    "questionText": "Describe how the movement of a fluid creates a circulating current through the relationship between rising warm water and sinking cooler water.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r1:q1",
+    "operationId": "assessment:VOC-EN-PASTE-01:r1",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:592abd1d47b2a866b075bb14c45df26bc262ac800399c58f6fffd09405a3cbaa",
+    "questionText": "After the isolation steps are completed, what is the required action regarding the isolating device to ensure safety?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r1:q2",
+    "operationId": "assessment:VOC-EN-PASTE-01:r1",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:4a3c1be433b68e670cef401d6df91b1c16f54e706a862f2192fe66989741f477",
+    "questionText": "What two specific actions must be taken regarding the isolating device and any potential stored energy, such as pressure or tension, to ensure the system is safe for maintenance?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r2:q1",
+    "operationId": "assessment:VOC-EN-PASTE-01:r2",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:a45d11178440517d84d5616f6716640ebbce227f8aadd075424f63630daed0d6",
+    "questionText": "After the initial isolation steps, what specific actions must be performed regarding the isolating device to ensure safety?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r2:q2",
+    "operationId": "assessment:VOC-EN-PASTE-01:r2",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:cf910e39587cc7c6ee1725155848ec4355ee964d7e0e82513281001af86eca5f",
+    "questionText": "What two specific safety measures must be taken regarding the isolating device and any potential stored energy, such as pressure or tension, before maintenance can begin?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  }
+]
