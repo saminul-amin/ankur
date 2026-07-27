@@ -295,3 +295,17 @@ The AI integration is approved for product implementation only if:
 - measured latency is recorded honestly.
 
 Failure does not authorize switching models or providers silently. It creates a documented blocker and an ADR review.
+
+## 12. Task 06C-R1 bounded repair clarification
+
+Evidence analysis uses `analysis-semantic.v2`: Gemma selects a numbered evidence
+index and supplies semantic wording; application code maps it to the immutable
+composite evidence identity and owns every internal ID and quote.
+
+Assessment repair separates schema-present `lockedOutputFields` from canonical
+answers and permitted evidence in `referenceContext`. Reference context is not
+an output property. A component receives at most one schema or semantic repair.
+`MAX_TOKENS` may receive a bounded larger repair budget; non-truncated output
+retains the normal budget. R1 did not establish production reliability for
+assessment or adaptive generation, so these remain safety contracts rather
+than a quality-pass claim.

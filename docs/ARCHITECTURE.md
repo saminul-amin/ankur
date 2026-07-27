@@ -271,6 +271,18 @@ Every pending state must have an error transition back to the last stable state.
 - Health and runtime-status responses expose only a sanitized abbreviated Git/deployment build identifier for release verification.
 - No server-side response may approach the 4.5 MB platform limit.
 
+## 10.1 Task 06C-R1 reliability boundary
+
+The evidence-first generation sequence is application-selected numbered
+evidence → Gemma semantic wording → application-owned IDs/evidence/marks →
+structural and semantic validation → at most one bounded component repair →
+persistence or controlled failure.
+
+Evaluation observability separates provider attempts from logical artifacts.
+The fixed R1 denominator excludes baseline and transcription calls and records
+dependency-blocked artifacts explicitly. Frozen Task 06, Task 06C, and each R1
+iteration remain in separate immutable locations.
+
 ## 11. Performance strategy
 
 - Keep P0 source size bounded.

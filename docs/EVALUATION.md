@@ -277,3 +277,19 @@ written cases. It therefore failed the 95% logical-validity and minimum-ten
 written-case gates before human review. The public-safe report is
 `evaluation/task06c/TASK_06C_EVALUATION_REPORT.md`; Task 06 historical metrics
 remain unchanged.
+
+## 16. Task 06C-R1 reliability correction
+
+Task 06C-R1 is isolated under `evaluation/task06c-r1/`. Three controlled
+iterations are frozen: iteration 1 is `REWORK` (23/43, two questions), iteration
+2 is `REWORK` (34/48 mixed runner records, 18 questions, nine written records),
+and iteration 3 is `REVERT` (6/45, zero questions).
+
+Iteration 3 introduced the corrected denominator: exactly 45 structured logical
+artifacts (nine analyses, 21 assessments, 12 written evaluations, and three
+adaptive artifacts). Baseline and transcription calls remain provider attempts
+but are excluded from that logical denominator. Missing dependent artifacts are
+explicit `DEPENDENCY_UNAVAILABLE` controlled failures.
+
+The provider-free notebook reads only public-safe exports. The technical gate
+failed, so reviewer packets were not generated and Task 07 remains blocked.

@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset='utf-8'><title>Ankur Task 06C-R1 Evaluation</title>
+<style>body{max-width:1080px;margin:40px auto;padding:0 24px;font:16px/1.55 system-ui;color:#173c31}h1,h2,h3{color:#0d5d43}pre{white-space:pre-wrap;background:#f5f2e8;padding:18px;border-radius:12px}code{font-family:ui-monospace,monospace}.cell{margin:32px 0}.output{border-left:4px solid #d8a640}</style></head><body>
+<section class='cell'><h1>Ankur Task 06C-R1 reliability evaluation</h1>
+
+<p>Provider-free reconciliation of committed public-safe iteration exports. Human metrics remain pending.</p></section>
+<section class='cell'><pre><code>import json
+from pathlib import Path
+root = Path(&#x27;evaluation/task06c-r1&#x27;)
+metrics = {}
+for number in (1, 2, 3):
+    path = root / f&#x27;iteration-{number}&#x27; / &#x27;exports&#x27; / &#x27;aggregate-metrics.json&#x27;
+    metrics[number] = json.loads(path.read_text(encoding=&#x27;utf-8&#x27;))
+print(&#x27;Loaded public-safe iterations:&#x27;, sorted(metrics))
+</code></pre><pre class='output'>Loaded public-safe iterations: [1, 2, 3]
+</pre></section>
+<section class='cell'><pre><code>for number, item in metrics.items():
+    reliability = item[&#x27;reliability&#x27;]
+    questions = item[&#x27;questions&#x27;][&#x27;total&#x27;]
+    written = item[&#x27;written&#x27;][&#x27;total&#x27;]
+    print(f&quot;iteration-{number}: final={reliability[&#x27;finalValid&#x27;][&#x27;count&#x27;]}/{reliability[&#x27;finalValid&#x27;][&#x27;denominator&#x27;]}; questions={questions}; written={written}&quot;)
+assert metrics[3][&#x27;reliability&#x27;][&#x27;totalOperations&#x27;] == 45
+assert metrics[3][&#x27;questions&#x27;][&#x27;total&#x27;] == 0
+print(&#x27;Fixed-denominator reconciliation: PASSED&#x27;)
+</code></pre><pre class='output'>iteration-1: final=23/43; questions=2; written=2
+iteration-2: final=34/48; questions=18; written=9
+iteration-3: final=6/45; questions=0; written=0
+Fixed-denominator reconciliation: PASSED
+</pre></section>
+<section class='cell'><pre><code>baseline = {&#x27;final_valid&#x27;: &#x27;33/45&#x27;, &#x27;questions&#x27;: 18, &#x27;written&#x27;: 7}
+best = metrics[2]
+print(&#x27;Frozen Task 06C baseline:&#x27;, baseline)
+print(&#x27;Best R1 observed persisted questions:&#x27;, best[&#x27;questions&#x27;][&#x27;total&#x27;])
+print(&#x27;Human acceptance and grading agreement: pending (no reviewer packets generated)&#x27;)
+print(&#x27;Task 07 authorized: NO&#x27;)
+</code></pre><pre class='output'>Frozen Task 06C baseline: {&#x27;final_valid&#x27;: &#x27;33/45&#x27;, &#x27;questions&#x27;: 18, &#x27;written&#x27;: 7}
+Best R1 observed persisted questions: 18
+Human acceptance and grading agreement: pending (no reviewer packets generated)
+Task 07 authorized: NO
+</pre></section>
+</body></html>

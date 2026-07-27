@@ -93,3 +93,11 @@ failure: 33/45 final-valid logical operations and seven eligible written cases.
 No fresh human review was started from the incomplete sample. Historical Task 06
 evidence remains immutable, all unchanged thresholds remain authoritative, and
 Task 07 remains unauthorized.
+
+## Task 06C-R1 outcome addendum — version 1.3.3
+
+`SSOT_UPDATE_v1.3.3_TASK06C_R1_FAILED.md` records three frozen controlled
+reliability iterations. None passed the unchanged technical gate. No reviewer
+packets or human metrics were produced. The best non-regressive product
+configuration is retained, all Task 06/06C/R1 evidence remains immutable, and
+Task 07 remains unauthorized.
