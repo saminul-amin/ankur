@@ -970,12 +970,91 @@ async function readManifest(): Promise<EvaluationMaterial[]> {
     .map((item) => evaluationMaterialSchema.parse(item));
 }
 
+function fixedReliabilityOperations(state: PrivateState): ProviderOperation[] {
+  const specifications: Array<{
+    operationId: string;
+    materialId: string;
+    operationType: ProviderOperation["operationType"];
+    artifactPresent: boolean;
+  }> = [];
+  for (const [index, material] of ACTIVE_CORPUS.entries()) {
+    specifications.push({
+      operationId: `analysis:${material.id}`,
+      materialId: material.id,
+      operationType: "analysis",
+      artifactPresent: state.preparationMaps[material.id] !== undefined,
+    });
+    const runs = ASSESSMENT_RUN_COUNTS.get(material.id) ?? 0;
+    for (let run = 1; run <= runs; run += 1) {
+      const operationId = `assessment:${material.id}:r${String(run)}`;
+      specifications.push({
+        operationId,
+        materialId: material.id,
+        operationType: "assessment_generation",
+        artifactPresent: state.activities[operationId] !== undefined,
+      });
+    }
+    if (index < 6) {
+      for (const answerCase of ANSWER_CASES[index] ?? []) {
+        const operationId = `written:${material.id}:${answerCase}`;
+        specifications.push({
+          operationId,
+          materialId: material.id,
+          operationType: "written_grading",
+          artifactPresent: state.writtenEvaluations[operationId] !== undefined,
+        });
+      }
+    }
+    if (index < 3) {
+      const operationId = `revision:${material.id}`;
+      specifications.push({
+        operationId,
+        materialId: material.id,
+        operationType: "revision_retry_generation",
+        artifactPresent: state.revisions[operationId] !== undefined,
+      });
+    }
+  }
+  if (specifications.length !== 45) throw new Error("R1_LOGICAL_OPERATION_PLAN_INVALID");
+  const byId = new Map(state.providerOperations.map((item) => [item.operationId, item]));
+  return specifications.map((specification) => {
+    const recorded = byId.get(specification.operationId);
+    if (recorded !== undefined) return recorded;
+    return providerOperationSchema.parse({
+      schemaVersion: "provider-operation.v1",
+      operationId: specification.operationId,
+      materialId: specification.materialId,
+      modelId: MODEL,
+      operationType: specification.operationType,
+      promptVersion: specification.artifactPresent ? "deterministic-no-provider.v1" : "dependency-unavailable.v1",
+      providerSchemaVersion: "none",
+      thinkingLevel: "minimal",
+      temperature: 0,
+      maxOutputTokens: 1,
+      timestamp: state.updatedAt,
+      latencyMs: 0,
+      inputTokens: null,
+      outputTokens: null,
+      firstPassValid: specification.artifactPresent,
+      repairAttempted: false,
+      repairSuccess: false,
+      finalStatus: specification.artifactPresent ? "valid" : "controlled_failure",
+      failureCategory: specification.artifactPresent ? null : "DEPENDENCY_UNAVAILABLE",
+      evidenceFailureCount: 0,
+      quoteFailureCount: 0,
+      conceptFailureCount: 0,
+      reconciliationFailureCount: 0,
+      artifactHash: null,
+    });
+  });
+}
+
 async function exportPublic(state: PrivateState): Promise<void> {
   const materials = await readManifest();
   const extraction = await extractionRecords(state, ACTIVE_CORPUS);
   const questions = questionRecords(state);
   const written = writtenRecords(state, questions);
-  const provider = state.providerOperations
+  const providerAttempts = state.providerOperations
     .map((item) => {
       const inferredRepair = item.finalStatus === "controlled_failure" &&
         (item.failureCategory === "INVALID_OUTPUT" || item.failureCategory === "EVIDENCE_INVALID");
@@ -985,6 +1064,8 @@ async function exportPublic(state: PrivateState): Promise<void> {
         repairSuccess: item.repairSuccess && !inferredRepair,
       });
     })
+    .toSorted((left, right) => left.operationId.localeCompare(right.operationId));
+  const provider = fixedReliabilityOperations({ ...state, providerOperations: providerAttempts })
     .toSorted((left, right) => left.operationId.localeCompare(right.operationId));
   const completedAdaptive = state.adaptiveRecords.toSorted((left, right) => left.recordId.localeCompare(right.recordId));
   const adaptiveByMaterial = new Map(completedAdaptive.map((item) => [item.materialId, item]));
@@ -1097,6 +1178,7 @@ async function exportPublic(state: PrivateState): Promise<void> {
     ["written-grading-records.json", written],
     ["adaptive-loop-records.json", adaptive],
     ["provider-operations.json", provider],
+    ["provider-attempts.json", providerAttempts],
     ["baseline-records.json", baseline],
   ];
   await Promise.all(files.map(([name, value]) => writeFile(resolve(PUBLIC_ROOT, name), `${JSON.stringify(value, null, 2)}\n`, "utf8")));

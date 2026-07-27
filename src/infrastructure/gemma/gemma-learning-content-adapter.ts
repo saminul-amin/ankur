@@ -147,7 +147,7 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       schemaVersion: "single-mcq-question.v2",
       thinkingLevel,
       temperature: 0.1,
-      maxOutputTokens: 1_200,
+      maxOutputTokens: 2_400,
       timeoutMs: this.timeoutMs,
       contents: [{
         kind: "text",
@@ -175,7 +175,7 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       schemaVersion: "short-written-question.v2",
       thinkingLevel,
       temperature: 0.1,
-      maxOutputTokens: 1_000,
+      maxOutputTokens: 2_000,
       timeoutMs: this.timeoutMs,
       contents: [{
         kind: "text",
@@ -204,7 +204,7 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       schemaVersion: "written-rubric.v2",
       thinkingLevel,
       temperature: 0.1,
-      maxOutputTokens: 1_200,
+      maxOutputTokens: 2_000,
       timeoutMs: this.timeoutMs,
       contents: [{
         kind: "text",
