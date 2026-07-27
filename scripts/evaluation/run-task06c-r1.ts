@@ -228,6 +228,9 @@ async function observeOperation<T>(input: {
   if (existing !== undefined) throw new Error("OPERATION_ALREADY_COMPLETE");
   const controlled = input.state.providerOperations.find((item) => item.operationId === input.operationId && item.finalStatus === "controlled_failure");
   if (controlled !== undefined) {
+    if (process.env["ANKUR_TASK06C_R1_PRESERVE_FAILURES"] === "true") {
+      throw new Error("PRESERVED_CONTROLLED_FAILURE");
+    }
     let attempt = 1;
     while (input.state.providerOperations.some((item) => item.operationId === `${input.operationId}:attempt${String(attempt)}`)) {
       attempt += 1;
