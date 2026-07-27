@@ -5,8 +5,8 @@ import type { RevisionPlan, RetryMode } from "../../domain/revision/revision-pla
 import type { ConfirmedSource } from "../../domain/source/confirmed-source";
 
 export const REVISION_PROMPT_VERSIONS = {
-  generate: "revision.v5",
-  repair: "revision-repair.v5",
+  generate: "revision.v4",
+  repair: "revision-repair.v4",
 } as const;
 
 export interface RevisionRetryGroundingAssignment {

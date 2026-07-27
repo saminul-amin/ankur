@@ -32,9 +32,9 @@ type RetryRepairPromptContext = NonNullable<
   Parameters<typeof buildEvidenceFirstAssessmentPrompt>[0]["repair"]
 >;
 
-const RETRY_MCQ_OUTPUT_TOKEN_BUDGET = 3_200;
-const RETRY_WRITTEN_OUTPUT_TOKEN_BUDGET = 2_800;
-const RETRY_RUBRIC_OUTPUT_TOKEN_BUDGET = 2_400;
+const RETRY_MCQ_OUTPUT_TOKEN_BUDGET = 1_800;
+const RETRY_WRITTEN_OUTPUT_TOKEN_BUDGET = 1_800;
+const RETRY_RUBRIC_OUTPUT_TOKEN_BUDGET = 1_600;
 
 function learnerIssueSummary(input: {
   readonly name: string;

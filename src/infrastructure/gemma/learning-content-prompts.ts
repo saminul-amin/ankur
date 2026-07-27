@@ -11,8 +11,8 @@ import {
 } from "../../application/services/bounded-repair-context";
 
 export const LEARNING_PROMPT_VERSIONS = {
-  analysis: "analysis-indexed-evidence.v3", assessment: "assessment-evidence-first.v9",
-  analysisEvidenceRepair: "analysis-indexed-evidence-repair.v3", assessmentEvidenceRepair: "assessment-evidence-first-repair.v9",
+  analysis: "analysis-indexed-evidence.v3", assessment: "assessment-evidence-first.v8",
+  analysisEvidenceRepair: "analysis-indexed-evidence-repair.v3", assessmentEvidenceRepair: "assessment-evidence-first-repair.v8",
 } as const;
 
 export interface AssessmentGroundingAssignment {
@@ -165,5 +165,5 @@ OUTPUT CONTRACT
 ${output}
 
 QUALITY RULES
-Use natural ${input.canonicalAnswer.language === "bn" ? "Bengali" : input.canonicalAnswer.language === "en" ? "English" : "mixed-language"} wording. Every question prompt must contain at least two exact meaningful content terms from the locked canonical answer so its target is explicit, but must not reveal the complete answer. Avoid repeated tokens, duplicated clauses, option labels, placeholders, malformed punctuation, and truncated questions. Keep every artifact answerable only from the locked evidence. The three distractors must be pairwise distinct, must each be false or unsupported under the permitted evidence, and must not repeat or paraphrase any complete clause from the canonical answer. Do not turn another source-supported fact into a distractor. Do not introduce asserted external facts.${writtenContext}${exclusion}${repair}`;
+Use natural ${input.canonicalAnswer.language === "bn" ? "Bengali" : input.canonicalAnswer.language === "en" ? "English" : "mixed-language"} wording. Every question prompt must contain at least two exact meaningful content terms from the locked canonical answer so its target is explicit, but must not reveal the complete answer. Avoid repeated tokens, duplicated clauses, option labels, placeholders, malformed punctuation, and truncated questions. Keep every artifact answerable only from the locked evidence. Distractors must not also be supported, must not paraphrase the locked answer, and must not introduce asserted external facts.${writtenContext}${exclusion}${repair}`;
 }
