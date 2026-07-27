@@ -1,0 +1,452 @@
+[
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r3:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r3",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:1b3c300695d249cc3ecb943d91566f31a238ff98fba8c5ed4240ef98b7239094",
+    "questionText": "জলচক্রে মেঘ তৈরির প্রক্রিয়াটি কীভাবে কাজ করে? জলীয় বাষ্প এবং মেঘ তৈরির সাথে সম্পর্কিত মূল প্রক্রিয়াটি কী?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r3:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r3",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:d9d5df20d5b2e10a69bbf515def0ef2ad9eb5f2099fb6f63cefa396696a15e4f",
+    "questionText": "মেঘ তৈরির প্রক্রিয়া এবং বৃষ্টি হওয়ার পেছনের কারণটি ব্যাখ্যা করো।",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-BN-PASTE-01:q1",
+    "operationId": "revision:SCI-BN-PASTE-01",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:5a17a6de4f548384e0e0641e6618e2fff2561f47e6534f28ed262d665ceecf26",
+    "questionText": "উঁচু স্তরে বাতাস ঠান্ডা হলে জলীয় বাষ্পের কী পরিবর্তন হয় এবং এর ফলে মেঘ তৈরি হয় কি না?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-BN-PASTE-01:q2",
+    "operationId": "revision:SCI-BN-PASTE-01",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:f9872d9d7b628409620bbc4117fd91bdb59857f93224c6b30281241d9ef78449",
+    "questionText": "উঁচু স্তরে বাতাস ঠান্ডা হওয়ার ফলে সৃষ্ট মেঘ এবং বৃষ্টিপাতের প্রক্রিয়াটি সংক্ষেপেভাবে ব্যাখ্যা করো।",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:71ca9b3760517911337f0f5e943fa87f2ce7c809d30cf4efa2dda4b281158959",
+    "questionText": "How is energy transferred via the process of convection?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:77f89d0ecb477b51ed0caab82ecc7e5da5ee80db5b81a2cacdd755428bd40bef",
+    "questionText": "Describe the mechanism of convection, specifically explaining how the movement of a fluid and the resulting circulating current are involved in the energy transfer process.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:7d021212307d7f23c25f4d9e3909bd7b426b7f54019ded5cc9f9d8b8e761d5bd",
+    "questionText": "How is energy transferred via the process of convection within a system?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:fba1c76b8d52f350d7785a91488704bada6b78afc42e1c9273ef090a7cf4df30",
+    "questionText": "Describe how the movement of a fluid facilitates the transfer of energy through convection, specifically explaining the role of the role of the temperature-driven circulation current.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:79fd6f6b6817a76328fb7607a096617b88eb72fc4641dd28cab42489ee448bbc",
+    "questionText": "Which mechanism of heat transfer involves the movement of a fluid to transfer energy?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:0aeb61de0296245ab060e316ba61c1d586a27427bf4acd43408b2cff4da34c3b",
+    "questionText": "Describe how convection works in a fluid, specifically explaining the process of circulating currents.  ",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r1:q1",
+    "operationId": "assessment:VOC-EN-PASTE-01:r1",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:a00347601127e543c067c1f8de4219be4587c678c5cffddce8b6939c402f79e8",
+    "questionText": "What is the required first step for a worker to take regarding energy sources and affected coworkers when preparing to maintain a powered machine?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r1:q2",
+    "operationId": "assessment:VOC-EN-PASTE-01:r1",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:faad0a0193c38cddcc9ddf216cf86138a55f935e79b13f5904296e67848ab874",
+    "questionText": "What two specific actions must a worker perform regarding energy sources and affected coworkers before starting maintenance on a powered machine?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r2:q1",
+    "operationId": "assessment:VOC-EN-PASTE-01:r2",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:42ec684d77dfce83946bb868a16c44e14617a27c30d5c27f290c0e49b55b386a",
+    "questionText": "What actions must a worker take regarding energy sources and affected coworkers before maintaining a powered machine?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r2:q2",
+    "operationId": "assessment:VOC-EN-PASTE-01:r2",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:faad0a0193c38cddcc9ddf216cf86138a55f935e79b13f5904296e67848ab874",
+    "questionText": "What two specific actions must a worker perform regarding energy sources and affected coworkers before starting maintenance on a powered machine?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:VOC-EN-PASTE-01:r1:q2",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r1:q1",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r1",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:02ac9d7b5101cf1cef92e7ea6b3ac780a8796cfad0bf21260116c1d1c409266e",
+    "questionText": "How does a rechargeable battery work in terms of energy storage and supply? ব্যাটারি চার্জিং এর ক্ষেত্রে energy storage এবং energy supply এর প্রক্রিয়াটি কী?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r1:q2",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r1",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:65da5e8e4e6dea4afbaa48a5723c503442c2610f45e66c3fd82586585371cf14",
+    "questionText": "Explain the process of energy storage in a rechargeable battery and why it is important to match the charger to the battery type and rated voltage. ব্যাটারি চার্জিং এর ক্ষেত্রে energy storage এবং rated voltage এর গুরুত্ব কী?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r2:q1",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r2",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:9367c0f5f7d13f174cd6d749908980421851bb321384b5c6388ee32e0acea2f3",
+    "questionText": "How does a rechargeable battery work in terms of energy storage and electrical energy supply? ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং electrical energy সরবরাহ করার প্রক্রিয়াটি কী?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r2:q2",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r2",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:49ac02be13d9887a7327390c67983b11d32449eb356ce5f1b07bcc98263239ad",
+    "questionText": "Explain the process of energy storage in a rechargeable battery and why it is important to match the charger to the battery type and rated voltage. ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় করার প্রক্রিয়াটি কী এবং চার্জারটি battery type এবং rated voltage এর সাথে মিলিয়ে রাখা কেন প্রয়োজন?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  }
+]

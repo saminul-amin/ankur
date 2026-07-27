@@ -28,3 +28,5 @@ tsconfig.tsbuildinfo
 /CODEX_AUTONOMOUS_TASK_06C_R1.md
 /evaluation/task06c-r1/records/private/
 /evaluation/task06c-r1/annotations/private/
+/evaluation/task06c-r1/iteration-*/records/private/
+/evaluation/task06c-r1/iteration-*/annotations/private/
