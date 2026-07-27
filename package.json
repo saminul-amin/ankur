@@ -40,7 +40,8 @@
     "notebook:task06c-r1": "python scripts/evaluation/run-notebook.py --task06c-r1",
     "evaluation:task06c-r2:dry-run": "node --import tsx scripts/evaluation/run-task06c-r2.ts --mode=dry-run",
     "evaluation:task06c-r2:run": "node --env-file-if-exists=.env.local --import tsx scripts/evaluation/run-task06c-r2.ts --mode=resume",
-    "notebook:task06c-r2": "python scripts/evaluation/run-notebook.py --task06c-r2"
+    "notebook:task06c-r2": "python scripts/evaluation/run-notebook.py --task06c-r2",
+    "evaluation:task06c-r2e:preflight": "node --env-file-if-exists=.env.local --import tsx scripts/evaluation/run-task06c-r2e-preflight.ts"
   },
   "dependencies": {
     "@google/genai": "latest",
