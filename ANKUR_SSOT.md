@@ -112,3 +112,14 @@ provider timeouts, rate limiting, and unavailability limited the full run to
 No reviewer packets or human metrics were produced. Historical evidence and
 the unchanged technical thresholds remain authoritative. Task 07 remains
 unauthorized.
+
+## Task 06C-R2E outcome addendum — version 1.3.5
+
+`SSOT_UPDATE_v1.3.5_TASK06C_R2E.md` records the provider-stable,
+evaluation-only rerun of the frozen R2 implementation. The 3/3 preflight passed
+and run 1 was infrastructure-valid, so it is authoritative. The run produced
+24/45 final-valid logical operations, 24 questions, and 11 written cases.
+Deterministic grounding and MCQ-key validity were 100% for persisted questions,
+but seven assessment operations remained `INVALID_OUTPUT`; the unchanged
+technical gate therefore failed. No reviewer packets or human metrics were
+created, and Task 07 remains unauthorized.

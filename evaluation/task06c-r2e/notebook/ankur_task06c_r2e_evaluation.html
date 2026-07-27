@@ -1,0 +1,71 @@
+<!doctype html><html><head><meta charset='utf-8'><title>Ankur Task 06C-R2E Evaluation</title>
+<style>body{max-width:1080px;margin:40px auto;padding:0 24px;font:16px/1.55 system-ui;color:#173c31}h1,h2,h3{color:#0d5d43}pre{white-space:pre-wrap;background:#f5f2e8;padding:18px;border-radius:12px}code{font-family:ui-monospace,monospace}.cell{margin:32px 0}.output{border-left:4px solid #d8a640}</style></head><body>
+<section class='cell'><h1>Ankur Task 06C-R2E provider-stable evaluation</h1>
+
+<p>Provider-free reconciliation of the authoritative public-safe run. Historical Task 06, Task 06C, R1, R2, and R2E remain separate.</p></section>
+<section class='cell'><pre><code>import json
+from pathlib import Path
+root = Path(&#x27;evaluation/task06c-r2e/run-1&#x27;)
+metrics = json.loads((root / &#x27;exports&#x27; / &#x27;aggregate-metrics.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+operations = json.loads((root / &#x27;records&#x27; / &#x27;public&#x27; / &#x27;provider-operations.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+attempts = json.loads((root / &#x27;records&#x27; / &#x27;public&#x27; / &#x27;provider-attempts.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+questions = json.loads((root / &#x27;records&#x27; / &#x27;public&#x27; / &#x27;question-records.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+written = json.loads((root / &#x27;records&#x27; / &#x27;public&#x27; / &#x27;written-grading-records.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+classification = json.loads((root / &#x27;INFRASTRUCTURE_CLASSIFICATION.json&#x27;).read_text(encoding=&#x27;utf-8&#x27;))
+print(&#x27;Loaded public-safe Task 06C-R2E run 1&#x27;)
+</code></pre><pre class='output'>Loaded public-safe Task 06C-R2E run 1
+</pre></section>
+<section class='cell'><pre><code>assert classification[&#x27;classification&#x27;] == &#x27;INFRASTRUCTURE_VALID&#x27;
+assert classification[&#x27;authoritative&#x27;] is True
+assert metrics[&#x27;reliability&#x27;][&#x27;totalOperations&#x27;] == len(operations) == 45
+assert metrics[&#x27;questions&#x27;][&#x27;total&#x27;] == len(questions) == 24
+assert metrics[&#x27;written&#x27;][&#x27;total&#x27;] == len(written) == 11
+assert metrics[&#x27;questions&#x27;][&#x27;deterministicGrounding&#x27;][&#x27;percentage&#x27;] == 100
+assert metrics[&#x27;questions&#x27;][&#x27;deterministicKeyValidity&#x27;][&#x27;percentage&#x27;] == 100
+assert all(metrics[&#x27;reliability&#x27;][key] == 0 for key in [&#x27;groundingFailures&#x27;, &#x27;quoteFailures&#x27;, &#x27;conceptFailures&#x27;, &#x27;reconciliationFailures&#x27;])
+print(&#x27;Infrastructure classification: INFRASTRUCTURE_VALID&#x27;)
+print(&#x27;R2E final validity: 24/45; questions: 24; written: 11&#x27;)
+print(&#x27;Provider-operation rows:&#x27;, len(attempts))
+print(&#x27;Fixed-denominator and artifact reconciliation: PASSED&#x27;)
+</code></pre><pre class='output'>Infrastructure classification: INFRASTRUCTURE_VALID
+R2E final validity: 24/45; questions: 24; written: 11
+Provider-operation rows: 50
+Fixed-denominator and artifact reconciliation: PASSED
+</pre></section>
+<section class='cell'><pre><code>gates = {
+    &#x27;final_valid_43_of_45&#x27;: metrics[&#x27;reliability&#x27;][&#x27;finalValid&#x27;][&#x27;count&#x27;] &gt;= 43,
+    &#x27;questions_at_least_30&#x27;: len(questions) &gt;= 30,
+    &#x27;written_at_least_10&#x27;: len(written) &gt;= 10,
+    &#x27;grounding_100_percent&#x27;: metrics[&#x27;questions&#x27;][&#x27;deterministicGrounding&#x27;][&#x27;percentage&#x27;] == 100,
+    &#x27;mcq_key_100_percent&#x27;: metrics[&#x27;questions&#x27;][&#x27;deterministicKeyValidity&#x27;][&#x27;percentage&#x27;] == 100,
+}
+for gate, passed in gates.items():
+    print(gate, &#x27;PASS&#x27; if passed else &#x27;FAIL&#x27;)
+assert gates[&#x27;final_valid_43_of_45&#x27;] is False
+assert gates[&#x27;questions_at_least_30&#x27;] is False
+print(&#x27;Human metrics: pending; reviewer packets: not generated&#x27;)
+print(&#x27;Task 07 authorized: NO&#x27;)
+</code></pre><pre class='output'>final_valid_43_of_45 FAIL
+questions_at_least_30 FAIL
+written_at_least_10 PASS
+grounding_100_percent PASS
+mcq_key_100_percent PASS
+Human metrics: pending; reviewer packets: not generated
+Task 07 authorized: NO
+</pre></section>
+<section class='cell'><pre><code>history = {
+    &#x27;Task 06&#x27;: &#x27;historical human-reviewed product gate failed&#x27;,
+    &#x27;Task 06C&#x27;: &#x27;33/45 final valid&#x27;,
+    &#x27;Task 06C-R1&#x27;: &#x27;no fixed-denominator gate pass&#x27;,
+    &#x27;Task 06C-R2&#x27;: &#x27;12/45 final valid; infrastructure-limited&#x27;,
+    &#x27;Task 06C-R2E&#x27;: &#x27;24/45 final valid; infrastructure-valid product gate failed&#x27;,
+}
+for name, result in history.items():
+    print(name, result)
+</code></pre><pre class='output'>Task 06 historical human-reviewed product gate failed
+Task 06C 33/45 final valid
+Task 06C-R1 no fixed-denominator gate pass
+Task 06C-R2 12/45 final valid; infrastructure-limited
+Task 06C-R2E 24/45 final valid; infrastructure-valid product gate failed
+</pre></section>
+</body></html>

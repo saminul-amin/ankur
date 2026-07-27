@@ -293,3 +293,25 @@ explicit `DEPENDENCY_UNAVAILABLE` controlled failures.
 
 The provider-free notebook reads only public-safe exports. The technical gate
 failed, so reviewer packets were not generated and Task 07 remains blocked.
+
+## 17. Task 06C-R2E provider-stable evaluation
+
+Task 06C-R2E is isolated under `evaluation/task06c-r2e/` and changes no product
+prompt, schema, validator, or generation behavior. Three small bounded requests
+must pass before a fixed run begins. A complete run always retains the
+45-logical-operation denominator; provider attempts, baseline calls, and
+transcription calls remain separately reported.
+
+Run 1 passed the 3/3 preflight and was classified `INFRASTRUCTURE_VALID`: all
+nine baselines completed, seven of nine analyses completed, there was no
+authentication failure, provider-wide unavailability, or explicit quota
+exhaustion, and the single rate limit plus single timeout did not constitute
+sustained or repeated cross-material infrastructure failure. Semantic
+`INVALID_OUTPUT` failures cannot be reclassified as infrastructure failures.
+
+The authoritative result was 24/45 final-valid logical operations, 24 persisted
+questions, and 11 written cases. Persisted deterministic grounding and MCQ-key
+validity were 100%, with zero invalid rubrics entering grading metrics and zero
+cross-material evidence defects. Seven assessment operations failed after their
+bounded repair, so the technical gate failed before human review. Task 07
+remains blocked.
