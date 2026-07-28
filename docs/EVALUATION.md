@@ -315,3 +315,34 @@ validity were 100%, with zero invalid rubrics entering grading metrics and zero
 cross-material evidence defects. Seven assessment operations failed after their
 bounded repair, so the technical gate failed before human review. Task 07
 remains blocked.
+
+## 18. Task 06C-R2F final assessment correction
+
+Task 06C-R2F is isolated under `evaluation/task06c-r2f/`. Before implementation,
+the seven R2E assessment failures were diagnosed from the available sanitized
+records. R2E did not retain field-level semantic failure codes, so the diagnosis
+records those fields as unavailable rather than reconstructing provider output.
+
+The narrow correction adds deterministic language and semantic-equivalence
+filtering before existing deterministic misconception fallback. It does not
+change the indexed-evidence analysis pipeline, canonical-answer ownership,
+provider schemas, prompts, correct-option identity, rubric construction, mark
+allocation, or evidence rules. Sanitized first-pass and repair-stage semantic
+diagnostics now record only failure code, field path, category, and schema
+version.
+
+The single authorized run retained the fixed 45-operation denominator and
+produced:
+
+- 22/45 first-pass-valid operations;
+- 33/45 final-valid operations;
+- 11/14 successful bounded repairs;
+- 42 persisted structured questions;
+- 18 written cases;
+- 42/42 deterministic grounding and MCQ-key validity;
+- zero invalid rubrics in grading metrics and zero cross-material evidence
+  defects.
+
+The unchanged 43/45 final-validity gate failed. The implementation is retained
+as a material, non-regressive improvement, but reviewer packets were not
+generated and all human metrics remain pending. Task 07 remains blocked.

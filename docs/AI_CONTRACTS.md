@@ -309,3 +309,24 @@ an output property. A component receives at most one schema or semantic repair.
 retains the normal budget. R1 did not establish production reliability for
 assessment or adaptive generation, so these remain safety contracts rather
 than a quality-pass claim.
+
+## 13. Task 06C-R2F deterministic distractor salvage
+
+`evidence-first-assessment-validation.v3` applies language-quality validation
+and semantic-equivalence filtering to model-supplied misconception candidates
+before application-owned option assembly. Candidate comparison normalizes
+Unicode, case, punctuation, and whitespace. Invalid, canonical-equivalent,
+evidence-supported, exact-duplicate, and near-duplicate candidates are rejected.
+Valid candidates are preserved and missing candidates may be supplied only by
+the existing deterministic, evidence-derived misconception transformations
+under `deterministic-distractor-salvage.v2`.
+
+The provider continues to receive the same strict small semantic contracts and
+at most one bounded regeneration. Prompts and provider schemas are unchanged.
+Application code continues to own evidence scope, canonical answers, option
+identity and order, rubric identity, claim identity, and five-mark allocation.
+
+Evaluation-only semantic diagnostics may contain the model ID, prompt/schema
+version, validation stage, sanitized failure code, sanitized field path, and
+failure category. They must never contain raw source text, prompt bodies, model
+content, provider bodies, credentials, learner answers, or hidden reasoning.

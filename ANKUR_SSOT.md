@@ -123,3 +123,17 @@ Deterministic grounding and MCQ-key validity were 100% for persisted questions,
 but seven assessment operations remained `INVALID_OUTPUT`; the unchanged
 technical gate therefore failed. No reviewer packets or human metrics were
 created, and Task 07 remains unauthorized.
+
+## Task 06C-R2F outcome addendum — version 1.3.6
+
+`SSOT_UPDATE_v1.3.6_TASK06C_R2F.md` records the final narrow assessment
+correction and its single fixed-denominator evaluation. Deterministic distractor
+salvage reduced assessment `INVALID_OUTPUT` failures from seven to two while
+preserving 100% grounding and MCQ-key validity. The run improved to 33/45
+final-valid logical operations, 42 persisted questions, and 18 written cases,
+but it did not meet the unchanged 43/45 reliability gate.
+
+The improved implementation is retained as `KEEP`. No further broad reliability
+iteration, reviewer packet generation, or human metric is authorized by this
+result. Task 07 remains unauthorized. Deployment and submission preparation may
+proceed only with this limitation disclosed.
