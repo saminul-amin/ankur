@@ -35,3 +35,6 @@ tsconfig.tsbuildinfo
 /evaluation/task06c-r2e/run-*/records/private/
 /evaluation/task06c-r2e/run-*/annotations/private/
 /evaluation/task06c-r2e/reviewer-packets/private/
+/evaluation/task06c-r2f/run-*/records/private/
+/evaluation/task06c-r2f/run-*/annotations/private/
+/evaluation/task06c-r2f/reviewer-packets/private/
