@@ -2,7 +2,9 @@ import type { ModelArtifactMetadata } from "../../domain/ai/model-artifact";
 import {
   buildCanonicalAnswer,
   isOptionSupportedByCanonical,
+  semanticTextSimilarity,
   validateCanonicalAnswer,
+  validateLanguageQuality,
   validateQuestionRubricAlignment,
   validateShortWrittenQuestion,
   validateSingleMcqQuestion,
@@ -126,6 +128,9 @@ function comparable(value: string): string {
     .trim();
 }
 
+export const ASSESSMENT_VALIDATOR_VERSION = "evidence-first-assessment-validation.v3";
+export const DISTRACTOR_SALVAGE_VERSION = "deterministic-distractor-salvage.v2";
+
 function deterministicMisconceptions(language: CanonicalAnswerV2["language"]): readonly string[] {
   if (language === "bn") return [
     "উৎসে বর্ণিত কারণ ও ফলের সম্পর্কটি উল্টো।",
@@ -150,14 +155,23 @@ export function selectDeterministicDistractors(input: {
 }): readonly [string, string, string] {
   const accepted: string[] = [];
   for (const candidate of [...input.candidates, ...deterministicMisconceptions(input.canonicalAnswer.language)]) {
-    const normalized = comparable(candidate);
+    const trimmed = candidate.trim().replace(/\s+/gu, " ");
+    const normalized = comparable(trimmed);
+    const languageFailures = validateLanguageQuality(trimmed, {
+      kind: "option",
+      sourceLanguage: input.canonicalAnswer.language,
+    });
     if (
       normalized.length === 0 ||
       comparable(input.canonicalAnswer.canonicalAnswer) === normalized ||
-      isOptionSupportedByCanonical(candidate, input.canonicalAnswer) ||
-      accepted.some((existing) => comparable(existing) === normalized)
+      languageFailures.length > 0 ||
+      isOptionSupportedByCanonical(trimmed, input.canonicalAnswer) ||
+      accepted.some((existing) =>
+        comparable(existing) === normalized ||
+        semanticTextSimilarity(existing, trimmed) >= 0.82
+      )
     ) continue;
-    accepted.push(candidate.trim());
+    accepted.push(trimmed);
     if (accepted.length === 3) break;
   }
   if (accepted.length !== 3) throw new Error("No valid deterministic distractor set remained.");

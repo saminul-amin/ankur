@@ -141,6 +141,10 @@ function similarity(left: string, right: string): number {
   return Math.max(tokenScore, ngramScore);
 }
 
+export function semanticTextSimilarity(left: string, right: string): number {
+  return similarity(left, right);
+}
+
 function scopeFor(candidate: DuplicateCandidate, prior: DuplicateCandidate): DuplicateComparisonScope | null {
   if (candidate.operationId === prior.operationId) return "same_operation";
   if (candidate.kind === "retry" && prior.kind === "assessment") return "retry_source";

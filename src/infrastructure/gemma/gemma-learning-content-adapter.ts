@@ -23,6 +23,11 @@ import {
   buildEvidenceFirstAssessmentPrompt,
   LEARNING_PROMPT_VERSIONS,
 } from "./learning-content-prompts";
+import type {
+  ProviderDiagnosticObserver,
+  ProviderFailureCategory,
+} from "./provider-diagnostics";
+import type { ArtifactValidationFailure } from "../../domain/assessments/evidence-first-validation";
 
 const PRIMARY_MODEL = "gemma-4-26b-a4b-it" as const;
 type RepairPromptContext = NonNullable<
@@ -52,7 +57,36 @@ function artifact(input: {
 }
 
 export class GemmaLearningContentAdapter implements LearningContentGenerationPort {
-  constructor(private readonly model: GenerativeModelPort, private readonly timeoutMs = 90_000) {}
+  constructor(
+    private readonly model: GenerativeModelPort,
+    private readonly timeoutMs = 90_000,
+    private readonly semanticDiagnosticObserver?: ProviderDiagnosticObserver,
+  ) {}
+
+  private recordSemanticFailures(
+    failures: readonly ArtifactValidationFailure[],
+    phase: "first_pass" | "repair",
+    promptVersion: string,
+  ): void {
+    for (const failure of failures) {
+      let category: ProviderFailureCategory = "transport_schema_mismatch";
+      if (/EVIDENCE|GROUND/u.test(failure.code)) category = "invalid_evidence";
+      else if (/QUOTE/u.test(failure.code)) category = "quote_mismatch";
+      else if (/RUBRIC/u.test(failure.code)) category = "rubric_mismatch";
+      else if (/CONCEPT/u.test(failure.code)) category = "concept_mismatch";
+      this.semanticDiagnosticObserver?.({
+        modelId: PRIMARY_MODEL,
+        promptVersion,
+        schemaVersion: "assessment-semantic-validation.v3",
+        phase,
+        category,
+        code: failure.code,
+        fieldPath: failure.path,
+        expected: failure.expected ?? "deterministically valid assessment semantic field",
+        repairAttempted: phase === "repair",
+      });
+    }
+  }
 
   async generatePreparationMap(
     input: Parameters<LearningContentGenerationPort["generatePreparationMap"]>[0],
@@ -218,6 +252,7 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
 
     let semanticRepairAttempted = false;
     if (assembled.failures.length > 0) {
+      this.recordSemanticFailures(assembled.failures, "first_pass", promptVersion);
       semanticRepairAttempted = true;
       const failureCodes = [...new Set(assembled.failures.map((failure) => failure.code))];
       const mcqFailed = assembled.failures.some((failure) =>
@@ -277,6 +312,7 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
         metadata: placeholderMetadata,
       });
       if (assembled.failures.length > 0) {
+        this.recordSemanticFailures(assembled.failures, "repair", promptVersion);
         throw new ProviderError("INVALID_OUTPUT", {
           cause: new Error(
             assembled.failures
