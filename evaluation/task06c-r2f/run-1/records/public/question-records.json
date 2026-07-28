@@ -1,0 +1,1052 @@
+[
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r1:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r1",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:abd30ac549abb22f3006790b8760695b4435e7c493e9299358f6d11ed075b92c",
+    "questionText": "জলচক্রে পানির বাষ্পে পরিণত হওয়ার প্রক্রিয়াটি কীভাবে ঘটে?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r1:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r1",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:b359bd8d5344b513a195665a2cc36cc1bc9c7fd0ddc73af989ad73d902579641",
+    "questionText": "সূর্যের তাপে নদী বা সমুদ্রের পানি বাষ্পে পরিণত হওয়ার প্রক্রিয়াটিকে কী বলা হয়?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r2:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r2",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:e1a65cdcd73d91054001a786555777a4282044d2fb6add8b2125ea838877d684",
+    "questionText": "জলচক্রে নদী, পুকুর ও সমুদ্রের পানি বাষ্পে পরিণত হয়ে উপরে ওঠার প্রক্রিয়াটি কীসের মাধ্যমে ঘটে?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r2:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r2",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:4915529dac1f926dd6cd420983764f3e5e8a414c3438653ef00828fb5ed27caa",
+    "questionText": "সূর্যের তাপে নদী, পুকুর বা সমুদ্রের পানি বাষ্পে পরিণত হওয়ার প্রক্রিয়াটিকে কী বলা হয়?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-BN-PASTE-01:r1:q2",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r3:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r3",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:8f798793b0e66d40527f5b588f981b4d8ab7ed92fbcc2272e5091c2d40191a3c",
+    "questionText": "জলচক্রে পানি বাষ্পে পরিণত হয়ে উপরে ওঠার প্রক্রিয়াটি কীভাবে ঘটে?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r3:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r3",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:1ea5fcc8551b37833f6d3b80542774bafa2ca2a53023b3334e15dea80156eb7d",
+    "questionText": "সূর্যের তাপে নদী, পুকুর বা সমুদ্রের পানি বাষ্পে পরিণত হয়ে উপরে ওঠার প্রক্রিয়াটিকে কী বলা হয়?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-BN-PASTE-01:q1",
+    "operationId": "revision:SCI-BN-PASTE-01",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 7,
+    "questionHash": "sha256:230c87fe54fd67e14d27023080e2bd3e94644c42e1b2de78a796bb38d17c6f1e",
+    "questionText": "সূর্যের তাপে নদী, পুকুর বা সমুদ্রের পানি বাষ্পে পরিণত হয়ে উপরে ওঠার প্রক্রিয়াটি কীসের সাথে সম্পর্কিত?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-BN-PASTE-01:r3:q2",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-BN-PASTE-01:q2",
+    "operationId": "revision:SCI-BN-PASTE-01",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 8,
+    "questionHash": "sha256:f682499a3c7bdacff76009fcd8b90a4af773d7bcb024d01543055e43f7456575",
+    "questionText": "সূর্যের তাপে নদী, পুকুর বা সমুদ্রের পানি বাষ্পে পরিণত হয়ে উপরে ওঠার প্রক্রিয়াটিকে কী নামে অভিহিত করা হয়?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:bcc7389088788a7c51ff681dde649af2383e69a14850b820933c99e331c2bfe9",
+    "questionText": "Which process describes how energy is transferred via the movement of a fluid?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:7ff79fa08bc06a9ce54844029f24795cf97d667fb56a759b28df7016151042a2",
+    "questionText": "Explain how the movement of a fluid facilitates convection and describe the resulting circulating current.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:bcc7389088788a7c51ff681dde649af2383e69a14850b820933c99e331c2bfe9",
+    "questionText": "Which process describes how energy is transferred via the movement of a fluid?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-EN-PDF-01:r1:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:f54a81f5cd67a1c01fedec2859388b53a235d868228fcaab4e6b89c7c03d9a89",
+    "questionText": "Explain how the movement of a fluid facilitates convection and describe the resulting circulating current created by temperature differences.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:bcc7389088788a7c51ff681dde649af2383e69a14850b820933c99e331c2bfe9",
+    "questionText": "Which process describes how energy is transferred via the movement of a fluid?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-EN-PDF-01:r1:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:7ff79fa08bc06a9ce54844029f24795cf97d667fb56a759b28df7016151042a2",
+    "questionText": "Explain how the movement of a fluid facilitates convection and describe the resulting circulating current.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-EN-PDF-01:r1:q2",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-EN-PDF-01:q1",
+    "operationId": "revision:SCI-EN-PDF-01",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 7,
+    "questionHash": "sha256:ab33e56ede5da876380509cd83d631dd93e99f9b0891c919c26302e66b0daad7",
+    "questionText": "Which mechanism of heat transfer involves the energy transfer through the movement of a fluid?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-EN-PDF-01:q2",
+    "operationId": "revision:SCI-EN-PDF-01",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 8,
+    "questionHash": "sha256:db78c044090c441e766d4b5f16c4a2a7e599e8aac60f5bf4cc3f39efeb0e0d55",
+    "questionText": "Describe how the movement of a fluid leads to a circulating current through the process of convection.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-IMG-01:r1:q1",
+    "operationId": "assessment:CIV-BN-IMG-01:r1",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:4a01e4c36b326b95212536358a36c24757c8eb3a97650210af26a4240cd66dbb",
+    "questionText": "ঘূর্ণিঝড়ের আগে স্থানীয় কর্তৃপক্ষ যদি সরিয়ে নেওয়ার নির্দেশ দেয়, তবে কী করণীয়?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-IMG-01:r1:q2",
+    "operationId": "assessment:CIV-BN-IMG-01:r1",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:b71b99ce37811c6d690b72799cec09d6ca5a2d38fa36227e0c6fcbd776b940c8",
+    "questionText": "স্থানীয় কর্তৃপক্ষ সরিয়ে নেওয়ার নির্দেশ দিলে আশ্রয়কেন্দ্রে যাওয়ার ক্ষেত্রে কাদের সহায়তায় অগ্রাধিকার দিতে হবে?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-IMG-01:r2:q1",
+    "operationId": "assessment:CIV-BN-IMG-01:r2",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:429ebb9a912f642c14a9af347707de10db13bbcc9c2f59689d64b4c8d43a22db",
+    "questionText": " ঘূর্ণিঝড়ের আগে স্থানীয় কর্তৃপক্ষ কর্তৃক সরিয়ে নেওয়ার নির্দেশ দিলে আপনার করণীয় কী?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-IMG-01:r2:q2",
+    "operationId": "assessment:CIV-BN-IMG-01:r2",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:61f628496a9e9b59f11579d246c83c865afa62fd7c820a3cca8aebf1ea3f4b82",
+    "questionText": "ঘূর্ণিঝড়ের সময় স্থানীয় কর্তৃপক্ষ সরিয়ে নেওয়ার নির্দেশ দিলে আশ্রয়কেন্দ্রে যাওয়ার ক্ষেত্রে কাদের সহায়তায় অগ্রাধিকার দিতে হবে?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-IMG-01:r3:q1",
+    "operationId": "assessment:CIV-BN-IMG-01:r3",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:4a01e4c36b326b95212536358a36c24757c8eb3a97650210af26a4240cd66dbb",
+    "questionText": "ঘূর্ণিঝড়ের আগে স্থানীয় কর্তৃপক্ষ যদি সরিয়ে নেওয়ার নির্দেশ দেয়, তবে কী করণীয়?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:CIV-BN-IMG-01:r1:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-IMG-01:r3:q2",
+    "operationId": "assessment:CIV-BN-IMG-01:r3",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:b71b99ce37811c6d690b72799cec09d6ca5a2d38fa36227e0c6fcbd776b940c8",
+    "questionText": "স্থানীয় কর্তৃপক্ষ সরিয়ে নেওয়ার নির্দেশ দিলে আশ্রয়কেন্দ্রে যাওয়ার ক্ষেত্রে কাদের সহায়তায় অগ্রাধিকার দিতে হবে?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:CIV-BN-IMG-01:r1:q2",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:CIV-BN-IMG-01:q1",
+    "operationId": "revision:CIV-BN-IMG-01",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 7,
+    "questionHash": "sha256:7037e18a34c80edd89949afef196eb8c56c262c27811f547e4eb25a8368c0ae5",
+    "questionText": "ঘূর্ণিঝড়ের সময়কালে-র জন্য প্রস্তুতিমূলক ব্যবস্থা হিসেবে, স্থানীয় কর্তৃপক্ষ যদি সরিয়ে নেওয়ার নির্দেশ দেয়, তবে নিরাপদ স্থানে পৌঁছানোর জন্য কী করা উচিত?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:CIV-BN-IMG-01:q2",
+    "operationId": "revision:CIV-BN-IMG-01",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 8,
+    "questionHash": "sha256:dd9699d7df6c110fae6238285446d8ce36a9b2142384ab3e9eb4eea2f8206816",
+    "questionText": "স্থানীয় কর্তৃপক্ষ সরিয়ে নেওয়ার নির্দেশ দিলে আশ্রয়কেন্দ্রে যাওয়ার সময় কাদের সহায়তায় অগ্রাধিকার দেওয়া উচিত এবং কখন তা করতে হবে?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r1:q1",
+    "operationId": "assessment:VOC-EN-PASTE-01:r1",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:b45daa5fe5173b6eaab6a7b8502e82d99c8b08e498affcc78a45481ed83b7955",
+    "questionText": "After the initial isolation steps, what is the required procedure for the following isolating device?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r1:q2",
+    "operationId": "assessment:VOC-EN-PASTE-01:r1",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:58a9b67df8c264ebbc9df029c53ed7e90b4cf99c1f28031750e25382a015244c",
+    "questionText": "What are the two specific requirements for securing the isolating device and managing any remaining stored energy?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r2:q1",
+    "operationId": "assessment:VOC-EN-PASTE-01:r2",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:a45d11178440517d84d5616f6716640ebbce227f8aadd075424f63630daed0d6",
+    "questionText": "After the initial isolation steps, what specific actions must be performed regarding the isolating device to ensure safety?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r2:q2",
+    "operationId": "assessment:VOC-EN-PASTE-01:r2",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:cf910e39587cc7c6ee1725155848ec4355ee964d7e0e82513281001af86eca5f",
+    "questionText": "What two specific safety measures must be taken regarding the isolating device and any potential stored energy, such as pressure or tension, before maintenance can begin?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:VOC-EN-PASTE-01:q1",
+    "operationId": "revision:VOC-EN-PASTE-01",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:3228bf652e9900169d170780bdbf677290fc049780a603e26d36f963efe2fd35",
+    "questionText": "What is the next step in the machine maintenance safety protocol to secure the isolating device?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:VOC-EN-PASTE-01:q2",
+    "operationId": "revision:VOC-EN-PASTE-01",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:a816d3a30199e8669332685b27bd6aa8462bf5d7a867563d1471992ac19e9a23",
+    "questionText": "Beyond the initial isolation, what specific actions must be taken regarding the isolating device and any potential stored energy, such as pressure or tension?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r1:q1",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r1",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:b00754703990040ee1ebbf6c40889d416a1f3f3d238fe0080327481472f36d6b",
+    "questionText": "How does a rechargeable battery work? ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং ব্যবহার করার প্রক্রিয়াটি কী?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r1:q2",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r1",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:60c8366b5cbc3b9fc8ca7b6fef4545ed21bdfdcf23e7c0e2a1939f25ec708003",
+    "questionText": "Explain the process of energy storage in a rechargeable battery through chemical changes and why it is important to match the charger with the battery type and rated voltage. ব্যাটারি চার্জিং এর মাধ্যমে রাসায়নিক পরিবর্তন এবং চার্জারের সাথে ব্যাটারি টাইপ ও ভোল্টেজ মিলানোর গুরুত্ব ব্যাখ্যা করুন।",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r2:q1",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r2",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:6de7b9fa84e9ecec1886dfc74269dd3605a47987ea43f230455333a970e92c3f",
+    "questionText": "How does a rechargeable battery work in terms of its energy storage and electrical energy supply? ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং electrical energy সরবরাহ করার প্রক্রিয়াটি কী?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r2:q2",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r2",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:2e3da569be5d3b5bce2e8b9e6a83dffdf91cac23d89ded248fef1dea62086a5e",
+    "questionText": "Explain the process of energy storage in a rechargeable battery through chemical changes and why the charger must match the battery type and rated voltage to manage heat. ব্যাটারি চার্জিং এর সময় chemical changes এর মাধ্যমে শক্তি সঞ্চয় করার প্রক্রিয়া এবং তাপ নিয়ন্ত্রণের জন্য charger এর প্রয়োজনীয়তা ব্যাখ্যা করুন।",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-MIX-PASTE-02:q1",
+    "operationId": "revision:SCI-MIX-PASTE-02",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:b6035655238284b360450b97b3e91a4b92db87c8270ad54691eda3ed5463d3ef",
+    "questionText": "Which of the following best describes the process of energy storage and electrical energy supply in a rechargeable battery? ব্যাটারিটি কীভাবে শক্তি সঞ্চয় এবং বিদ্যুৎ শক্তি সরবরাহ করে?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-MIX-PASTE-02:q2",
+    "operationId": "revision:SCI-MIX-PASTE-02",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:f9df82ee169aeb3e303ba4d3c9c360e9c166b47ca2455fb7c8823d85c38ad5fa",
+    "questionText": "Explain how a rechargeable battery stores energy and why it is necessary to match the charger's rated voltage with the battery type. ব্যাটারিটি কীভাবে শক্তি সঞ্চয় করে এবং কেন চার্জারের ভোল্টেজ ব্যাটারি টাইপের সাথে মিলানো প্রয়োজন?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-02:r1:q1",
+    "operationId": "assessment:VOC-EN-PASTE-02:r1",
+    "materialId": "VOC-EN-PASTE-02",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:5200f784248cd716ca31b941e8a6fe52c95523046f1124600e96cfadc2be5ff2",
+    "questionText": "Which of the following best describes the required setup for a portable ladder to ensure stability and prevent slipping?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-02:r1:q2",
+    "operationId": "assessment:VOC-EN-PASTE-02:r1",
+    "materialId": "VOC-EN-PASTE-02",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:017b390c2cd910cc5517f78c39a4a63b384128432ee0fb5c840abe3703c071a9",
+    "questionText": "What are the two requirements for ladder placement regarding the surface and the extension of the rails above a landing?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-02:r2:q1",
+    "operationId": "assessment:VOC-EN-PASTE-02:r2",
+    "materialId": "VOC-EN-PASTE-02",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:e36fda55f1d2140ae8f3b482c14d969f8668af08872c924085e2b96f49e28439",
+    "questionText": "Which of the following describes a safe setup for a portable ladder?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-02:r2:q2",
+    "operationId": "assessment:VOC-EN-PASTE-02:r2",
+    "materialId": "VOC-EN-PASTE-02",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:00f8070fc2e3ed96a2d23193a53e8ee5e9164b640f9a540d83008f6863adb969",
+    "questionText": "What two specific requirements must be met regarding the ladder's placement on a surface and the extension of the rails when accessing an upper level?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:VOC-EN-PASTE-02:q1",
+    "operationId": "revision:VOC-EN-PASTE-02",
+    "materialId": "VOC-EN-PASTE-02",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:a3ee9fce9cbc5541cc73c318c3e48eba1a29c305909638edf54581b3bc630a33",
+    "questionText": "Which of the following describes the correct setup for a ladder to ensure it is placed on a firm, level surface and secured against movement?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:VOC-EN-PASTE-02:q2",
+    "operationId": "revision:VOC-EN-PASTE-02",
+    "materialId": "VOC-EN-PASTE-02",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:15d918e6eceb7c2b7cb72ae7cb3c1a50eb94539c5bbef1903a075bd3229765dc",
+    "questionText": "To ensure safe access to an upper level, what two specific requirements must be met regarding the ladder's placement on the surface and the extension of the rails?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  }
+]

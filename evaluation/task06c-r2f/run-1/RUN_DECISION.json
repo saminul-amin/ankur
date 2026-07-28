@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "task06c-r2f-run-decision.v1",
+  "runId": "task06c-r2f-run-1",
+  "implementationCommit": "193a4da",
+  "classification": "KEEP",
+  "technicalGate": "failed",
+  "materialImprovement": true,
+  "comparison": {
+    "r2eFinalValid": 24,
+    "r2fFinalValid": 33,
+    "denominator": 45,
+    "r2eQuestions": 24,
+    "r2fQuestions": 42,
+    "r2eWrittenCases": 11,
+    "r2fWrittenCases": 18,
+    "r2eAssessmentInvalidOutput": 7,
+    "r2fAssessmentInvalidOutput": 2
+  },
+  "preservedCorrectness": {
+    "deterministicGroundingPercentage": 100,
+    "deterministicMcqKeyValidityPercentage": 100,
+    "invalidRubricsEnteringMetrics": 0,
+    "crossMaterialEvidenceDefects": 0
+  },
+  "remainingFailures": {
+    "analysisRateLimited": 1,
+    "analysisTimeout": 1,
+    "assessmentInvalidOutput": 2,
+    "assessmentDependencyUnavailable": 4,
+    "writtenDependencyUnavailable": 4
+  },
+  "decision": "Freeze and retain the materially improved non-regressive R2F implementation. No further reliability iteration is authorized."
+}
