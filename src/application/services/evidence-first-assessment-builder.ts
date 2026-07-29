@@ -84,6 +84,16 @@ export function createEvidenceFirstAssessmentPlan(input: {
     assignments[2] ?? assignments[0] ?? first,
   ] as const;
   const prefix = input.idPrefix ?? "assessment";
+  const firstEvidenceSegment = segmentById.get(first.evidenceSegmentId);
+  const writtenEvidenceSegmentIds = [...new Set(written.map((assignment) => assignment.evidenceSegmentId))];
+  if (writtenEvidenceSegmentIds.length < 2 && firstEvidenceSegment !== undefined) {
+    for (const segment of input.source.segments) {
+      if (!writtenEvidenceSegmentIds.includes(segment.id)) {
+        writtenEvidenceSegmentIds.push(segment.id);
+      }
+      if (writtenEvidenceSegmentIds.length === 3) break;
+    }
+  }
   const mcqCanonicalAnswer = buildCanonicalAnswer({
     source: input.source,
     evidenceSegmentIds: [first.evidenceSegmentId],
@@ -94,7 +104,7 @@ export function createEvidenceFirstAssessmentPlan(input: {
   });
   const writtenCanonicalAnswer = buildCanonicalAnswer({
     source: input.source,
-    evidenceSegmentIds: [...new Set(written.map((assignment) => assignment.evidenceSegmentId))],
+    evidenceSegmentIds: writtenEvidenceSegmentIds,
     conceptIds: [...new Set(written.map((assignment) => assignment.conceptId))],
     idSuffix: `${prefix}-written`,
     maximumAnswerCharacters: 1_200,

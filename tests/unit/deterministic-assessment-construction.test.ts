@@ -16,6 +16,8 @@ import {
 } from "../../src/application/services/evidence-first-assessment-builder.js";
 import { createSamplePreparationMap, createSampleSource } from "../../src/application/sample/sample-vertical-slice.js";
 import type { ModelArtifactMetadata } from "../../src/domain/ai/model-artifact.js";
+import type { PreparationMap } from "../../src/domain/preparation/preparation-map.js";
+import { createConfirmedSource } from "../../src/domain/source/confirmed-source.js";
 import { GemmaLearningContentAdapter } from "../../src/infrastructure/gemma/gemma-learning-content-adapter.js";
 import { evidenceFirstMcqProviderSchema } from "../../src/shared/schemas/evidence-first-question-schemas.js";
 
@@ -155,6 +157,66 @@ describe("Task 06C-R2 deterministic assessment construction", () => {
       expect(marks.reduce((sum, mark) => sum + mark, 0)).toBe(5);
       expect(marks.every(Number.isInteger)).toBe(true);
     }
+  });
+
+  it("constructs a valid written evidence window when indexed analysis returns one concept", () => {
+    const source = createConfirmedSource({
+      pages: [
+        { pageNumber: 1, text: "Photosynthesis uses sunlight, water, and carbon dioxide to make glucose." },
+        { pageNumber: 2, text: "Chlorophyll absorbs light energy, and oxygen is released." },
+      ],
+      language: "en",
+      method: "pasted_text",
+      priorityInstruction: "",
+      confirmedAt: "2026-07-29T00:00:00.000Z",
+    });
+    const first = source.segments[0];
+    if (first === undefined) throw new Error("The release regression requires source evidence.");
+    const evidence = [{ segmentId: first.id }];
+    const map: PreparationMap = {
+      schemaVersion: "preparation-map.v1",
+      id: `preparation-${source.sourceVersionId}`,
+      sourceVersionId: source.sourceVersionId,
+      title: "Photosynthesis",
+      language: "en",
+      domain: "Science",
+      topics: [{
+        id: "topic-primary",
+        name: "Photosynthesis",
+        priority: "high",
+        evidence,
+      }],
+      concepts: [{
+        id: "concept-primary",
+        topicId: "topic-primary",
+        name: "Photosynthesis",
+        description: "Plants use light energy to produce food.",
+        priority: "high",
+        evidence,
+      }],
+      objectives: [{
+        id: "objective-primary",
+        description: "Explain photosynthesis.",
+        conceptIds: ["concept-primary"],
+        evidence,
+      }],
+      warnings: [],
+      artifact: {
+        ...metadata("single-concept-analysis"),
+        task: "material_analysis",
+        schemaVersion: "preparation-map.v1",
+      },
+    };
+    const plan = createEvidenceFirstAssessmentPlan({
+      source,
+      preparationMap: map,
+      selectedConceptIds: ["concept-primary"],
+    });
+    expect(plan.writtenCanonicalAnswer.requiredClaims).toHaveLength(2);
+    expect(plan.writtenCanonicalAnswer.evidenceReferences.map((reference) => reference.segmentId))
+      .toEqual(source.segments.map((segment) => segment.id));
+    expect(deterministicRubricMarks(plan.writtenCanonicalAnswer.requiredClaims.length))
+      .toEqual([3, 2]);
   });
 
   it("rejects model attempts to emit application-owned internal IDs", () => {
