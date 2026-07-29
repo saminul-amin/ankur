@@ -5,7 +5,7 @@
 - Trusted source branch: `task06c-r2f/final-assessment-correction`
 - Trusted source SHA: `3b458b736d487ba9c927868b3a29064ecb7e7cd0`
 - Release branch: `release/ankur-r2f-preview`
-- Release SHA: pending final evidence commit
+- Release code SHA: `3575cf808cf1e5362ff6a626aca864bdef4a3128`
 - Integration strategy: direct branch from the trusted R2F SHA; full history
   preserved; no squash, rebase, cherry-pick, or merge.
 - Remote baseline: `origin/main` at
@@ -15,9 +15,37 @@
 
 ## Release changes
 
-No product, prompt, schema, provider, domain, persistence, or UI behavior was
-changed. Release work adds only this report, the human approval checklist, and
-public-safe screenshot copies. Frozen Task 06 through R2F evidence is unchanged.
+Two release-verification defects were corrected without changing prompts,
+provider transport, grounding, scoring, persistence, or UI behavior:
+
+- a one-concept preparation map now expands the written-question evidence scope
+  with additional confirmed segments from the same source version when needed;
+- the API contract now permits empty feedback only for the deterministic
+  `not_answered` written status.
+
+Release work also adds this report, the human approval checklist, and public-safe
+screenshot copies. Frozen Task 06 through R2F evidence is unchanged.
+
+## Changed files
+
+Release documentation and evidence:
+
+- `docs/releases/ANKUR_R2F_PREVIEW_RELEASE_REPORT.md`
+- `docs/releases/ANKUR_R2F_HUMAN_APPROVAL_CHECKLIST.md`
+- eight public-safe PNG files under `docs/releases/screenshots/`
+
+One-concept assessment release fix:
+
+- `src/application/services/evidence-first-assessment-builder.ts`
+- `tests/unit/deterministic-assessment-construction.test.ts`
+
+Deterministic unanswered-grading contract fix:
+
+- `src/shared/schemas/api-contracts.ts`
+- `tests/unit/written-grading-and-diagnosis.test.ts`
+
+No provider prompt, model configuration, accepted ADR, historical evaluation
+record, production variable, or production deployment was changed.
 
 ## Provider-free release gate
 
@@ -26,7 +54,7 @@ public-safe screenshot copies. Frozen Task 06 through R2F evidence is unchanged.
 | `npm ci` | Passed; 290 packages installed |
 | `npm run lint` | Passed |
 | `npm run typecheck` | Passed |
-| `npm test` | Passed; 33 files and 166 tests |
+| `npm test` | Passed; 33 files and 168 tests |
 | `npm run build` | Passed; Next.js 16.2.11 production build |
 | `npm run test:e2e` | Passed; 22 tests and 6 intentional skips |
 | `npm audit --audit-level=moderate` | Passed; zero vulnerabilities |
@@ -43,6 +71,10 @@ public-safe screenshot copies. Frozen Task 06 through R2F evidence is unchanged.
 The first sandboxed production build could not download Google font assets.
 The same command passed with network access; this was an execution-environment
 network restriction, not a source defect.
+
+The release fixes are recorded in commits `25b1dcf` and `3575cf8`. The final
+post-fix full gate passed with 33 test files / 168 tests and 22 Playwright tests
+/ 6 intentional project-specific skips.
 
 ## Local production verification
 
@@ -90,29 +122,42 @@ No `NEXT_PUBLIC_*` provider secret or model override exists.
 
 ## Preview deployment
 
-- Deployment ID: pending
-- Preview URL: pending
-- Deployment status: pending
-- Build duration: pending
-- Exact deployed SHA: pending
+- Deployment ID: `dpl_7rtKUcsKLraUnwHniJhv3E5fncE6`
+- Preview URL:
+  `https://ankur-90h3wl2r5-saminulamin-gmailcoms-projects.vercel.app`
+- Stable branch alias:
+  `https://ankur-saminulamin-3445-saminulamin-gmailcoms-projects.vercel.app`
+- Deployment status: Ready (preview target; production was not changed)
+- Build duration: 45 seconds
+- Exact deployed SHA/build ID:
+  `3575cf808cf1e5362ff6a626aca864bdef4a3128` /
+  `3575cf808cf1`
+- Access protection: unauthenticated requests receive HTTP 302 to Vercel SSO.
+  Authenticated Vercel deployment checks return HTTP 200.
+- Runtime: live AI enabled, sample mode enabled, provider configured, primary
+  model `gemma-4-26b-a4b-it`.
 
 ## Preview smoke matrix
 
 | Flow | Result |
 |---|---|
-| HTTPS/home/general rendering | Pending |
-| Sample flow | Pending |
-| Live English pasted text | Pending |
-| Live Bengali pasted text | Pending |
-| Mixed-language pasted text | Pending |
-| Digital/scanned PDF | Pending |
-| Standalone image | Pending |
-| Assessment interaction | Pending |
-| Written grading | Pending |
-| Revision/retry | Pending |
-| Controlled failure | Pending |
-| Mobile | Pending |
-| Console/server errors | Pending |
+| HTTPS/home/general rendering | Authenticated health/home passed; unauthenticated clean-browser access blocked by Vercel SSO |
+| Sample flow | Local production Playwright passed; preview flag is enabled; remote interactive check blocked by Vercel SSO |
+| Live English pasted text | Passed full analysis, assessment, revision/retry, and retry written-grading chain |
+| Live Bengali pasted text | Analysis passed; assessment returned controlled `MODEL_OUTPUT_INVALID` after bounded repair |
+| Mixed-language pasted text | Analysis passed; assessment returned controlled `MODEL_OUTPUT_INVALID` after bounded repair |
+| Digital/scanned PDF | Local production Playwright passed; remote interactive check blocked by Vercel SSO |
+| Standalone image | Live Bengali image transcription returned a non-empty, schema-valid transcription |
+| Assessment interaction | English passed; Bengali and mixed assessment availability failed as above |
+| Written grading | English retry written grading passed with valid marks/status |
+| Revision/retry | English live adaptive chain passed |
+| Controlled failure | Empty-source request returned safe `VALIDATION_FAILED` without provider or credential leakage |
+| Mobile | Local production Playwright passed with no horizontal overflow; remote interactive check blocked by Vercel SSO |
+| Console/server errors | No unsafe provider body or credential exposure observed; controlled generation failures remained sanitized |
+
+The live verifier intentionally did not rerun unchanged Bengali or mixed
+assessment failures to select a favorable output. The preview therefore does
+not satisfy the required multilingual release-availability gate.
 
 ## Evaluation disclosure
 
@@ -156,6 +201,18 @@ availability remained below the project's strict reliability target.
 - Sample mode is required as a safe fallback.
 - Browser persistence is device-local and has no account synchronization.
 - Fresh independent R2F human review has not been performed.
+- Bengali and mixed-language preview assessments produced controlled invalid
+  outputs after bounded repair.
+- The preview remains protected by Vercel SSO and is not available to a clean
+  unauthenticated reviewer session.
+
+## Release decision
+
+Release QA failed. Production is not authorized. Before another preview can be
+submitted for human approval, assessment-generation reliability must pass the
+required Bengali and mixed-language live flows, and the project owner must
+create a Vercel shareable preview link (or otherwise authorize appropriate
+preview access) without weakening production protection.
 
 ## Rollback
 

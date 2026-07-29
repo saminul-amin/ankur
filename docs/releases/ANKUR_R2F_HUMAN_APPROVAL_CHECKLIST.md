@@ -1,10 +1,16 @@
 # Ankur R2F preview human approval checklist
 
-Preview URL: pending deployment
+Preview URL:
+`https://ankur-90h3wl2r5-saminulamin-gmailcoms-projects.vercel.app`
+
+Current status: release QA failed; human production approval is not yet
+requested. The URL is protected by Vercel SSO and requires an authorized team
+session until a shareable preview link is created.
 
 Release branch: `release/ankur-r2f-preview`
 
-Before approving production, review the preview in a clean browser and confirm:
+After the release-QA blockers in the preview report are resolved, review the
+new preview in a clean browser and confirm:
 
 - [ ] Visual polish is suitable for a judge-facing demonstration.
 - [ ] Bengali text is readable and correctly shaped.
