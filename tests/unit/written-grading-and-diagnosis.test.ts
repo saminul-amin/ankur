@@ -4,6 +4,7 @@ import { createSampleActivitySet, createSamplePreparationMap, createSampleSource
 import { calculateConceptPerformance, reconcileAssessmentTotal, weakConcepts } from "../../src/domain/assessments/concept-performance.js";
 import { gradeMcq } from "../../src/domain/assessments/mcq.js";
 import { createEmptyWrittenEvaluation, validateWrittenEvaluation } from "../../src/domain/assessments/written-evaluation.js";
+import { writtenEvaluationApiSchema } from "../../src/shared/schemas/api-contracts.js";
 
 describe("written grading and deterministic diagnosis", () => {
   const source = createSampleSource();
@@ -17,6 +18,14 @@ describe("written grading and deterministic diagnosis", () => {
     expect(result.criterionResults.every((criterion) => criterion.awardedMarks === 0 && criterion.state === "not_met")).toBe(true);
     expect(result.missingConceptIds).toEqual(activity.questions[1].requiredConceptIds);
     expect(validateWrittenEvaluation(source, activity.questions[1], result)).toEqual([]);
+    expect(writtenEvaluationApiSchema.safeParse(result).success).toBe(true);
+  });
+
+  it("requires feedback for provider-graded written evaluations", () => {
+    expect(writtenEvaluationApiSchema.safeParse({
+      ...createSampleWrittenEvaluation(activity),
+      feedback: "",
+    }).success).toBe(false);
   });
 
   it("allocates written criterion marks only to their linked concepts and reconciles all six marks", () => {

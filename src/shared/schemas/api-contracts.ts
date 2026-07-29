@@ -79,9 +79,20 @@ export const writtenEvaluationApiSchema = z.object({
   status: z.enum(["correct", "partially_correct", "incorrect", "not_answered", "needs_review"]),
   criterionResults: z.array(criterionResultApiSchema).min(2).max(4), coveredConceptIds: z.array(conceptIdSchema).max(8),
   missingConceptIds: z.array(conceptIdSchema).max(8), incorrectClaims: z.array(z.string().min(1).max(500)).max(8),
-  unsupportedClaims: z.array(z.string().min(1).max(500)).max(8), feedback: z.string().min(1).max(800),
+  unsupportedClaims: z.array(z.string().min(1).max(500)).max(8), feedback: z.string().max(800),
   evidence: z.array(evidenceSchema).min(1).max(6), recommendedRevisionConceptIds: z.array(conceptIdSchema).max(8), artifact: artifactSchema,
-}).strict();
+}).strict().superRefine((value, context) => {
+  if (
+    (value.status === "not_answered" && value.feedback !== "") ||
+    (value.status !== "not_answered" && value.feedback.trim().length === 0)
+  ) {
+    context.addIssue({
+      code: "custom",
+      path: ["feedback"],
+      message: "Unanswered evaluations have no feedback; graded evaluations require feedback.",
+    });
+  }
+});
 
 export const mcqGradeApiSchema = z.object({
   status: z.enum(["correct", "incorrect", "unanswered"]), correct: z.boolean(),
