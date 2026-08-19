@@ -10,13 +10,13 @@ import type { PreparationMap } from "../../domain/preparation/preparation-map";
 import { ProviderError } from "../../shared/errors/provider-error";
 import {
   evidenceFirstMcqProviderJsonSchema,
-  evidenceFirstMcqProviderSchema,
+  evidenceFirstMcqProviderTransportSchema,
   evidenceFirstWrittenQuestionProviderJsonSchema,
-  evidenceFirstWrittenQuestionProviderSchema,
+  evidenceFirstWrittenQuestionProviderTransportSchema,
 } from "../../shared/schemas/evidence-first-question-schemas";
 import {
   preparationMapProviderJsonSchema,
-  preparationMapProviderSchema,
+  preparationMapProviderTransportSchema,
 } from "../../shared/schemas/learning-content-schemas";
 import {
   buildAnalysisPrompt,
@@ -92,7 +92,11 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
     input: Parameters<LearningContentGenerationPort["generatePreparationMap"]>[0],
   ): Promise<PreparationMap> {
     const promptVersion = LEARNING_PROMPT_VERSIONS.analysis;
-    const thinkingLevel = "high";
+    // Analysis only picks one numbered evidence choice and writes short labels.
+    // Extended thinking added no measured grounding benefit and reproducibly
+    // drove Bengali and mixed sources into degenerate repetition loops that
+    // exhausted the output budget; the application still validates grounding.
+    const thinkingLevel = "minimal";
     const result = await this.model.generateStructured({
       task: "structured_generation",
       modelId: PRIMARY_MODEL,
@@ -100,12 +104,15 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       schemaVersion: "analysis-semantic.v2",
       thinkingLevel,
       temperature: 0.1,
-      maxOutputTokens: 4_000,
+      // A valid analysis object needs roughly 200 output tokens. A tight budget
+      // keeps a degenerate repetition loop cheap and detects it in seconds
+      // instead of spending the whole request timeout on it.
+      maxOutputTokens: 1_200,
       timeoutMs: this.timeoutMs,
       contents: [{ kind: "text", text: buildAnalysisPrompt(input) }],
       outputMode: "native",
       jsonSchema: preparationMapProviderJsonSchema,
-      schema: preparationMapProviderSchema,
+      schema: preparationMapProviderTransportSchema,
       maxSchemaRepairs: 1,
     });
     const selected = input.source.segments[result.value.evidenceIndex - 1];
@@ -194,7 +201,7 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       }],
       outputMode: "native",
       jsonSchema: evidenceFirstMcqProviderJsonSchema,
-      schema: evidenceFirstMcqProviderSchema,
+      schema: evidenceFirstMcqProviderTransportSchema,
       maxSchemaRepairs: repair === undefined ? 1 : 0,
     });
     const generateWritten = (
@@ -223,7 +230,7 @@ export class GemmaLearningContentAdapter implements LearningContentGenerationPor
       }],
       outputMode: "native",
       jsonSchema: evidenceFirstWrittenQuestionProviderJsonSchema,
-      schema: evidenceFirstWrittenQuestionProviderSchema,
+      schema: evidenceFirstWrittenQuestionProviderTransportSchema,
       maxSchemaRepairs: repair === undefined ? 1 : 0,
     });
     const placeholderMetadata: ModelArtifactMetadata = {

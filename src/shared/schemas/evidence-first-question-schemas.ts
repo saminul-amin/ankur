@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { collapseRepeatedSegmentsDeep } from "../text/collapse-repetition";
+
 export const EVIDENCE_FIRST_CONTRACT_VERSIONS = {
   canonicalAnswer: "canonical-answer.v2",
   singleMcq: "single-mcq-question.v2",
@@ -183,6 +185,18 @@ export const evidenceFirstRubricProviderSchema = z.object({
   criterion2Description: z.string().min(1).max(600),
   criterion3Description: z.string().min(1).max(600),
 }).strict();
+
+// Assessment transports share the analysis transport's deterministic repetition
+// collapse. The unchanged semantic validators still decide acceptance.
+export const evidenceFirstMcqProviderTransportSchema = z.preprocess(
+  collapseRepeatedSegmentsDeep,
+  evidenceFirstMcqProviderSchema,
+);
+
+export const evidenceFirstWrittenQuestionProviderTransportSchema = z.preprocess(
+  collapseRepeatedSegmentsDeep,
+  evidenceFirstWrittenQuestionProviderSchema,
+);
 
 export type ScopedEvidenceReference = z.infer<typeof scopedEvidenceReferenceSchema>;
 export type RequiredClaim = z.infer<typeof requiredClaimSchema>;

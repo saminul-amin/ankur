@@ -140,6 +140,59 @@ function comparable(value: string): string {
 
 export const ASSESSMENT_VALIDATOR_VERSION = "evidence-first-assessment-validation.v3";
 export const DISTRACTOR_SALVAGE_VERSION = "deterministic-distractor-salvage.v2";
+export const PROMPT_SALVAGE_VERSION = "deterministic-question-prompt-salvage.v1";
+
+const CLAUSE_SEPARATOR = /([.!?।;:,]+\s*)/u;
+
+function collapseAdjacentDuplicateTokens(value: string): string {
+  const parts = value.split(/(\s+)/u);
+  const kept: string[] = [];
+  let previousWord: string | undefined;
+  for (const part of parts) {
+    if (/^\s+$/u.test(part)) { kept.push(part); continue; }
+    const key = comparable(part);
+    if (key.length > 1 && key === previousWord) {
+      if (kept.at(-1) !== undefined && /^\s+$/u.test(kept.at(-1) ?? "")) kept.pop();
+      continue;
+    }
+    previousWord = key.length > 1 ? key : undefined;
+    kept.push(part);
+  }
+  return kept.join("");
+}
+
+function dropRepeatedClauses(value: string): string {
+  const parts = value.split(CLAUSE_SEPARATOR);
+  const seen = new Set<string>();
+  const kept: string[] = [];
+  for (let index = 0; index < parts.length; index += 2) {
+    const clause = parts[index] ?? "";
+    const delimiter = parts[index + 1] ?? "";
+    const key = comparable(clause);
+    if (key.length >= 8 && seen.has(key)) continue;
+    if (key.length >= 8) seen.add(key);
+    kept.push(clause, delimiter);
+  }
+  return kept.join("");
+}
+
+/**
+ * Repairs only mechanical wording defects a provider prompt can carry — adjacent
+ * duplicated tokens, literally repeated clauses, doubled or dangling punctuation,
+ * and a missing terminal question mark. Meaning is never rewritten, and the
+ * unchanged validators still decide whether the salvaged prompt is acceptable.
+ */
+export function salvageQuestionPrompt(prompt: string): string {
+  const collapsed = dropRepeatedClauses(collapseAdjacentDuplicateTokens(prompt))
+    .replace(/\s+/gu, " ")
+    .replace(/([!?।.,])\1+/gu, "$1")
+    .replace(/[,.]\s*([?।])/gu, "$1")
+    .replace(/\s+([!?।.,])/gu, "$1")
+    .replace(/[,:;—-]+\s*$/u, "")
+    .trim();
+  if (collapsed.length === 0) return prompt.trim();
+  return /[?？।.]$/u.test(collapsed) ? collapsed : `${collapsed}?`;
+}
 
 function deterministicMisconceptions(language: CanonicalAnswerV2["language"]): readonly string[] {
   if (language === "bn") return [
@@ -253,7 +306,7 @@ export function assembleEvidenceFirstAssessment(input: {
     id: `${prefix}-001`,
     materialId: input.plan.mcqCanonicalAnswer.materialId,
     sourceVersionId: input.source.sourceVersionId,
-    prompt: input.mcqProvider.prompt,
+    prompt: salvageQuestionPrompt(input.mcqProvider.prompt),
     explanation: input.plan.mcqCanonicalAnswer.canonicalAnswer,
     canonicalAnswerId: input.plan.mcqCanonicalAnswer.id,
     requiredClaimIds: input.plan.mcqCanonicalAnswer.requiredClaims.map((claim) => claim.id),
@@ -269,7 +322,7 @@ export function assembleEvidenceFirstAssessment(input: {
     id: `${prefix}-002`,
     materialId: input.plan.writtenCanonicalAnswer.materialId,
     sourceVersionId: input.source.sourceVersionId,
-    prompt: input.writtenQuestionProvider.prompt,
+    prompt: salvageQuestionPrompt(input.writtenQuestionProvider.prompt),
     explanation: input.plan.writtenCanonicalAnswer.canonicalAnswer,
     canonicalAnswerId: input.plan.writtenCanonicalAnswer.id,
     requiredClaimIds: input.plan.writtenCanonicalAnswer.requiredClaims.map((claim) => claim.id),

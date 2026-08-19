@@ -11,9 +11,9 @@ import type { RevisionItem } from "../../domain/revision/revision-plan";
 import { ProviderError } from "../../shared/errors/provider-error";
 import {
   evidenceFirstMcqProviderJsonSchema,
-  evidenceFirstMcqProviderSchema,
+  evidenceFirstMcqProviderTransportSchema,
   evidenceFirstWrittenQuestionProviderJsonSchema,
-  evidenceFirstWrittenQuestionProviderSchema,
+  evidenceFirstWrittenQuestionProviderTransportSchema,
 } from "../../shared/schemas/evidence-first-question-schemas";
 import {
   revisionItemCandidateProviderJsonSchema,
@@ -99,7 +99,7 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
         }],
         outputMode: "native",
         jsonSchema: evidenceFirstMcqProviderJsonSchema,
-        schema: evidenceFirstMcqProviderSchema,
+        schema: evidenceFirstMcqProviderTransportSchema,
         maxSchemaRepairs: repair === undefined ? 1 : 0,
       });
       const writtenResult = await this.model.generateStructured({
@@ -127,7 +127,7 @@ export class GemmaRevisionGenerationAdapter implements RevisionGenerationPort {
         }],
         outputMode: "native",
         jsonSchema: evidenceFirstWrittenQuestionProviderJsonSchema,
-        schema: evidenceFirstWrittenQuestionProviderSchema,
+        schema: evidenceFirstWrittenQuestionProviderTransportSchema,
         maxSchemaRepairs: repair === undefined ? 1 : 0,
       });
       const placeholderMetadata: ModelArtifactMetadata = {

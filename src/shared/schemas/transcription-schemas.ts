@@ -19,7 +19,7 @@ export const pageTranscriptionProviderJsonSchema = {
   properties: {
     pageNumber: { type: "integer", minimum: 1, maximum: 3 },
     detectedLanguage: { type: "string", enum: ["bn", "en", "mixed"] },
-    text: { type: "string" },
+    text: { type: "string", minLength: 1, maxLength: 25_000 },
     uncertainSegments: {
       type: "array",
       maxItems: 20,
@@ -27,13 +27,13 @@ export const pageTranscriptionProviderJsonSchema = {
         type: "object",
         additionalProperties: false,
         properties: {
-          text: { type: "string" },
-          reason: { type: "string" },
+          text: { type: "string", minLength: 1, maxLength: 500 },
+          reason: { type: "string", minLength: 1, maxLength: 240 },
         },
         required: ["text", "reason"],
       },
     },
-    warnings: { type: "array", maxItems: 10, items: { type: "string" } },
+    warnings: { type: "array", maxItems: 10, items: { type: "string", minLength: 1, maxLength: 240 } },
   },
   required: ["pageNumber", "detectedLanguage", "text", "uncertainSegments", "warnings"],
 } as const;

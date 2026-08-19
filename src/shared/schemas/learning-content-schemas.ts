@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { collapseRepeatedSegmentsDeep } from "../text/collapse-repetition";
+
 export const evidenceSchema = z.object({
   segmentId: z.string().regex(/^M\d{2}-P\d{3}-S\d{3}$/),
   quote: z.string().min(1).max(600).optional(),
@@ -75,19 +77,30 @@ export const writtenRubricCandidateProviderSchema = z.object({
   criterion3Description: z.string().min(1).max(400),
 }).strict();
 
+// The analysis transport applies deterministic repetition collapse before
+// validation so a bounded degenerate loop cannot fail an otherwise usable
+// artifact purely on its length contract. Nothing else is rewritten.
+export const preparationMapProviderTransportSchema = z.preprocess(
+  collapseRepeatedSegmentsDeep,
+  preparationMapProviderSchema,
+);
+
 export type PreparationMapProviderOutput = z.infer<typeof preparationMapProviderSchema>;
 export type McqCandidateProviderOutput = z.infer<typeof mcqCandidateProviderSchema>;
 export type WrittenQuestionCandidateProviderOutput = z.infer<typeof writtenQuestionCandidateProviderSchema>;
 export type WrittenRubricCandidateProviderOutput = z.infer<typeof writtenRubricCandidateProviderSchema>;
 
+// Every bound below mirrors `preparationMapProviderSchema`. Without them the
+// provider received no length contract and could run a scalar into a degenerate
+// repetition loop until it exhausted the output budget.
 export const preparationMapProviderJsonSchema = {
   type: "object", additionalProperties: false,
   properties: {
-    title: { type: "string" }, language: { type: "string", enum: ["bn", "en", "mixed"] }, domain: { type: "string" },
-    topicName: { type: "string" }, topicPriority: { type: "string", enum: ["high", "medium", "low"] },
-    conceptName: { type: "string" }, conceptDescription: { type: "string" }, conceptPriority: { type: "string", enum: ["high", "medium", "low"] },
-    objectiveDescription: { type: "string" }, evidenceIndex: { type: "integer", minimum: 1, maximum: 24 },
-    warnings: { type: "array", maxItems: 3, items: { type: "string" } },
+    title: { type: "string", minLength: 1, maxLength: 160 }, language: { type: "string", enum: ["bn", "en", "mixed"] }, domain: { type: "string", minLength: 1, maxLength: 120 },
+    topicName: { type: "string", minLength: 1, maxLength: 120 }, topicPriority: { type: "string", enum: ["high", "medium", "low"] },
+    conceptName: { type: "string", minLength: 1, maxLength: 120 }, conceptDescription: { type: "string", minLength: 1, maxLength: 500 }, conceptPriority: { type: "string", enum: ["high", "medium", "low"] },
+    objectiveDescription: { type: "string", minLength: 1, maxLength: 300 }, evidenceIndex: { type: "integer", minimum: 1, maximum: 24 },
+    warnings: { type: "array", maxItems: 3, items: { type: "string", minLength: 1, maxLength: 240 } },
   },
   required: ["title", "language", "domain", "topicName", "topicPriority", "conceptName", "conceptDescription", "conceptPriority", "objectiveDescription", "evidenceIndex", "warnings"],
 } as const;

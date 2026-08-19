@@ -54,6 +54,45 @@ function structuredText(response: GenerateContentResponse): string | undefined {
   return text && text.length > 0 ? text : undefined;
 }
 
+export const STRUCTURED_JSON_EXTRACTION_VERSION = "structured-json-extraction.v1";
+
+/**
+ * Recovers the single JSON object a structured response was asked for when the
+ * provider wraps it in a fenced code block or surrounding prose. Only complete,
+ * brace-balanced candidates are returned; truncated output stays invalid so the
+ * existing bounded repair still runs.
+ */
+export function extractStructuredJsonCandidate(text: string): string | undefined {
+  const withoutFences = text
+    .replace(/^\s*```[a-zA-Z]*\s*/u, "")
+    .replace(/\s*```\s*$/u, "")
+    .trim();
+  const start = withoutFences.indexOf("{");
+  if (start < 0) return undefined;
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let index = start; index < withoutFences.length; index += 1) {
+    const character = withoutFences[index];
+    if (escaped) { escaped = false; continue; }
+    if (inString) {
+      if (character === "\\") escaped = true;
+      else if (character === "\"") inString = false;
+      continue;
+    }
+    if (character === "\"") { inString = true; continue; }
+    if (character === "{") depth += 1;
+    else if (character === "}") {
+      depth -= 1;
+      if (depth === 0) {
+        const candidate = withoutFences.slice(start, index + 1);
+        return candidate === text ? undefined : candidate;
+      }
+    }
+  }
+  return undefined;
+}
+
 function diagnosticCode(code: string, response: GenerateContentResponse): string {
   const finishReason = response.candidates?.[0]?.finishReason;
   return typeof finishReason === "string" && /^[A-Z_]{2,40}$/u.test(finishReason)
@@ -283,25 +322,37 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
       throw new ProviderError("INVALID_OUTPUT", { cause: new Error(firstValidation.repairMessage) });
     }
 
+    const firstFinishReason: string = first.response.candidates?.[0]?.finishReason ?? "";
+    // A truncated candidate is usually a degenerate repetition loop. Echoing it
+    // back re-primes the same loop, so the original task is retried once with a
+    // small temperature increase instead of an echo repair.
     const repairFromEmptyResponse = firstText === undefined;
+    const truncatedCandidate = !repairFromEmptyResponse && firstFinishReason === "MAX_TOKENS";
+    const retryOriginalTask = repairFromEmptyResponse || truncatedCandidate;
     const repairInstruction: GenerationContentPart = {
       kind: "text",
       text: repairFromEmptyResponse
         ? "The previous response was empty. Complete the original task now and return only one object satisfying the supplied native output schema. Do not include hidden reasoning."
-        : `Repair this invalid JSON object so it satisfies the supplied native output schema. Preserve its supported semantic content, fill only required fields, and return JSON only. Do not include hidden reasoning.\n\nVALIDATION ERRORS\n${firstValidation.repairMessage}\n\nINVALID OBJECT\n${firstText}`,
+        : truncatedCandidate
+          ? "The previous response was cut off before it finished. Complete the original task again and return only one concise object satisfying the supplied native output schema. Respect every stated length limit and never repeat a word, phrase, or clause. Do not include hidden reasoning."
+          : `Repair this invalid JSON object so it satisfies the supplied native output schema. Preserve its supported semantic content, fill only required fields, and return JSON only. Do not include hidden reasoning.\n\nVALIDATION ERRORS\n${firstValidation.repairMessage}\n\nINVALID OBJECT\n${firstText}`,
     };
-    const repairContents: readonly GenerationContentPart[] = repairFromEmptyResponse
+    const repairContents: readonly GenerationContentPart[] = retryOriginalTask
       ? [...request.contents, repairInstruction]
       : [repairInstruction];
-    const firstFinishReason: string = first.response.candidates?.[0]?.finishReason ?? "";
-    const repairOutputBudget = firstFinishReason === "MAX_TOKENS"
+    const repairOutputBudget = truncatedCandidate
       ? Math.min(Math.max(request.maxOutputTokens + 400, Math.ceil(request.maxOutputTokens * 1.5)), 4_000)
-      : Math.min(request.maxOutputTokens, 1_600);
+      : repairFromEmptyResponse
+        ? request.maxOutputTokens
+        : Math.min(request.maxOutputTokens, 1_600);
     const repaired = await this.#call({
       ...request,
       thinkingLevel: repairFromEmptyResponse ? request.thinkingLevel : "minimal",
-      temperature: repairFromEmptyResponse ? request.temperature : 0,
-      maxOutputTokens: repairFromEmptyResponse ? request.maxOutputTokens : repairOutputBudget,
+      // A cut-off or withheld candidate is usually a degenerate sampling path
+      // (repetition loop or recitation stop). Retrying the same task raises
+      // temperature just enough to leave that path instead of replaying it.
+      temperature: retryOriginalTask ? Math.max(request.temperature, 0.35) : 0,
+      maxOutputTokens: repairOutputBudget,
       contents: repairContents,
     }, mode === "native");
     const repairedText = structuredText(repaired.response);
@@ -347,6 +398,10 @@ export class GoogleGenAiAdapter implements GenerativeModelPort {
         repairMessage: validationMessage(result.error),
       };
     } catch {
+      const candidate = extractStructuredJsonCandidate(text);
+      if (candidate !== undefined) {
+        return this.#parseAndValidate(candidate, request);
+      }
       return {
         success: false,
         category: "invalid_json",
