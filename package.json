@@ -28,8 +28,7 @@
     "evaluation:export": "node --import tsx scripts/evaluation/run.ts --mode=public-export",
     "evaluation:verify": "node --import tsx scripts/evaluation/verify-public.ts && node --import tsx scripts/evaluation/verify-closure.ts",
     "notebook:run": "python scripts/evaluation/run-notebook.py",
-    "evaluation:human-close": "node --import tsx scripts/evaluation/close-human-review.ts"
-    ,
+    "evaluation:human-close": "node --import tsx scripts/evaluation/close-human-review.ts",
     "evaluation:task06c:prepare": "node --import tsx scripts/evaluation/prepare-task06c.ts",
     "evaluation:task06c:verify": "node --import tsx scripts/evaluation/verify-task06c.ts",
     "evaluation:task06c:dry-run": "node --import tsx scripts/evaluation/run.ts --task06c --mode=dry-run",
@@ -48,14 +47,17 @@
     "evaluation:task06c-r2f:dry-run": "node --import tsx scripts/evaluation/run-task06c-r2f.ts --mode=dry-run",
     "evaluation:task06c-r2f:run": "node --env-file-if-exists=.env.local --import tsx scripts/evaluation/run-task06c-r2f.ts --mode=resume",
     "evaluation:task06c-r2f:preflight": "node --env-file-if-exists=.env.local --import tsx scripts/evaluation/run-task06c-r2f-preflight.ts",
-    "notebook:task06c-r2f": "python scripts/evaluation/run-notebook.py --task06c-r2f"
+    "notebook:task06c-r2f": "python scripts/evaluation/run-notebook.py --task06c-r2f",
+    "evaluation:task06c-r2g:dry-run": "node --import tsx scripts/evaluation/run-task06c-r2g.ts --mode=dry-run",
+    "evaluation:task06c-r2g:run": "node --env-file-if-exists=.env.local --import tsx scripts/evaluation/run-task06c-r2g.ts --mode=resume",
+    "evaluation:task06c-r2g:preflight": "node --env-file-if-exists=.env.local --import tsx scripts/evaluation/run-task06c-r2g-preflight.ts"
   },
   "dependencies": {
     "@google/genai": "latest",
     "lucide-react": "^1.25.0",
     "motion": "^12.42.2",
-    "next": "16.2.11",
-    "pdfjs-dist": "6.1.200",
+    "next": "16.3.1",
+    "pdfjs-dist": "6.2.108",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "0.0.1",
@@ -85,8 +87,9 @@
   },
   "overrides": {
     "next": {
-      "postcss": "8.5.22",
+      "postcss": "8.5.26",
       "sharp": "0.35.0"
-    }
+    },
+    "postcss": "8.5.26"
   }
 }
