@@ -22,6 +22,15 @@ export const metadata: Metadata = {
   description: "A source-grounded learning studio that turns confirmed Bengali and English material into transparent practice.",
 };
 
+// Applied before first paint so a stored appearance choice never flashes the
+// opposite theme. It only reads one own-origin key and sets one data attribute.
+const themeBootstrap = `try{var t=localStorage.getItem("ankur.theme.v1");if(t==="dark"||t==="light"){document.documentElement.dataset.theme=t}}catch(e){}`;
+
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-  return <html className={`${manrope.variable} ${notoBengali.variable}`} lang="en"><body>{children}</body></html>;
+  return (
+    <html className={`${manrope.variable} ${notoBengali.variable}`} lang="en" suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: themeBootstrap }} /></head>
+      <body>{children}</body>
+    </html>
+  );
 }

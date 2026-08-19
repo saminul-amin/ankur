@@ -42,6 +42,7 @@ import { AdaptiveResultSummary } from "../../components/learning/adaptive-result
 import { RuntimePill, type RuntimeState } from "../../components/learning/runtime-pill";
 import { SourceCanvas, type SourceKind } from "../../components/learning/source-canvas";
 import { AlertBanner, Badge, Button, Field, TextInput } from "../../components/ui/primitives";
+import { ThemeToggle } from "../../components/ui/theme-toggle";
 import { processPageImagesForReview, processPdfForReview } from "../../composition/browser-services";
 import {
   INGESTION_STORAGE_KEY,
@@ -583,16 +584,20 @@ export function VerticalSliceWorkspace() {
     workspaceRef.current?.focus({ preventScroll: true });
   }
 
+  // Once a learner is inside the flow the marketing introduction stops being
+  // useful and only adds scrolling between them and their own work.
+  const sessionStarted = stage !== "input";
+
   return (
     <LazyMotion features={domAnimation}>
       <main>
         <header className="site-header">
           <a className="brand-link" href="#top" aria-label="Ankur home"><AnkurMark /></a>
-          <nav aria-label="Primary navigation"><a href="#how-it-works">How it works</a><a href="#workspace">Workspace</a></nav>
-          <RuntimePill state={liveStatus} />
+          <nav aria-label="Primary navigation">{sessionStarted ? null : <a href="#how-it-works">How it works</a>}<a href="#workspace">Workspace</a></nav>
+          <div className="site-header__tools"><ThemeToggle /><RuntimePill state={liveStatus} /></div>
         </header>
 
-        <section className="hero" id="top" aria-labelledby="hero-title">
+        {sessionStarted ? null : <section className="hero" id="top" aria-labelledby="hero-title">
           <div className="hero__copy">
             <Badge tone="sprout"><Sparkles aria-hidden="true" size={14} />Source-grounded learning</Badge>
             <h1 id="hero-title">Turn what you read<br />into what you <em>know.</em></h1>
@@ -601,15 +606,15 @@ export function VerticalSliceWorkspace() {
             <div className="hero__trust"><span><ShieldCheck aria-hidden="true" size={16} />Review before generation</span><span><FileCheck2 aria-hidden="true" size={16} />Evidence linked</span></div>
           </div>
           <HeroComposition />
-        </section>
+        </section>}
 
-        <section className="principles" id="how-it-works" aria-label="How Ankur works">
+        {sessionStarted ? null : <section className="principles" id="how-it-works" aria-label="How Ankur works">
           <article><span>01</span><div><strong>You confirm the source</strong><p>Nothing is generated until you review every included page.</p></div></article>
           <article><span>02</span><div><strong>Ankur maps the ideas</strong><p>Every concept points to an immutable page segment.</p></div></article>
           <article><span>03</span><div><strong>You practise with proof</strong><p>Answers are graded by rules, then linked to evidence.</p></div></article>
-        </section>
+        </section>}
 
-        <section className="studio" id="workspace" ref={workspaceRef} tabIndex={-1} aria-labelledby="workspace-title">
+        <section className={sessionStarted ? "studio studio--focused" : "studio"} id="workspace" ref={workspaceRef} tabIndex={-1} aria-labelledby="workspace-title">
           <header className="studio__header">
             <div><p className="eyebrow">Your learning studio</p><h2 id="workspace-title">Grow understanding, one step at a time.</h2></div>
             <div><Badge tone={mode === "sample" ? "sun" : "neutral"}>{mode === "sample" ? "Provider-free mixed sample" : "Live source workflow"}</Badge><Button size="small" variant="quiet" onClick={clearSession}>Clear session</Button></div>
