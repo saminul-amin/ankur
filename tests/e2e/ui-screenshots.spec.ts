@@ -16,6 +16,10 @@ async function hideDevelopmentChrome(page: Page) {
 
 test("captures the Task 04 mixed-assessment UI inventory", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chrome", "Single deterministic screenshot inventory");
+  // A single capture utility that walks the whole golden path across two
+  // viewports and includes a deliberate three-second grading delay, so it needs
+  // far more than the default per-test budget.
+  test.setTimeout(240_000);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
