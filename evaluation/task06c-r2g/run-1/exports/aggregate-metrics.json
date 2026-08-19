@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "aggregate-metrics.v1",
+  "generatedAt": "2026-08-19T14:23:00.165Z",
+  "corpus": {
+    "materials": 9,
+    "domains": 3,
+    "languages": 3,
+    "inputTypes": 4
+  },
+  "extraction": {
+    "pageSuccess": {
+      "count": 12,
+      "denominator": 12,
+      "percentage": 100,
+      "status": "measured"
+    },
+    "routingAccuracy": {
+      "count": 12,
+      "denominator": 12,
+      "percentage": 100,
+      "status": "measured"
+    },
+    "meanCharacterErrorRate": 0.004312,
+    "materialCorrectionPages": {
+      "count": 2,
+      "denominator": 12,
+      "percentage": 16.67,
+      "status": "measured"
+    }
+  },
+  "questions": {
+    "total": 46,
+    "deterministicGrounding": {
+      "count": 46,
+      "denominator": 46,
+      "percentage": 100,
+      "status": "measured"
+    },
+    "deterministicKeyValidity": {
+      "count": 46,
+      "denominator": 46,
+      "percentage": 100,
+      "status": "measured"
+    },
+    "duplicates": {
+      "count": 6,
+      "denominator": 46,
+      "percentage": 13.04,
+      "status": "measured"
+    },
+    "humanAccepted": {
+      "count": 0,
+      "denominator": 0,
+      "percentage": null,
+      "status": "pending_human_review"
+    },
+    "humanGroundedAccepted": {
+      "count": 0,
+      "denominator": 0,
+      "percentage": null,
+      "status": "pending_human_review"
+    },
+    "humanCorrectKeys": {
+      "count": 0,
+      "denominator": 0,
+      "percentage": null,
+      "status": "pending_human_review"
+    },
+    "humanAmbiguous": {
+      "count": 0,
+      "denominator": 0,
+      "percentage": null,
+      "status": "pending_human_review"
+    }
+  },
+  "written": {
+    "total": 22,
+    "providerOperations": 19,
+    "humanReviewed": 0,
+    "meanAbsoluteError": null,
+    "exactAgreement": {
+      "count": 0,
+      "denominator": 0,
+      "percentage": null,
+      "status": "pending_human_review"
+    },
+    "withinOneMark": {
+      "count": 0,
+      "denominator": 0,
+      "percentage": null,
+      "status": "pending_human_review"
+    },
+    "statusAgreement": {
+      "count": 0,
+      "denominator": 0,
+      "percentage": null,
+      "status": "pending_human_review"
+    }
+  },
+  "reliability": {
+    "totalOperations": 45,
+    "firstPassValid": {
+      "count": 31,
+      "denominator": 45,
+      "percentage": 68.89,
+      "status": "measured"
+    },
+    "finalValid": {
+      "count": 38,
+      "denominator": 45,
+      "percentage": 84.44,
+      "status": "measured"
+    },
+    "repairRate": {
+      "count": 10,
+      "denominator": 45,
+      "percentage": 22.22,
+      "status": "measured"
+    },
+    "repairSuccess": {
+      "count": 7,
+      "denominator": 10,
+      "percentage": 70,
+      "status": "measured"
+    },
+    "groundingFailures": 0,
+    "quoteFailures": 0,
+    "conceptFailures": 0,
+    "reconciliationFailures": 0,
+    "medianLatencyMs": 5113,
+    "p95LatencyMs": 61780,
+    "maximumLatencyMs": 78578
+  },
+  "adaptive": {
+    "total": 9,
+    "valid": {
+      "count": 6,
+      "denominator": 9,
+      "percentage": 66.67,
+      "status": "measured"
+    },
+    "fabricatedWeaknesses": 0,
+    "meanObservedScoreChange": 4.0833
+  },
+  "baseline": {
+    "materials": 9,
+    "parseSuccess": {
+      "count": 9,
+      "denominator": 9,
+      "percentage": 100,
+      "status": "measured"
+    },
+    "evidenceTransparency": {
+      "count": 42,
+      "denominator": 42,
+      "percentage": 100,
+      "status": "measured"
+    }
+  },
+  "humanReviewStatus": "pending"
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "task06c-r2g-run-decision.v1",
+  "runId": "task06c-r2g-run-1",
+  "implementationCommit": "e0c1eef",
+  "classification": "KEEP",
+  "technicalGate": "failed",
+  "materialImprovement": true,
+  "comparison": {
+    "denominator": 45,
+    "r2fFirstPassValid": 22,
+    "r2gFirstPassValid": 31,
+    "r2fFinalValid": 33,
+    "r2gFinalValid": 38,
+    "r2fQuestions": 42,
+    "r2gQuestions": 46,
+    "r2fWrittenCases": 18,
+    "r2gWrittenCases": 22,
+    "r2fDuplicatePercentage": 16.67,
+    "r2gDuplicatePercentage": 13.04,
+    "r2fSemanticLanguageFailures": 9,
+    "r2gSemanticLanguageFailures": 0
+  },
+  "preservedCorrectness": {
+    "deterministicGroundingPercentage": 100,
+    "deterministicMcqKeyValidityPercentage": 100,
+    "invalidRubricsEnteringMetrics": 0,
+    "crossMaterialEvidenceDefects": 0,
+    "fabricatedWeaknesses": 0
+  },
+  "remainingFailures": {
+    "analysisInvalidOutput": 1,
+    "assessmentInvalidOutput": 2,
+    "assessmentDependencyUnavailable": 2,
+    "writtenDependencyUnavailable": 2
+  },
+  "remainingFailureCause": "All seven remaining invalid operations trace to provider transport behaviour, not to generated learning quality: eight first-pass MAX_TOKENS repetition loops, four of which the bounded retry did not recover, and four RECITATION stops. Zero LANG_* semantic failures remain, against nine in the frozen R2F run.",
+  "decision": "Freeze and retain the R2G implementation. It improves final logical validity by five operations and first-pass validity by nine, adds four persisted questions and four written cases, lowers the duplicate rate, and preserves 100% deterministic grounding and answer-key validity. The unchanged 43/45 gate still fails, so no reviewer packet, human metric, or Task 07 authorization follows from this result."
+}

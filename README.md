@@ -48,6 +48,7 @@ The public demo also includes a clearly labelled, provider-free sample so the pr
 - Source-grounded revision notes plus one retry MCQ and one retry short-written question.
 - Deterministic attempt comparison with cautious, non-mastery claims.
 - Responsive, keyboard-accessible Luminous Knowledge Garden interface.
+- Light and dark appearance that follows the system preference and remembers an explicit choice.
 
 ## How Gemma 4 is used
 
@@ -132,7 +133,7 @@ Repository-owned reports record only redacted, reproducible metadata:
 - Provider Gate 1: Bengali text, Bengali image transcription, native structured output, thinking controls, and typed error mapping passed.
 - Document ingestion: digital, scanned, mixed-PDF, and standalone-image routing passed.
 - Mixed assessment: correct `5/5`, partial `2/5`, and deterministic empty `0/5` written results reconciled successfully.
-- Current offline matrix: 106 Vitest tests and 22 applicable Playwright cases passed; 6 project-specific mobile fixture duplicates are intentionally skipped and the dependency audit reported zero vulnerabilities.
+- Current offline matrix: 186 Vitest tests and 22 applicable Playwright cases passed; 6 project-specific mobile fixture duplicates are intentionally skipped and the dependency audit reported zero vulnerabilities.
 - The explicit Task 05 live adaptive verification completed a grounded weak-area revision and retry from `0/6` to `6/6`, with zero grounding, quote, concept-reference, reconciliation, duplicate, persistence, or state-loss failures in that bounded run.
 - The latest explicit-opt-in provider benchmark reached 9/9 final-valid operations with zero grounding, quote, concept, or mark-reconciliation failures. First-pass validity was 9/9 in that bounded run and remains an optimization metric, not a separate release blocker.
 
@@ -141,6 +142,12 @@ See the [evaluation directory](evaluation) for the recorded fixtures, methodolog
 The frozen-product Task 06 package now has complete blinded two-reviewer assessment and joint adjudication. On the internal six-material corpus, 1/30 Ankur structured questions passed both question-text and answer/reference acceptance, versus 29/30 one-prompt baseline questions. All 14 written cases were excluded from grading-accuracy metrics because their generated rubrics did not validly align with the questions. Reliability is now correctly separated into 47/51 provider-attempt availability and 40/44 final logical-artifact validity; the former mixed 40/51 rate is retired. Task 06 evidence closure passed, the product-quality gate failed, and Task 07 is blocked pending Task 06C remediation.
 
 Task 06C implementation and its separate nine-material frozen-plus-holdout corpus are present under `evaluation/task06c/`. Its single frozen live run reached 33/45 final-valid logical operations and produced only seven written cases, so the 95% reliability and minimum-ten-case gates failed before human review. Deterministic validation and the provider-free notebook do not substitute for fresh independent human review. Task 07 remains blocked.
+
+The latest reliability correction, Task 06C-R2G, is recorded under `evaluation/task06c-r2g/` against the same fixed 45-operation denominator. It improved final logical validity from 33/45 to **38/45 (84.44%)** and first-pass validity from 22/45 to 31/45, produced **46 persisted questions** and **22 written cases**, and lowered the duplicate rate to 13.04%. Deterministic grounding and answer-key validity stayed at **46/46 (100%)**, with zero invalid rubrics, zero cross-material evidence defects, and zero fabricated weaknesses.
+
+Every one of the seven remaining invalid operations traces to provider transport behaviour — a degenerate repetition loop that exhausts the output budget, or a recitation stop — rather than to generated learning quality. No `LANG_*` semantic failure remains, against nine in the previous run.
+
+Ankur rejects invalid generated artifacts rather than persisting them. In this run every persisted question was grounded in its source and had a deterministically valid answer key, while overall structured-generation availability remained below the project's strict 43/45 internal target. That gate is not met, human review is still pending, and Task 07 remains blocked.
 
 ## Privacy and security
 
@@ -154,7 +161,7 @@ Task 06C implementation and its separate nine-material frozen-plus-holdout corpu
 
 ## Limitations
 
-The current release supports one source session, one fixed two-question assessment, one bounded revision plan, and one two-question retry. A single retry can show short-term performance change but cannot prove durable learning. Provider latency and quota vary, and production live AI may be disabled after verification while the labelled sample remains available. In-memory rate limiting is not durable across serverless instances. Authentication, cloud history, timers, negative marking, spaced repetition, and additional question types are not part of this release.
+The current release supports one source session, one fixed two-question assessment, one bounded revision plan, and one two-question retry. Structured generation reached 38/45 final-valid operations in the latest nine-material evaluation, below the project's strict 43/45 internal target, so a learner may still see a controlled failure instead of a generated assessment. A single retry can show short-term performance change but cannot prove durable learning. Provider latency and quota vary, and production live AI may be disabled after verification while the labelled sample remains available. In-memory rate limiting is not durable across serverless instances. Authentication, cloud history, timers, negative marking, spaced repetition, and additional question types are not part of this release.
 
 Read the complete [limitations and release boundaries](docs/LIMITATIONS.md).
 

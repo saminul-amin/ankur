@@ -137,3 +137,33 @@ The improved implementation is retained as `KEEP`. No further broad reliability
 iteration, reviewer packet generation, or human metric is authorized by this
 result. Task 07 remains unauthorized. Deployment and submission preparation may
 proceed only with this limitation disclosed.
+
+## Task 06C-R2G outcome addendum — version 1.4.0
+
+`SSOT_UPDATE_v1.4.0_TASK06C_R2G.md` records the multilingual
+generation-reliability correction and its single fixed-denominator evaluation.
+
+Task 08A release QA had failed because live Bengali and mixed-language
+assessment generation returned controlled `MODEL_OUTPUT_INVALID`. The frozen
+R2F semantic diagnostics, confirmed by live replay, showed the dominant cause
+was provider transport and configuration behaviour — degenerate repetition loops
+under extended thinking, native JSON schemas missing the length bounds their Zod
+contracts enforced, echo repair re-priming the failing sampling path, and
+mechanical wording defects surviving regeneration — not generated-question
+quality. D-051 therefore authorizes exactly one further correction round for
+transport, configuration, and deterministic post-processing defects. D-052
+authorizes bounded UI polish inside the feature freeze. D-053 classifies a
+post-freeze dependency advisory as a release-blocking defect.
+
+The preflight-validated R2G run improved final logical validity from 33/45 to
+38/45 (84.44%) and first-pass validity from 22/45 to 31/45, produced 46 persisted
+questions and 22 written cases, lowered the duplicate rate to 13.04%, and held
+deterministic grounding, MCQ-key validity, invalid-rubric count, cross-material
+evidence defects, and fabricated weaknesses at their previous perfect values.
+Zero `LANG_*` semantic failures remain, against nine in R2F.
+
+The unchanged 43/45 reliability gate still failed. The implementation is
+retained as `KEEP`. No reviewer packet or human metric is authorized by this
+result, and Task 07 remains unauthorized. Historical Task 06 through R2F
+evidence remains immutable. Deployment and submission preparation may proceed
+only with this limitation disclosed.

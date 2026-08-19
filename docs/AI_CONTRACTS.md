@@ -42,13 +42,21 @@ Only `src/infrastructure/gemma/*` may import the Google SDK.
 | Task | Prompt version | Schema version | Thinking | Initial model |
 |---|---|---|---|---|
 | Page transcription | `transcription.v1` | `transcription.v1` | minimal | 26B A4B |
-| Material analysis | `analysis.v1` | `preparation-map.v1` | high | 26B A4B |
+| Material analysis | `analysis.v1` | `preparation-map.v1` | minimal | 26B A4B |
 | Assessment generation | `assessment-evidence-first.v6` | `canonical-answer.v2` / `single-mcq-question.v2` / `short-written-question.v2` / `written-rubric.v2` | minimal | 26B A4B |
 | Candidate review/repair | `assessment-evidence-first-repair.v6` | failing v2 component; public compatibility remains `activity-set.v2` | high | 26B A4B |
 | Written evaluation | `written-evaluation.v5` | `written-evaluation-transport.v5` | high | 26B A4B |
 | Revision and retry | `revision.v2` / `revision-repair.v2` | `revision-item.v1` / `revision-question.v2` / `written-rubric.v2`; application `revision-plan.v1` | high | 26B A4B |
 
 Thinking levels reflect official Gemma 4 hosted controls: `high` for enabled and `minimal` for disabled/minimal behavior.
+
+Material analysis uses minimal thinking. The task only selects one numbered
+evidence choice and writes short labels, and measured Bengali and mixed-language
+runs showed extended thinking reproducibly entering a degenerate repetition loop
+that exhausted the output budget without improving grounding.
+
+Every task's native JSON schema carries the same length bounds its Zod contract
+enforces, so the provider is told the limits it is expected to respect.
 
 ## 4. Structured-output strategy
 
@@ -267,6 +275,25 @@ Configuration must be centralized by task. No Route Handler may invent ad hoc mo
 - At most one repair call.
 - Repair input includes only the invalid object, expected contract, and validation errors—not the entire conversational history unless required.
 - Non-empty schema repair is a structural task and uses minimal thinking even when the original semantic task used high thinking. If the provider returns no object, the single regeneration attempt retains the original task context and thinking level because there is no semantic object to repair.
+- A candidate that stopped on `MAX_TOKENS` is treated the same way. Such a candidate is usually a degenerate repetition loop, so echoing it back would re-prime the loop; the single attempt repeats the original task instead.
+- Both original-task retries raise temperature to at least 0.35 so the retry leaves the sampling path that produced the loop or recitation stop rather than replaying it greedily.
+
+### Deterministic output recovery
+
+Before a response is classified invalid, the transport applies two bounded,
+meaning-preserving recoveries. Neither weakens a validator: the unchanged
+semantic validators still decide acceptance.
+
+- A complete, brace-balanced JSON object is extracted from a fenced or
+  prose-wrapped response. Truncated output stays invalid.
+- Immediately repeated words and phrases are collapsed before schema validation,
+  so a bounded repetition loop cannot fail an otherwise usable artifact purely on
+  its length contract.
+
+Application code applies one further deterministic salvage to provider question
+wording, alongside the existing distractor salvage: adjacent duplicate tokens,
+literally repeated clauses, doubled or dangling punctuation, and a missing
+terminal question mark are repaired mechanically. Meaning is never rewritten.
 
 ### Evidence repair
 

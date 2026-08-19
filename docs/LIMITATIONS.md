@@ -19,6 +19,9 @@
 - Written grading is a criterion-level AI estimate and must not be treated as an official academic grade.
 - Provider latency, rate limits, availability, and quota vary by project and time. The provider-free sample is therefore intentionally retained.
 - The latest bounded Task 04B.2 run achieved 9/9 final-valid operations and 9/9 first-pass validity with zero grounding, quote, concept, or mark-reconciliation failures. First-pass validity is an optimization metric, not an independent release blocker, and a single bounded repair remains available for provider variability.
+- The broader nine-material Task 06C-R2G evaluation reached 38/45 final-valid logical operations (84.44%), below the project's strict 43/45 internal target. Deterministic grounding and answer-key validity were 46/46 in that run, and no weakness was fabricated, but overall structured-generation availability is not yet at target.
+- The residual failures are provider output pathologies rather than question-quality defects: the model can enter a degenerate repetition loop that exhausts its output budget, or stop on recitation. Bounded deterministic recovery handles most but not all of these, and a learner may still see a controlled failure instead of a generated assessment.
+- No fresh independent human review of the Task 06C-R2G output has been performed. All human quality and grading-agreement metrics remain pending; pending is not passing.
 
 ## Document limitations
 

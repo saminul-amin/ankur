@@ -346,3 +346,53 @@ produced:
 The unchanged 43/45 final-validity gate failed. The implementation is retained
 as a material, non-regressive improvement, but reviewer packets were not
 generated and all human metrics remain pending. Task 07 remains blocked.
+
+## 19. Task 06C-R2G multilingual reliability correction
+
+Task 06C-R2G is isolated under `evaluation/task06c-r2g/`. It reuses the Task
+06C-R2F evaluation design without modification — the same nine-material
+frozen-plus-holdout corpus, the same fixed 45-operation logical denominator, the
+same answer cases, the same metrics, the same export shape, and the same
+acceptance thresholds. Only the output root differs, so every frozen R2F record
+is untouched and the two runs are directly comparable.
+
+The correction addresses provider transport and configuration behaviour, not
+generated-question quality. It changed no prompt, validator, threshold,
+grounding rule, canonical answer, correct-option identity, rubric construction,
+mark allocation, or model identity:
+
+- material analysis moved from extended to minimal thinking, and its output
+  budget from 4,000 to 1,200 tokens, because extended thinking reproducibly ran
+  Bengali and mixed-language scalars into a degenerate repetition loop that
+  exhausted the budget;
+- the analysis and transcription native JSON schemas now carry the length bounds
+  their Zod contracts already enforced;
+- a cut-off or withheld candidate retries the original task once, at a slightly
+  raised temperature, instead of being echoed back and re-priming the same loop;
+- two deterministic recoveries were added — transport-level extraction of a
+  complete brace-balanced JSON object and collapse of immediately repeated words
+  and phrases, and application-level question-prompt salvage for mechanical
+  wording defects.
+
+The preflight passed 3/3, so the single run is infrastructure-valid. It produced:
+
+- 31/45 first-pass-valid operations, from 22/45;
+- 38/45 final-valid operations (84.44%), from 33/45;
+- 7/10 successful bounded repairs, from 11/14;
+- 46 persisted structured questions, from 42;
+- 22 written cases, from 18;
+- 46/46 deterministic grounding and MCQ-key validity;
+- 6/46 duplicate diagnostics (13.04%), from 7/42 (16.67%);
+- a 0.004312 mean transcription character error rate, from 0.005145;
+- zero invalid rubrics in grading metrics, zero cross-material evidence defects,
+  and zero fabricated weaknesses.
+
+All seven remaining invalid operations are provider transport failures: eight
+first-pass `MAX_TOKENS` repetition loops of which four were not recovered by the
+bounded retry, and four `RECITATION` stops. Four of the seven are the explicit
+`DEPENDENCY_UNAVAILABLE` consequence of one failed analysis. Zero `LANG_*`
+semantic failures remain, against nine in R2F.
+
+The unchanged 43/45 final-validity gate failed. The implementation is retained
+as a material, non-regressive improvement, reviewer packets were not generated,
+and all human metrics remain pending. Task 07 remains blocked.

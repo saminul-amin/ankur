@@ -1,0 +1,1170 @@
+[
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r1:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r1",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:5129b53647533cb16d7b33a584c493efdceb0f81d7fe63e8b3f04843e405082d",
+    "questionText": "উঁচু স্তরে বাতাস ঠান্ডা হলে জলীয় বাষ্পের কী পরিবর্তন ঘটে এবং এর ফলে কী তৈরি হয়?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r1:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r1",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:bb2b24de19e6bb1a740ebb4d6201cb1d323d55300609d509e9639c80ed508015",
+    "questionText": "উঁচু স্তরে বাতাস ঠান্ডা হওয়ার ফলে জলীয় বাষ্পের কী পরিবর্তন ঘটে এবং কীভাবে বৃষ্টিপাত শুরু হয়?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002",
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r2:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r2",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:32958c908588a93570c7f01896a6e560fc1b5f30a46ac2068234d5f099329a7d",
+    "questionText": "মেঘ তৈরির প্রক্রিয়াটি কীভাবে সম্পন্ন হয়?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r2:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r2",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:d2d2a9c43b87282ac914fb4edf57e8ab744a4cb228254a31176071b2ad9f1dde",
+    "questionText": "উঁচু স্তরে বাতাস ঠান্ডা হওয়ার ফলে জলীয় বাষ্পের কী পরিবর্তন ঘটে এবং কীভাবে বৃষ্টি হিসেবে নেমে আসে?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002",
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r3:q1",
+    "operationId": "assessment:SCI-BN-PASTE-01:r3",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:1968ae9dca2531b0b92a883e7707f674405be70a118a4bd6bb08169235301b2a",
+    "questionText": "মেঘ তৈরির প্রক্রিয়ায় জলীয় বাষ্পের ভূমিকা কী?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-BN-PASTE-01:r3:q2",
+    "operationId": "assessment:SCI-BN-PASTE-01:r3",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:bb2b24de19e6bb1a740ebb4d6201cb1d323d55300609d509e9639c80ed508015",
+    "questionText": "উঁচু স্তরে বাতাস ঠান্ডা হওয়ার ফলে জলীয় বাষ্পের কী পরিবর্তন ঘটে এবং কীভাবে বৃষ্টিপাত শুরু হয়?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002",
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-BN-PASTE-01:r1:q2",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-BN-PASTE-01:q1",
+    "operationId": "revision:SCI-BN-PASTE-01",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 7,
+    "questionHash": "sha256:698ec75f712b7e095227fe9dbc2135d9859243c94390840cd1066ea23ecbbd93",
+    "questionText": "মেঘ তৈরির প্রক্রিয়ার ক্ষেত্রে উঁচু স্তরে বাতাস ঠান্ডা হওয়ার ফলে জলীয় বাষ্পের কী ঘটে?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-BN-PASTE-01:q2",
+    "operationId": "revision:SCI-BN-PASTE-01",
+    "materialId": "SCI-BN-PASTE-01",
+    "language": "bn",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 8,
+    "questionHash": "sha256:7b893d1c98cec1a5a4e837e2a0f3fac3e42a022a54ddb68981030dbf13924648",
+    "questionText": "জলীয় বাষ্প থেকে মেঘ তৈরির প্রক্রিয়া এবং বৃষ্টিপাতের জন্য জলকণাগুলোর কী অবস্থা হওয়া প্রয়োজন?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:acb8e4516cdeff00a371ed0e6a40f0cbee3be1632f908da5c686c928438bed5f",
+    "questionText": "In a system involving thermal energy, how does heat move between different regions?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r1:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r1",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:fe00ade71ac3908bfeb3b16c552968e40e725d36c7f75ec80f4642be92eeb1b9",
+    "questionText": "Explain the direction of heat movement between regions of different temperatures and describe how conduction works in terms of particle contact.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001",
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:38cba984d1af38abf9dd8e9d01596eef0ff4e44855359773f5dcdd85a32caba0",
+    "questionText": "In a system involving thermal energy, in which direction does heat move between two regions?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r2:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r2",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:aeab2f7796a3d0262bdb240f33ad900cb16041b3c7597ff01ad4b2d09d9d8e0d",
+    "questionText": "Explain how conduction works in terms of the direction of heat movement and the role of direct contact between particles.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001",
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q1",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:acb8e4516cdeff00a371ed0e6a40f0cbee3be1632f908da5c686c928438bed5f",
+    "questionText": "In a system involving thermal energy, how does heat move between different regions?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-EN-PDF-01:r1:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-EN-PDF-01:r3:q2",
+    "operationId": "assessment:SCI-EN-PDF-01:r3",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:fe00ade71ac3908bfeb3b16c552968e40e725d36c7f75ec80f4642be92eeb1b9",
+    "questionText": "Explain the direction of heat movement between regions of different temperatures and describe how conduction works in terms of particle contact.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001",
+      "M01-P002-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:SCI-EN-PDF-01:r1:q2",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-EN-PDF-01:q1",
+    "operationId": "revision:SCI-EN-PDF-01",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 7,
+    "questionHash": "sha256:73a7df21dde9bc7c4d82cc2851e5181e9b0f57d9393b610e7f8cd268dcbf098b",
+    "questionText": "Which of the following statements describes the question of how heat moves between regions of different temperatures?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-EN-PDF-01:q2",
+    "operationId": "revision:SCI-EN-PDF-01",
+    "materialId": "SCI-EN-PDF-01",
+    "language": "en",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 8,
+    "questionHash": "sha256:79f3fec0685f55473077e8291e926abbae733e02a3247993ddc17331338b475a",
+    "questionText": "Describe the direction of heat movement between regions and the mechanism of conduction through particle contact.",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-IMG-01:r1:q1",
+    "operationId": "assessment:CIV-BN-IMG-01:r1",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:0e69b5cc8eab2265224f7088db2ace4816c400cc35023d97b4e60e7578615a53",
+    "questionText": "ঘূর্ণিঝড়ের সতর্কসংকেত পাওয়ার পর পরিবারের সদস্যদের সাথে কী করা উচিত?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-IMG-01:r1:q2",
+    "operationId": "assessment:CIV-BN-IMG-01:r1",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:a01b19f55a3e437a8ad8e0ae60ce76d562f7ca35e08d445208bf002cee236aa2",
+    "questionText": "ঘূর্ণিঝড়ের সতর্কসংকেত পাওয়ার পর পরিবারের সদস্যদের জানানো এবং নিরাপদ আশ্রয়কেন্দ্রের অবস্থান ও যাওয়ার পথ সম্পর্কে কী প্রস্তুতি নেওয়া জরুরি?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001",
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-IMG-01:r2:q1",
+    "operationId": "assessment:CIV-BN-IMG-01:r2",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:303cbe4c1a57ed95b362427ff8c291112f557301ce6f894246f416a88bf6ee83",
+    "questionText": "ঘূর্ণিঝড়ের সতর্কসংকেত পাওয়ার পর প্রথমেই কী করা উচিত?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-IMG-01:r2:q2",
+    "operationId": "assessment:CIV-BN-IMG-01:r2",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:586328d84cdbbcfac9cfa3028a4406d864c71f4213c2cd10dd31cff20d5e5aeb",
+    "questionText": "ঘূর্ণিঝড়ের সতর্কসংকেত পাওয়ার পর পরিবারের সদস্যদের সাথে তথ্য শেয়ার করা এবং নিরাপদ আশ্রয়কেন্দ্রের অবস্থান ও যাওয়ার পথ সম্পর্কে কী প্রস্তুতি নেওয়া জরুরি?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001",
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:CIV-BN-IMG-01:r1:q2",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-IMG-01:r3:q1",
+    "operationId": "assessment:CIV-BN-IMG-01:r3",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:0e69b5cc8eab2265224f7088db2ace4816c400cc35023d97b4e60e7578615a53",
+    "questionText": "ঘূর্ণিঝড়ের সতর্কসংকেত পাওয়ার পর পরিবারের সদস্যদের সাথে কী করা উচিত?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:CIV-BN-IMG-01:r1:q1",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-IMG-01:r3:q2",
+    "operationId": "assessment:CIV-BN-IMG-01:r3",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:a01b19f55a3e437a8ad8e0ae60ce76d562f7ca35e08d445208bf002cee236aa2",
+    "questionText": "ঘূর্ণিঝড়ের সতর্কসংকেত পাওয়ার পর পরিবারের সদস্যদের জানানো এবং নিরাপদ আশ্রয়কেন্দ্রের অবস্থান ও যাওয়ার পথ সম্পর্কে কী প্রস্তুতি নেওয়া জরুরি?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001",
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": "question:assessment:CIV-BN-IMG-01:r1:q2",
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:CIV-BN-IMG-01:q1",
+    "operationId": "revision:CIV-BN-IMG-01",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 7,
+    "questionHash": "sha256:9f3a4fc7ab496257748119f5ddf5e8b672cde1ffab93e898f3610f3ff606947d",
+    "questionText": "ঘূর্ণিঝড়ের সতর্কসংকেত পাওয়ার পর পরিবারের সদস্যদের সম্পর্কে কী প্রস্তুতিটুকুতে প্রয়োজন?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:CIV-BN-IMG-01:q2",
+    "operationId": "revision:CIV-BN-IMG-01",
+    "materialId": "CIV-BN-IMG-01",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 8,
+    "questionHash": "sha256:38481b2841f5243da0590c177e964a41a09793823229052bd8c36762e4c5fe16",
+    "questionText": "ঘূর্ণিঝড়ের সতর্কসংকেত পাওয়ার পর পরিবারের সবাইকে জানানো এবং নিরাপদ আশ্রয়কেন্দ্রের অবস্থান ও যাওয়ার পথ সম্পর্কে কী পদক্ষেপ নেওয়া প্রয়োজন?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-MIX-PDF-01:r1:q1",
+    "operationId": "assessment:CIV-MIX-PDF-01:r1",
+    "materialId": "CIV-MIX-PDF-01",
+    "language": "mixed",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:c481e3b2715a4b79d95597a3c8fc29d84dae4c5f412dd1086120fb8ec5208bd2",
+    "questionText": "একটি household flood plan তৈরি করার সময় কোন বিষয়গুলো নিশ্চিত করা প্রয়োজন? (Which components are essential for a household flood plan?)?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-MIX-PDF-01:r1:q2",
+    "operationId": "assessment:CIV-MIX-PDF-01:r1",
+    "materialId": "CIV-MIX-PDF-01",
+    "language": "mixed",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:9e29d109200d2c4136031881eeed60075fd57f212fa91b398dea1e03cb89dee0",
+    "questionText": "একটি household flood plan-এ কী অন্তর্ভুক্ত করা উচিত এবং important documents ও medicines কীভাবে সংরক্ষণ করা উচিত? (What should be included in a household flood plan and how should important documents and medicines be stored?)?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001",
+      "M01-P002-S001",
+      "M01-P003-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:CIV-MIX-PDF-01:q1",
+    "operationId": "revision:CIV-MIX-PDF-01",
+    "materialId": "CIV-MIX-PDF-01",
+    "language": "mixed",
+    "domain": "bangladesh_civics",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:43af42c5914bc020580fee25a16a02c36aa92675780b63465a51919d76616d66",
+    "questionText": "Which of the following best describes the essential components of a household flood plan?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:CIV-MIX-PDF-01:q2",
+    "operationId": "revision:CIV-MIX-PDF-01",
+    "materialId": "CIV-MIX-PDF-01",
+    "language": "mixed",
+    "domain": "bangladesh_civics",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:ebfd44c54bc7f1cac892aeba22a661a1a125cb84abfc0d6a012d6c63aa92b1bd",
+    "questionText": "একটি household flood plan-এ safe destination, contact methods, এবং waterproof container-এর ব্যবহার সম্পর্কে বিস্তারিতভাবে লিখুন। (Write about the's a safe destination, একটি household faster-moving water-এর পরিবর্তে কোন রুট/route that avoids fast-moving water ব্যবহার করা উচিত এবং waterproof container-এ কী রাখা উচিত?)?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r1:q1",
+    "operationId": "assessment:VOC-EN-PASTE-01:r1",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:1a27ea117946704a06fb483b702b987b96f6de8eef3ef4a3856173c2a6a2061e",
+    "questionText": "After the isolation steps are completed, what is the next required action regarding the personal lock and the clear tag?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r1:q2",
+    "operationId": "assessment:VOC-EN-PASTE-01:r1",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:a76aa5611fd9a12fa88f627eae0e88b03021ea2caf62eac68bebbd6ed1e1c044",
+    "questionText": "Beyond applying a personal lock and a clear tag to the isolating device, what must be done regarding any stored energy, such as pressure in a line or tension in a spring?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002",
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r2:q1",
+    "operationId": "assessment:VOC-EN-PASTE-01:r2",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:a45d11178440517d84d5616f6716640ebbce227f8aadd075424f63630daed0d6",
+    "questionText": "After the initial isolation steps, what specific actions must be performed regarding the isolating device to ensure safety?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-01:r2:q2",
+    "operationId": "assessment:VOC-EN-PASTE-01:r2",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:8954860db22cea0b36724937c3d6c28c3768892dd0610e74547801f9971911de",
+    "questionText": "What specific steps are required regarding the isolating device, including the use of a personal lock and tag, and how should any stored energy be handled?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002",
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:VOC-EN-PASTE-01:q1",
+    "operationId": "revision:VOC-EN-PASTE-01",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:fd127f0301e0b28ce9f11e6810125ea4dc5b3a894420e6866cd83845b76c587e",
+    "questionText": "What is the immediate next step once the isolating device is ready for a personal lock and a clear tag?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:VOC-EN-PASTE-01:q2",
+    "operationId": "revision:VOC-EN-PASTE-01",
+    "materialId": "VOC-EN-PASTE-01",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:4a4f48d2a1d4ffa4707b786d314deda0f20852fa855462358ab92bcaa7e8a93d",
+    "questionText": "In addition to applying a personal lock and a clear tag to the isolating device, what specific actions must be performed regarding any stored energy, such as pressure in a line or tension in a spring?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r1:q1",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r1",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:b00754703990040ee1ebbf6c40889d416a1f3f3d238fe0080327481472f36d6b",
+    "questionText": "How does a rechargeable battery work? ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং ব্যবহার করার প্রক্রিয়াটি কী?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r1:q2",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r1",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:9c836950ea7849e66c4397fde36e2ca9a82e31d9149ef3bbeed72604b9f47cf4",
+    "questionText": "Explain the process of energy storage in a rechargeable battery through chemical changes, and why it is important to ensure the charger matches the battery type and rated voltage? ব্যাটারি চার্জিং এর মাধ্যমে রাসায়নিক পরিবর্তন (chemical changes) এবং চার্জারের ভোল্টেজ (voltage) মিলানো কেন প্রয়োজন?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001",
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r2:q1",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r2",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:6de7b9fa84e9ecec1886dfc74269dd3605a47987ea43f230455333a970e92c3f",
+    "questionText": "How does a rechargeable battery work in terms of its energy storage and electrical energy supply? ব্যাটারি চার্জিং এর মাধ্যমে শক্তি সঞ্চয় এবং electrical energy সরবরাহ করার প্রক্রিয়াটি কী?",
+    "correctOptionId": "A",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:SCI-MIX-PASTE-02:r2:q2",
+    "operationId": "assessment:SCI-MIX-PASTE-02:r2",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:e7495f54581597c654644d33f2f4092a492fcbd5c5310b6c634eb95ddf6a9b71",
+    "questionText": "Explain the process of energy storage in a rechargeable battery through chemical changes and why the charger must match the battery type and rated voltage to manage heat. ব্যাটারি চার্জিং এর মাধ্যমে chemical changes এর মাধ্যমে শক্তি সঞ্চয় এবং তাপ উৎপন্ন হওয়ার কারণে charger এর প্রয়োজনীয়তা সম্পর্কে লিখুন।",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001",
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-MIX-PASTE-02:q1",
+    "operationId": "revision:SCI-MIX-PASTE-02",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "single_mcq",
+    "questionOrdinal": 5,
+    "questionHash": "sha256:110cf1f0b995455dd9cb316e6e24c43172c0772c46722df82d62da24bd591840",
+    "questionText": "Which of the following best describes the process of a rechargeable battery in terms of energy conversion and storage? ব্যাটারিটি কীভাবে শক্তি সঞ্চয় এবং ব্যবহার করার ক্ষেত্রে energy conversion এবং storage এর ক্ষেত্রে কোনটি brightest-most accurate?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:revision:SCI-MIX-PASTE-02:q2",
+    "operationId": "revision:SCI-MIX-PASTE-02",
+    "materialId": "SCI-MIX-PASTE-02",
+    "language": "mixed",
+    "domain": "academic_science",
+    "questionStage": "adaptive_retry",
+    "questionType": "short_written",
+    "questionOrdinal": 6,
+    "questionHash": "sha256:c780b06166122602c50c2675176f0a06716503e92b6fddfa36f2eaace5ab32fc",
+    "questionText": "Explain how a rechargeable battery manages energy through chemical changes and why the charger's voltage must be correctly matched to prevent heat issues. ব্যাটারিটি কীভাবে chemical changes এর মাধ্যমে শক্তি সঞ্চয় করে এবং কেন চার্জারের voltage এবং battery type মিলানো জরুরি?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-PASTE-02:r1:q1",
+    "operationId": "assessment:CIV-BN-PASTE-02:r1",
+    "materialId": "CIV-BN-PASTE-02",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:589eeeb13f55162d72cd25cc3c02d35806040bcd5ac03a578259468acf92b32d",
+    "questionText": "বিদ্যালয়ে ভূমিকম্পের কম্পন শুরু হলে শ্রেণিকক্ষের শিক্ষার্থীরা কীভাবে নিরাপদ আশ্রয় গ্রহণ করবে?",
+    "correctOptionId": "D",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-PASTE-02:r1:q2",
+    "operationId": "assessment:CIV-BN-PASTE-02:r1",
+    "materialId": "CIV-BN-PASTE-02",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:c752251de1c2d5d3e18022a333ff75e952e15e97896d8469cab398eb9f7ffab0",
+    "questionText": "ভূমিকম্পের কম্পন শুরু হলে শ্রেণিকক্ষের শিক্ষার্থীরা কোন ধরনের বস্তুর নিচে আশ্রয় নেবে এবং কোন জিনিসের কাছ থেকে দূরে থাকতে হবে?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001",
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-PASTE-02:r2:q1",
+    "operationId": "assessment:CIV-BN-PASTE-02:r2",
+    "materialId": "CIV-BN-PASTE-02",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 3,
+    "questionHash": "sha256:9f906855d8bdde061550d1a410b946380358a4e84c6d93c0765e152ee06aea1b",
+    "questionText": "বিদ্যালয়ে ভূমিকম্পের কম্পন শুরু হলে শ্রেণিকক্ষের শিক্ষার্থীরা কীসের নিচে আশ্রয় নেবে এবং কীসের পা ধরে থাকবে?",
+    "correctOptionId": "B",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:CIV-BN-PASTE-02:r2:q2",
+    "operationId": "assessment:CIV-BN-PASTE-02:r2",
+    "materialId": "CIV-BN-PASTE-02",
+    "language": "bn",
+    "domain": "bangladesh_civics",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 4,
+    "questionHash": "sha256:5eb5e59c65ec11608791eb9cff83c297fc5f58de235fb3fbc0281d498bacf97c",
+    "questionText": "বিদ্যালয়ে ভূমিকম্পের কম্পন শুরু হলে শ্রেণিকক্ষের শিক্ষার্থীরা কীভাবে আশ্রয় নেবে এবং কোন বিপজ্জনক বস্তুর কাছ থেকে দূরে থাকতে হবে?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001",
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-02:r2:q1",
+    "operationId": "assessment:VOC-EN-PASTE-02:r2",
+    "materialId": "VOC-EN-PASTE-02",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "single_mcq",
+    "questionOrdinal": 1,
+    "questionHash": "sha256:99bd07a3e951426ea20d5cffc310bc6d0b13e9e7bc9a3c616e66b3040be84e12",
+    "questionText": "What specific items must a worker check on a portable ladder before use to ensure its safety?",
+    "correctOptionId": "C",
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  },
+  {
+    "schemaVersion": "generated-question-record.v1",
+    "recordId": "question:assessment:VOC-EN-PASTE-02:r2:q2",
+    "operationId": "assessment:VOC-EN-PASTE-02:r2",
+    "materialId": "VOC-EN-PASTE-02",
+    "language": "en",
+    "domain": "vocational_safety",
+    "questionStage": "original_assessment",
+    "questionType": "short_written",
+    "questionOrdinal": 2,
+    "questionHash": "sha256:b534bbe61ad46c66bf637b8b05aa9ba52f32c8ccf04f16e6975cbd721f653454",
+    "questionText": "What specific defects or contaminants on a portable ladder must be inspected for before use, and what is the required procedure for handling a damaged ladder?",
+    "correctOptionId": null,
+    "conceptIds": [
+      "concept-primary"
+    ],
+    "evidenceSegmentIds": [
+      "M01-P001-S001",
+      "M01-P001-S002"
+    ],
+    "deterministicGroundingValid": true,
+    "deterministicKeyValid": true,
+    "duplicateOfRecordId": null,
+    "reviewerStatus": "pending",
+    "acceptedByAdjudication": null
+  }
+]
