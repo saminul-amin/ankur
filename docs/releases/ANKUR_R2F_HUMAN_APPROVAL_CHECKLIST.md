@@ -3,7 +3,7 @@
 Release branch: `release/ankur-r2f-preview`
 
 Preview URL:
-`https://ankur-pa7zsswux-saminulamin-gmailcoms-projects.vercel.app`
+`https://ankur-aje5stpml-saminulamin-gmailcoms-projects.vercel.app`
 
 The preview URL, deployed commit, and smoke-test matrix are recorded in
 [`ANKUR_R2F_PREVIEW_RELEASE_REPORT.md`](ANKUR_R2F_PREVIEW_RELEASE_REPORT.md).
