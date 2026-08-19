@@ -154,9 +154,10 @@ environment variable was changed.
 - Project: `ankur` (`prj_p9iokXO06qrp6LLremLvm5PxXMAZ`)
 - Framework: Next.js; root directory `.`; Node.js 24.x
 - API routes: Node.js runtime; AI route maximum duration 180 seconds
-- Preview deployment ID: `dpl_3R2Eeu2jeETE5rqYgv1FqKbZf6Ba`
+- Preview deployment ID: `dpl_79JRHnnknAGGZKc6PdQU1ovxqTDs`
 - Preview URL:
-  `https://ankur-hc712m3ak-saminulamin-gmailcoms-projects.vercel.app`
+  `https://ankur-pa7zsswux-saminulamin-gmailcoms-projects.vercel.app`
+- Deployed release SHA: `a8b45dd`
 - Deployment status: Ready, preview target
 - Production environment and deployment: unchanged
 
@@ -182,7 +183,7 @@ One action is needed before an outside reviewer can open the preview:
 
 ```text
 Create a Vercel shareable preview link for deployment
-dpl_3R2Eeu2jeETE5rqYgv1FqKbZf6Ba, or add the reviewer to the Vercel team.
+dpl_79JRHnnknAGGZKc6PdQU1ovxqTDs, or add the reviewer to the Vercel team.
 ```
 
 Production protection must not be weakened to work around this.
