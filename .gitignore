@@ -38,3 +38,9 @@ tsconfig.tsbuildinfo
 /evaluation/task06c-r2f/run-*/records/private/
 /evaluation/task06c-r2f/run-*/annotations/private/
 /evaluation/task06c-r2f/reviewer-packets/private/
+/evaluation/task06c-r2g/run-*/records/private/
+/evaluation/task06c-r2g/run-*/annotations/private/
+/evaluation/task06c-r2g/reviewer-packets/private/
+
+# Local editor/agent workspace configuration.
+/.claude/
