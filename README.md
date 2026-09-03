@@ -4,6 +4,23 @@
 
 [Open the public demo](https://ankur-gamma.vercel.app)
 
+![Ankur: a Bengali source becomes a grounded, cited assessment](docs/media/ankur-flow.gif)
+
+### Every page is reviewed before it counts
+
+OCR is treated as a draft. The learner corrects the text, resolves uncertainty warnings, and
+chooses which pages enter the confirmed source — nothing is generated until that boundary is set.
+
+![Extraction review, showing Bengali source text beside its editable extraction](docs/media/02-source-review.png)
+
+### Concepts link only to validated evidence
+
+Each concept cites an immutable segment ID and opens the exact source text behind it. Items that
+fail deterministic source validation are never displayed.
+
+![Preparation map, each concept citing an immutable source segment ID](docs/media/03-knowledge-map.png)
+
+
 Ankur turns learner-confirmed Bengali, English, or mixed-language material into a source-grounded adaptive learning experience. It reviews document extraction, maps concepts, generates and grades a focused mixed assessment, builds evidence-linked personalized revision, offers a targeted retry, and compares the two attempts deterministically.
 
 ## The problem
